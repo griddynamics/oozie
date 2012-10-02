@@ -739,6 +739,10 @@
                     <licenseLocation>${clover.license}</licenseLocation>
                     <generateXml>true</generateXml>
                     <generateHtml>true</generateHtml>
+                    <excludes>
+                        <exclude>**/org/apache/oozie/store/**/*.java</exclude>
+                        <exclude>**/org/apache/oozie/example/**/*.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
