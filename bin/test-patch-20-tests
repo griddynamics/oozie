@@ -96,33 +96,37 @@ case $OP in
         # versions of antlr. Once we move to Pig 0.10 then we don't need this.
         mvn test -Dtest=TestHiveActionExecutor,TestHiveMain ${MVNPASSTHRU} \
             -PtestHive -Dmaven.test.failure.ignore=true -Dmaven.test.error.ignore=true \
-            -fae -Doozie.test.waitfor.ratio=3 -Dtest.timeout=7200 \
+            -Doozie.test.waitfor.ratio=3 -Dtest.timeout=7200 \
             | tee -a ${TEMPDIR}/${TASKNAME}.out >> $STDOUT
         exitCode=`expr $exitCode + ${PIPESTATUS[0]}`
     fi
     echo "$exitCode" >  ${TEMPDIR}/${TASKNAME}.exitCode
     ;;
   report)
-    failedTests=`find . -name 'TEST*.xml' | xargs grep  -l -E "<failure|<error" | sed -e "s|.*target/surefire-reports/TEST-|          |g" | sed -e "s|\.xml||g"`
-    testsRun=`grep "Tests run:" ${TEMPDIR}/${TASKNAME}.out | grep -v " Time elapsed:" | awk '{print $3}' | sed 's/,//' | awk 'BEGIN {count=0} {count=count+$1} END {print "Tests run: "count}'`
-    testsFailed=`grep "Tests run:" ${TEMPDIR}/${TASKNAME}.out | grep -v " Time elapsed:" | awk '{print $5}' | sed 's/,//' | awk 'BEGIN {count=0} {count=count+$1} END {print "Tests failures: "count}'`
-    testsErrors=`grep "Tests run:" ${TEMPDIR}/${TASKNAME}.out | grep -v " Time elapsed:" | awk '{print $7}' | sed 's/,//' | awk 'BEGIN {count=0} {count=count+$1} END {print "Tests errors: "count}'`
+    failedTests=` find . -name '*\.txt' | grep target/surefire-reports | xargs grep  "<<< FAILURE" | grep -v "Tests run:" | sed 's/.*\.txt\://' | sed 's/ .*//'`
+    testsRun=`grep "Tests run:" ${TEMPDIR}/${TASKNAME}.out | grep -v " Time elapsed:" | awk '{print $3}' | sed 's/,//' | awk 'BEGIN {count=0} {count=count+$1} END {print count}'`
+    testsFailed=`grep "Tests run:" ${TEMPDIR}/${TASKNAME}.out | grep -v " Time elapsed:" | awk '{print $5}' | sed 's/,//' | awk 'BEGIN {count=0} {count=count+$1} END {print count}'`
+    testsErrors=`grep "Tests run:" ${TEMPDIR}/${TASKNAME}.out | grep -v " Time elapsed:" | awk '{print $7}' | sed 's/,//' | awk 'BEGIN {count=0} {count=count+$1} END {print count}'`
+    hasFailures=`expr $testsFailed + $testsErrors`
     testsExitCode=`cat ${TEMPDIR}/${TASKNAME}.exitCode`
-    if [[ "$testsExitCode" != "0" ]] ; then
-      if [ -n "${failedTests}" ] ; then
-        echo "{color:red}-1{code} ${TASKNAME} - the patch failed the following testcases:" >> $SUMMARYFILE
-        echo "" >> ${SUMMARYFILE}
-        echo "${failedTests}" >> $SUMMARYFILE
-        echo "" >> ${SUMMARYFILE}
-      else
-        echo "{color:red}-1{code} ${TASKNAME} - patch does not compile, cannot run testcases" >> $SUMMARYFILE
-      fi
+    if [[ $hasFailures != 0 ]] ; then
+      echo "{color:red}-1 ${TASKNAME}{color}" >> $SUMMARYFILE
+      echo ".    Tests run: $testsRun" >> $SUMMARYFILE
+      echo ".    Tests failed: $testsFailed" >> $SUMMARYFILE
+      echo ".    Tests errors: $testsErrors" >> $SUMMARYFILE
+      echo "" >> ${SUMMARYFILE}
+      echo ".    The patch failed the following testcases:" >> $SUMMARYFILE
+      echo "" >> ${SUMMARYFILE}
+      echo "${failedTests}" | sed 's/^/.      /' >> $SUMMARYFILE
+      echo "" >> ${SUMMARYFILE}
     else
-      echo "{color:green}+1{code} ${TASKNAME}" >> $SUMMARYFILE
+      if [[ "$testsExitCode" != "0" ]] ; then
+          echo "{color:red}-1 ${TASKNAME}{color} - patch does not compile, cannot run testcases" >> $SUMMARYFILE
+      else
+        echo "{color:green}+1 ${TASKNAME}{color}" >> $SUMMARYFILE
+        echo ".    Tests run: $testsRun" >> $SUMMARYFILE
+      fi
     fi
-    echo "   $testsRun" >> $SUMMARYFILE
-    echo "   $testsFailed" >> $SUMMARYFILE
-    echo "   $testsErrors" >> $SUMMARYFILE
     ;;
 esac
 
