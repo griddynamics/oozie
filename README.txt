@@ -1,7 +1,6 @@
 Apache Oozie
 =============
 
-
 What is Oozie
 --------------
 
