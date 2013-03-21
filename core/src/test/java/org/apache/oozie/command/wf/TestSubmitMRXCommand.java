@@ -50,6 +50,7 @@ public class TestSubmitMRXCommand extends XFsTestCase {
     public void testWFXmlGeneration() throws Exception {
         Configuration conf = new Configuration(false);
 
+
         conf.set(XOozieClient.JT, "jobtracker");
         conf.set(XOozieClient.NN, "namenode");
         conf.set(OozieClient.LIBPATH, "libpath");
