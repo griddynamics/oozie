@@ -120,6 +120,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
     @Lob
     private String jobData = null;
 
+    @Override
     public long getEvent_id() {
         return event_id;
     }
@@ -128,6 +129,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.event_id = id;
     }
 
+    @Override
     public String getSlaId() {
         return slaId;
     }
@@ -141,6 +143,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
      *
      * public void setClientId(String clientId) { this.clientId = clientId; }
      */
+    @Override
     public SlaAppType getAppType() {
         return appType;
     }
@@ -149,6 +152,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.appType = appType;
     }
 
+    @Override
     public String getAppName() {
         return appName;
     }
@@ -157,6 +161,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.appName = appName;
     }
 
+    @Override
     public String getUser() {
         return user;
     }
@@ -165,6 +170,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.user = user;
     }
 
+    @Override
     public String getGroupName() {
         return groupName;
     }
@@ -173,6 +179,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.groupName = groupName;
     }
 
+    @Override
     public String getParentClientId() {
         return parentClientId;
     }
@@ -181,6 +188,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.parentClientId = parentClientId;
     }
 
+    @Override
     public String getParentSlaId() {
         return parentSlaId;
     }
@@ -189,6 +197,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.parentSlaId = parentSlaId;
     }
 
+    @Override
     public Date getExpectedStart() {
         return expectedStart;
     }
@@ -197,6 +206,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.expectedStart = expectedStart;
     }
 
+    @Override
     public Date getExpectedEnd() {
         return expectedEnd;
     }
@@ -205,6 +215,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.expectedEnd = expectedEnd;
     }
 
+    @Override
     public Date getStatusTimestamp() {
         return statusTimestamp;
     }
@@ -213,6 +224,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.statusTimestamp = statusTimestamp;
     }
 
+    @Override
     public String getNotificationMsg() {
         return notificationMsg;
     }
@@ -221,6 +233,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.notificationMsg = notificationMsg;
     }
 
+    @Override
     public String getAlertContact() {
         return alertContact;
     }
@@ -229,6 +242,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.alertContact = alertContact;
     }
 
+    @Override
     public String getDevContact() {
         return devContact;
     }
@@ -237,6 +251,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.devContact = devContact;
     }
 
+    @Override
     public String getQaContact() {
         return qaContact;
     }
@@ -245,6 +260,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.qaContact = qaContact;
     }
 
+    @Override
     public String getSeContact() {
         return seContact;
     }
@@ -253,6 +269,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.seContact = seContact;
     }
 
+    @Override
     public String getAlertFrequency() {
         return alertFrequency;
     }
@@ -261,6 +278,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.alertFrequency = alertFrequency;
     }
 
+    @Override
     public String getAlertPercentage() {
         return alertPercentage;
     }
@@ -269,6 +287,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.alertPercentage = alertPercentage;
     }
 
+    @Override
     public String getUpstreamApps() {
         return upstreamApps;
     }
@@ -277,6 +296,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.upstreamApps = upstreamApps;
     }
 
+    @Override
     public Status getJobStatus() {
         return jobStatus;
     }
@@ -285,6 +305,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         this.jobStatus = jobStatus;
     }
 
+    @Override
     public String getJobData() {
         return jobData;
     }
@@ -299,7 +320,7 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public JSONObject toJSONObject(String timeZoneId) {
         return null;
     }
@@ -308,7 +329,6 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
 
     }
 
-    @SuppressWarnings("unchecked")
     public JsonSLAEvent(JSONObject json) {
 
     }
