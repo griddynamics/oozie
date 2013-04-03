@@ -17,6 +17,8 @@
  */
 package org.apache.oozie.action.ssh;
 
+import static org.mockito.Mockito.verify;
+
 import org.apache.oozie.service.CallbackService;
 
 import java.io.IOException;
@@ -43,6 +45,7 @@ import org.apache.oozie.test.XFsTestCase;
 import org.apache.oozie.util.ELEvaluator;
 import org.apache.oozie.util.PropertiesUtils;
 import org.apache.oozie.util.XConfiguration;
+import org.mockito.Mockito;
 
 public class TestSshActionExecutor extends XFsTestCase {
 
@@ -165,7 +168,7 @@ public class TestSshActionExecutor extends XFsTestCase {
     protected String getActionXMLSchema() {
         return "uri:oozie-workflow:0.1";
     }
-    
+
     /**
      * test {@code SshActionExecutor.check()} method with invalid
      * xml configuration
@@ -180,17 +183,17 @@ public class TestSshActionExecutor extends XFsTestCase {
         action.setConf("<ssh xmlns='" + getActionXMLSchema() + "'> invalid body ");
         action.setName("ssh");
         final SshActionExecutor ssh = new SshActionExecutor();
-        final Context context = new Context(workflow, action);        
+        final Context context = new Context(workflow, action);
         try {
             ssh.check(context, action);
             fail("testSshCheckWithInvalidXml expected ex error");
         } catch (ActionExecutorException aex) {
-          //ActionExecutorException should be thrown to pass the test
-          assertEquals("ERR_XML_PARSE_FAILED", aex.getErrorCode());
-          assertEquals(ActionExecutorException.ErrorType.ERROR, aex.getErrorType());
+            //ActionExecutorException should be thrown to pass the test
+            assertEquals("ERR_XML_PARSE_FAILED", aex.getErrorCode());
+            assertEquals(ActionExecutorException.ErrorType.ERROR, aex.getErrorType());
         }
     }
-    
+
     /**
      * test {@code SshActionExecutor.start()} method with invalid
      * xml configuration
@@ -199,7 +202,6 @@ public class TestSshActionExecutor extends XFsTestCase {
         String baseDir = getTestCaseDir();
         Path appPath = new Path(getNameNodeUri(), baseDir);
         WorkflowJobBean workflow = createWorkflowJobBean(appPath);
-  
         WorkflowActionBean action = new WorkflowActionBean();
         action.setId("actionId");
         action.setConf("<ssh xmlns='" + getActionXMLSchema() + "'> invalid body ");
@@ -210,9 +212,10 @@ public class TestSshActionExecutor extends XFsTestCase {
             ssh.start(context, action);
             fail("testSshStartWithInvalidXml expected ex error");
         } catch (ActionExecutorException ex) {
-          //ActionExecutorException should be thrown to pass the test
+            //ActionExecutorException should be thrown to pass the test
         }
     }
+
     /**
      * test {@code SshActionExecutor.start()/kill()}
      * sequence call
@@ -232,7 +235,9 @@ public class TestSshActionExecutor extends XFsTestCase {
         final SshActionExecutor ssh = new SshActionExecutor();
         final Context context = new Context(workflow, action);
         ssh.start(context, action);
-        ssh.kill(context, action);
+        Context contextMock = Mockito.mock(Context.class);
+        ssh.kill(contextMock, action);
+        verify(contextMock).setEndData(WorkflowAction.Status.KILLED, "ERROR");
     }
 
     private WorkflowJobBean createWorkflowJobBean(Path appPath) {
@@ -249,7 +254,7 @@ public class TestSshActionExecutor extends XFsTestCase {
         workflow.setId(Services.get().get(UUIDService.class).generateId(ApplicationType.WORKFLOW));
         return workflow;
     }
-    
+
     public void testJobStart() throws ActionExecutorException {
         String baseDir = getTestCaseDir();
         Path appPath = new Path(getNameNodeUri(), baseDir);
@@ -279,7 +284,7 @@ public class TestSshActionExecutor extends XFsTestCase {
         assertEquals(Status.OK, action.getStatus());
         assertEquals("something", PropertiesUtils.stringToProperties(action.getData()).getProperty("prop1"));
     }
-        
+
     public void testJobRecover() throws ActionExecutorException, InterruptedException {
         String baseDir = getTestCaseDir();
         Path appPath = new Path(getNameNodeUri(), baseDir);
