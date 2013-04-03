@@ -89,7 +89,7 @@ public class TestSshActionExecutor extends XFsTestCase {
         public boolean isRetry() {
             throw new UnsupportedOperationException();
         }
-        
+
         public WorkflowAction getAction() {
           return action;
         }
