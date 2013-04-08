@@ -18,14 +18,14 @@ import org.apache.oozie.util.DateUtils;
 
 public class TestCoordinatorJobBean extends XTestCase {
 
-    private static final Date ct = new Date(1L); 
-    private static final Date et = new Date(2L); 
-    private static final Date st = new Date(3L);
-    private static final Date lat = new Date(3L);
-    private static final Date lmt = new Date(4L);
-    private static final Date nmt = new Date(5L);
-    private static final Date pt = new Date(6L);
-    private static final Date spt = new Date(7L);
+    private static final Date ct  = new Date(1L); 
+    private static final Date et  = new Date(2L); 
+    private static final Date st  = new Date(3L);
+    private static final Date lat = new Date(4L);
+    private static final Date lmt = new Date(5L);
+    private static final Date nmt = new Date(6L);
+    private static final Date pt  = new Date(7L);
+    private static final Date spt = new Date(8L);
     private static final List<? extends JsonCoordinatorAction> actionList  
         = Collections.singletonList(new CoordinatorActionBean());
     private static final Execution execution = Execution.LIFO;
