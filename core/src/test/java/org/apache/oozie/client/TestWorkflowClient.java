@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,8 @@ public class TestWorkflowClient extends DagServletTestCase {
 
     private static final boolean IS_SECURITY_ENABLED = false;
     static final String VERSION = "/v" + OozieClient.WS_PROTOCOL_VERSION;
-    static final String[] END_POINTS = {"/versions", VERSION + "/jobs", VERSION + "/job/*", VERSION + "/admin/*", VERSION + "/sla/*"};
+    static final String[] END_POINTS = {"/versions", VERSION + "/jobs", VERSION + "/job/*", VERSION + "/admin/*", 
+        VERSION + "/sla/*"};
     @SuppressWarnings("rawtypes")
     static final Class[] SERVLET_CLASSES = {HeaderTestingVersionServlet.class, V0JobsServlet.class,
             V0JobServlet.class, V1AdminServlet.class,SLAServlet.class};
@@ -498,7 +499,7 @@ public class TestWorkflowClient extends DagServletTestCase {
                     public Void call() throws Exception {
                         String oozieUrl = getContextURL();
                         OozieClient wc = new OozieClient(oozieUrl);
-                        
+
                         PrintStream oldStream = System.out;
                         ByteArrayOutputStream data = new ByteArrayOutputStream();
                         System.setOut(new PrintStream(data));
