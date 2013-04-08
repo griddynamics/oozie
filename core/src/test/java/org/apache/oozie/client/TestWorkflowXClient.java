@@ -155,6 +155,8 @@ public class TestWorkflowXClient extends DagServletTestCase {
                                 tmp.getAbsolutePath());
                         String localPath = libPath.toString().substring(
                                 startPosition);
+                        
+                        wc.setLib(configuration, libPath.toString());
 
                         configuration.setProperty(OozieClient.LIBPATH,
                                 localPath.substring(1));
@@ -167,9 +169,7 @@ public class TestWorkflowXClient extends DagServletTestCase {
                                     "java.lang.RuntimeException: libpath should be absolute",
                                     e.toString());
                         }
-
-                        configuration.setProperty(OozieClient.LIBPATH,
-                                libPath.toString());
+                        wc.setLib(configuration, libPath.toString());
 
                         assertEquals(MockDagEngineService.JOB_ID + wfCount
                                 + MockDagEngineService.JOB_ID_END,
