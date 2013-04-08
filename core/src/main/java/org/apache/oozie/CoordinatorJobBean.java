@@ -407,6 +407,7 @@ public class CoordinatorJobBean extends JsonCoordinatorJob implements Writable {
      * output. @throws IOException thrown if the coordinator bean could not be
      * serialized.
      */
+    @Override
     public void write(DataOutput dataOutput) throws IOException {
         WritableUtils.writeStr(dataOutput, getAppPath());
         WritableUtils.writeStr(dataOutput, getAppName());
@@ -446,6 +447,7 @@ public class CoordinatorJobBean extends JsonCoordinatorJob implements Writable {
      * @param dataInput data input.
      * @throws IOException thrown if the workflow bean could not be deserialized.
      */
+    @Override
     public void readFields(DataInput dataInput) throws IOException {
         setAppPath(WritableUtils.readStr(dataInput));
         setAppName(WritableUtils.readStr(dataInput));
@@ -456,7 +458,7 @@ public class CoordinatorJobBean extends JsonCoordinatorJob implements Writable {
         setTimeUnit(CoordinatorJob.Timeunit.valueOf(WritableUtils.readStr(dataInput)));
         setTimeZone(WritableUtils.readStr(dataInput));
         setConcurrency(dataInput.readInt());
-        setExecutionOrder(Execution.valueOf(WritableUtils.readStr(dataInput)));
+        setExecution(Execution.valueOf(WritableUtils.readStr(dataInput)));
 
         long d = dataInput.readLong();
         if (d != -1) {
