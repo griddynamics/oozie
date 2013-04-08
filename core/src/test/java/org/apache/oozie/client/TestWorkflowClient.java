@@ -45,10 +45,10 @@ public class TestWorkflowClient extends DagServletTestCase {
 
     private static final boolean IS_SECURITY_ENABLED = false;
     static final String VERSION = "/v" + OozieClient.WS_PROTOCOL_VERSION;
-    static final String[] END_POINTS = {"/versions", VERSION + "/jobs", VERSION + "/job/*", VERSION + "/admin/*"};
+    static final String[] END_POINTS = {"/versions", VERSION + "/jobs", VERSION + "/job/*", VERSION + "/admin/*", VERSION + "/sla/*"};
     @SuppressWarnings("rawtypes")
     static final Class[] SERVLET_CLASSES = {HeaderTestingVersionServlet.class, V0JobsServlet.class,
-            V0JobServlet.class, V1AdminServlet.class};
+            V0JobServlet.class, V1AdminServlet.class,SLAServlet.class};
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -498,16 +498,7 @@ public class TestWorkflowClient extends DagServletTestCase {
                     public Void call() throws Exception {
                         String oozieUrl = getContextURL();
                         OozieClient wc = new OozieClient(oozieUrl);
-                        String jobId = MockDagEngineService.JOB_ID + "1"
-                                + MockDagEngineService.JOB_ID_END;
-                        assertEquals(RestConstants.JOB_SHOW_LOG,
-                                wc.getJobLog(jobId));
-
-                        WorkflowAction wfAction = wc
-                                .getWorkflowActionInfo(jobId);
-
-                        assertEquals(jobId, wfAction.getId());
-
+                        
                         PrintStream oldStream = System.out;
                         ByteArrayOutputStream data = new ByteArrayOutputStream();
                         System.setOut(new PrintStream(data));
@@ -518,7 +509,7 @@ public class TestWorkflowClient extends DagServletTestCase {
                         }
                         assertTrue(data.toString().contains("<sla-message>"));
                         assertTrue(data.toString().contains(
-                                "<last-sequence-id>0</last-sequence-id>"));
+                            "<last-sequence-id>0</last-sequence-id>"));
                         assertTrue(data.toString().contains("</sla-message>"));
 
                         return null;
