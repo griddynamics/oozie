@@ -115,6 +115,9 @@ public class TestSqoopActionExecutor extends ActionExecutorTestCase {
         return "db.hsqldb";
     }
 
+    
+    
+    
     private String getDbPath() {
         return new File(getTestCaseDir(), getDbFile()).getAbsolutePath();
     }
