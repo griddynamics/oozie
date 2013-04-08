@@ -87,7 +87,7 @@ public class TestWorkflowClient extends DagServletTestCase {
                                 found = true;
                             }
                         }
-                        assertTrue("headers does not tontaints header!", found);
+                        assertTrue("headers does not tontain header!", found);
                         wc.validateWSVersion();
                         assertTrue(HeaderTestingVersionServlet.OOZIE_HEADERS
                                 .containsKey("header"));

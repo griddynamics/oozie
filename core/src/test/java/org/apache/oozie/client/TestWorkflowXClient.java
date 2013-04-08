@@ -123,7 +123,7 @@ public class TestWorkflowXClient extends DagServletTestCase {
                         // try to submit without JT and NN
                         try {
                             wc.submitMapReduce(configuration);
-                            fail("submit client without JT should throuhg exception");
+                            fail("submit client without JT should throw exception");
                         } catch (RuntimeException exception) {
                             assertEquals(
                                     "java.lang.RuntimeException: jobtracker is not specified in conf",
