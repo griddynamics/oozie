@@ -34,12 +34,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
-import java.util.Enumeration;
 import java.util.concurrent.Callable;
-import javax.imageio.ImageIO;
-import junit.framework.Assert;
-import org.apache.oozie.ErrorCode;
 
 public class TestV1JobServlet extends DagServletTestCase {
 
@@ -49,12 +44,14 @@ public class TestV1JobServlet extends DagServletTestCase {
 
     private static final boolean IS_SECURITY_ENABLED = false;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
     }
 
     private void _testAction(final String action, final Configuration conf) throws Exception {
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 MockCoordinatorEngineService.reset();
                 Map<String, String> params = new HashMap<String, String>();
@@ -117,6 +114,7 @@ public class TestV1JobServlet extends DagServletTestCase {
      */
     public void testStart() throws Exception {
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 MockCoordinatorEngineService.reset();
                 Map<String, String> params = new HashMap<String, String>();
@@ -169,6 +167,7 @@ public class TestV1JobServlet extends DagServletTestCase {
     private void _testNonJsonResponses(final String show, final String contentType, final String response)
             throws Exception {
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 MockCoordinatorEngineService.reset();
                 Map<String, String> params = new HashMap<String, String>();
@@ -207,6 +206,7 @@ public class TestV1JobServlet extends DagServletTestCase {
 
     public void testJobInfo() throws Exception {
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 MockCoordinatorEngineService.reset();
                 Map<String, String> params = new HashMap<String, String>();
@@ -249,6 +249,7 @@ public class TestV1JobServlet extends DagServletTestCase {
 
     public void testCoordChange() throws Exception {
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 MockCoordinatorEngineService.reset();
                 Map<String, String> params = new HashMap<String, String>();

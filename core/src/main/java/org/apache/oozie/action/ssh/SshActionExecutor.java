@@ -453,7 +453,8 @@ public class SshActionExecutor extends ActionExecutor {
     private void initSshScripts() {
         String dirLocation = Services.get().getRuntimeDir() + "/ssh";
         File path = new File(dirLocation);
-        if (!path.mkdirs()) {
+        path.mkdirs();
+        if (!path.exists()) {
             throw new RuntimeException(XLog.format("Not able to create required directory {0}", dirLocation));
         }
         try {

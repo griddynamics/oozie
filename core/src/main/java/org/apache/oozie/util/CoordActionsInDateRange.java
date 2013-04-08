@@ -22,7 +22,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.oozie.CoordinatorActionBean;
@@ -53,19 +55,23 @@ public class CoordActionsInDateRange {
     public static List<String> getCoordActionIdsFromDates(String jobId, String scope) throws XException {
         ParamChecker.notEmpty(jobId, "jobId");
         ParamChecker.notEmpty(scope, "scope");
-        Set<String> actionSet = new HashSet<String>();
+        // NB: Use LinkedHashMap to get an ordered set.
+        // The ordering is needed to achieve reproducible behavior.
+        Map<String,String> actionMap = new LinkedHashMap<String,String>();
         String[] list = scope.split(",");
         for (String s : list) {
             s = s.trim();
             if (s.contains("::")) {
                 List<String> listOfActions = getCoordActionIdsFromDateRange(jobId, s);
-                actionSet.addAll(listOfActions);
+                for (String a: listOfActions) {
+                    actionMap.put(a, null);
+                }
             }
             else {
                 throw new XException(ErrorCode.E0308, "'" + s + "'. Separator '::' is missing for start and end dates of range");
             }
         }
-        return new ArrayList<String>(actionSet);
+        return new ArrayList<String>(actionMap.keySet());
     }
 
     /**

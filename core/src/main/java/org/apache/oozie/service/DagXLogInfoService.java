@@ -52,6 +52,7 @@ public class DagXLogInfoService implements Service {
      *
      * @param services services.
      */
+    @Override
     public void init(Services services) {
         XLog.Info.defineParameter(TOKEN);
         XLog.Info.defineParameter(APP);

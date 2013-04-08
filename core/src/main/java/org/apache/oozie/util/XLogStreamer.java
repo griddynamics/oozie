@@ -33,6 +33,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
+import com.google.common.annotations.VisibleForTesting;
+
 /**
  * XLogStreamer streams the given log file to logWriter after applying the given filter.
  */
@@ -46,7 +48,7 @@ public class XLogStreamer {
      */
     public static class Filter {
         private Map<String, Integer> logLevels;
-        private Map<String, String> filterParams;
+        private final Map<String, String> filterParams;
         private static List<String> parameters = new ArrayList<String>();
         private boolean noFilter;
         private Pattern filterPattern;
@@ -171,6 +173,11 @@ public class XLogStreamer {
 
         public static void reset() {
             parameters.clear();
+        }
+        
+        @VisibleForTesting
+        public final Map<String, String> getFilterParams() {
+          return filterParams;
         }
     }
 

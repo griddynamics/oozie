@@ -17,12 +17,9 @@
  */
 package org.apache.oozie;
 
-import org.apache.oozie.service.LiteWorkflowAppService;
 import org.apache.oozie.test.XTestCase;
-import org.apache.oozie.workflow.WorkflowInstance;
 import org.apache.oozie.workflow.WorkflowApp;
 import org.apache.oozie.workflow.WorkflowException;
-import org.apache.oozie.workflow.lite.LiteWorkflowApp;
 import org.apache.oozie.workflow.lite.LiteWorkflowInstance;
 import org.apache.oozie.WorkflowJobBean;
 import org.apache.hadoop.conf.Configuration;

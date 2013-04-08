@@ -24,10 +24,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.oozie.client.CoordinatorAction;
 import org.apache.oozie.client.CoordinatorJob;
@@ -271,7 +274,9 @@ public class CoordinatorEngine extends BaseEngine {
         if (logRetrievalScope != null && logRetrievalType != null) {
             // if coordinator action logs are to be retrieved based on action id range
             if (logRetrievalType.equals(RestConstants.JOB_LOG_ACTION)) {
-                Set<String> actions = new HashSet<String>();
+                // NB: use set implementation that maintains order or elements to
+                // achieve reproducibility:
+                Map<String,String> actionMap = new LinkedHashMap<String,String>();
                 String[] list = logRetrievalScope.split(",");
                 for (String s : list) {
                     s = s.trim();
@@ -299,7 +304,7 @@ public class CoordinatorEngine extends BaseEngine {
                             throw new CommandException(ErrorCode.E0302, "format is wrong for action's range '" + s + "'");
                         }
                         for (int i = start; i <= end; i++) {
-                            actions.add(jobId + "@" + i);
+                            actionMap.put(jobId + "@" + i, null);
                         }
                     }
                     else {
@@ -310,11 +315,11 @@ public class CoordinatorEngine extends BaseEngine {
                             throw new CommandException(ErrorCode.E0302, "format is wrong for action id'" + s
                                     + "'. Integer only.");
                         }
-                        actions.add(jobId + "@" + s);
+                        actionMap.put(jobId + "@" + s, null);
                     }
                 }
 
-                Iterator<String> actionsIterator = actions.iterator();
+                Iterator<String> actionsIterator = actionMap.keySet().iterator();
                 StringBuilder orSeparatedActions = new StringBuilder("");
                 boolean orRequired = false;
                 while (actionsIterator.hasNext()) {
@@ -324,7 +329,7 @@ public class CoordinatorEngine extends BaseEngine {
                     orSeparatedActions.append(actionsIterator.next().toString());
                     orRequired = true;
                 }
-                if (actions.size() > 1 && orRequired) {
+                if (actionMap.size() > 1 && orRequired) {
                     orSeparatedActions.insert(0, "(");
                     orSeparatedActions.append(")");
                 }

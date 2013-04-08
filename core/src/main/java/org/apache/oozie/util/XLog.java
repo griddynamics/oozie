@@ -41,7 +41,7 @@ public class XLog implements Log {
      */
     public static class Info {
         private static String template = "";
-        private static List<String> parameterNames = new ArrayList<String>();
+        private static final List<String> parameterNames = new ArrayList<String>();
 
         private static ThreadLocal<Info> tlLogInfo = new ThreadLocal<Info>() {
             @Override

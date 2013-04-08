@@ -499,6 +499,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testJobStatus() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 MockDagEngineService.reset();
