@@ -195,8 +195,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
                 + "coordinator.xml";
         final long now = System.currentTimeMillis();
         final String start = DateUtils.formatDateOozieTZ(new Date(now));
-        final String end = DateUtils.formatDateOozieTZ(new Date(
-                now + 1000 * 150)); // now + 2.5 min
+        final String end = DateUtils.formatDateOozieTZ(new Date(now + 1000 * 90)); // now + 1.5 min
 
         String wfXml = IOUtils.getResourceAsString("wf-no-op.xml", -1);
         writeToFile(wfXml, getFsTestCaseDir(), "workflow.xml");
@@ -229,22 +228,18 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         final CoordinatorEngine ce = new CoordinatorEngine(getTestUser(),
                 "UNIT_TESTING");
         final String jobId = ce.submitJob(conf, true);
-        waitFor(1000 * 60 * 3/* 3 min */, new Predicate() {
+        waitFor(1000 * 90 /* 1.5 min*/, new Predicate() {
             @Override
             public boolean evaluate() throws Exception {
                 try {
                     List<CoordinatorAction> actions = ce.getCoordJob(jobId)
                             .getActions();
-                    System.out.println("##### num of actions: "
-                            + actions.size());
                     if (actions.size() < 1) {
                         return false;
                     }
-                    for (CoordinatorAction action : actions) {
+                    for (CoordinatorAction action: actions) {
                         CoordinatorAction.Status actionStatus = action
                                 .getStatus();
-                        System.out.println("##### action: " + action
-                                + ", status: " + actionStatus);
                         if (actionStatus != CoordinatorAction.Status.SUCCEEDED) {
                             return false;
                         }
