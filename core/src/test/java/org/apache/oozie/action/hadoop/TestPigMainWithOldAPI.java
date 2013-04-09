@@ -30,15 +30,16 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
+import javax.imageio.stream.FileImageInputStream;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.oozie.test.XFsTestCase;
 import org.apache.oozie.util.XConfiguration;
 
-public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void> {
+public  class TestPigMainWithOldAPI  extends XFsTestCase implements Callable<Void>{
     private SecurityManager SECURITY_MANAGER;
-
+    
     protected void setUp() throws Exception {
         super.setUp();
         SECURITY_MANAGER = System.getSecurityManager();
@@ -49,13 +50,17 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
         super.tearDown();
     }
 
-    private static String pigScript = "set job.name 'test'\n" + "set debug on\n" + "A = load '$IN' using PigStorage(':');\n"
-            + "B = foreach A generate $0 as id;\n" + "store B into '$OUT' USING PigStorage();";
+    private static String pigScript = "set job.name 'test'\n" +
+             "set debug on\n" +
+             "A = load '$IN' using PigStorage(':');\n" +
+             "B = foreach A generate $0 as id;\n" +
+             "store B into '$OUT' USING PigStorage();";
+
+
 
     public void testPigScript() throws Exception {
         MainTestCase.execute(getTestUser(), this);
     }
-
     @Override
     public Void call() throws Exception {
         FileSystem fs = getFileSystem();
@@ -84,6 +89,8 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
 
         // option to specify whether stats should be stored or not
 
+
+
         SharelibUtils.addToDistributedCache("pig", fs, getFsTestCaseDir(), jobConf);
 
         PigMainWithOldAPI.setPigScript(jobConf, script.toString(), new String[] { "IN=" + inputDir.toUri().getPath(),
@@ -94,11 +101,15 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
         jobConf.writeXml(os);
         os.close();
 
+//        File statsDataFile = new File(getTestCaseDir(), "statsdata.properties");
+
+        //File hadoopIdsFile = new File(getTestCaseDir(), "hadoopIds.properties");
         File jobIdsFile = new File(getTestCaseDir(), "jobIds.properties");
 
         setSystemProperty("oozie.launcher.job.id", "" + System.currentTimeMillis());
         setSystemProperty("oozie.action.conf.xml", actionXml.getAbsolutePath());
-        setSystemProperty("oozie.action.output.properties", jobIdsFile.getAbsolutePath());
+        setSystemProperty("oozie.action.output.properties",jobIdsFile.getAbsolutePath());
+
 
         URL url = Thread.currentThread().getContextClassLoader().getResource("PigMain.txt");
         File classPathDir = new File(url.getPath()).getParentFile();
@@ -109,38 +120,44 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
 
         new LauncherSecurityManager();
         String user = System.getProperty("user.name");
-        ByteArrayOutputStream data = new ByteArrayOutputStream();
-        PrintStream oldPrintStream = System.out;
+        ByteArrayOutputStream data= new ByteArrayOutputStream();
+        PrintStream oldPrintStream=System.out;
         System.setOut(new PrintStream(data));
         try {
             Writer wr = new FileWriter(pigProps);
             props.store(wr, "");
             wr.close();
             PigMainWithOldAPI.main(null);
-        } catch (SecurityException ex) {
+        }
+        catch (SecurityException ex) {
             if (LauncherSecurityManager.getExitInvoked()) {
                 System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 if (LauncherSecurityManager.getExitCode() != 0) {
                     fail();
                 }
-            } else {
+            }
+            else {
                 throw ex;
             }
-        } finally {
+        }
+        finally {
             pigProps.delete();
             System.setProperty("user.name", user);
             System.setOut(oldPrintStream);
         }
-
-        assertTrue(jobIdsFile.exists());
-        Properties prop = new Properties();
-        prop.load(new FileReader(jobIdsFile));
-        String gobId = prop.getProperty("hadoopJobs");
-        assertTrue(data.toString().contains(gobId));
-        assertTrue(data.toString().contains("Success!"));
+        System.out.println("!!!!!"+data.toString());
+        // Stats should be stored only if option to write stats is set to true
+        
+            assertTrue(jobIdsFile.exists());
+            Properties prop= new Properties();
+            prop.load(new FileReader(jobIdsFile));
+            String gobId=prop.getProperty("hadoopJobs");
+            assertTrue(data.toString().contains(gobId));
+            assertTrue(data.toString().contains("Success!"));
 
         return null;
     }
+
 
 }
