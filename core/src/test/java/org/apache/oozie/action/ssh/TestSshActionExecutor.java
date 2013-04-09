@@ -17,6 +17,8 @@
  */
 package org.apache.oozie.action.ssh;
 
+import static org.mockito.Mockito.verify;
+
 import org.apache.oozie.service.CallbackService;
 
 import java.io.IOException;
@@ -29,6 +31,7 @@ import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.oozie.client.WorkflowAction;
 import org.apache.oozie.client.WorkflowJob;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.WorkflowAction.Status;
@@ -44,6 +47,7 @@ import org.apache.oozie.test.XFsTestCase;
 import org.apache.oozie.util.ELEvaluator;
 import org.apache.oozie.util.PropertiesUtils;
 import org.apache.oozie.util.XConfiguration;
+import org.mockito.Mockito;
 
 public class TestSshActionExecutor extends XFsTestCase {
 
@@ -93,6 +97,10 @@ public class TestSshActionExecutor extends XFsTestCase {
 
         public boolean isRetry() {
             throw new UnsupportedOperationException();
+        }
+
+        public WorkflowAction getAction() {
+          return action;
         }
 
         @Override
@@ -170,13 +178,80 @@ public class TestSshActionExecutor extends XFsTestCase {
         return "uri:oozie-workflow:0.1";
     }
 
-    public void testJobStart() throws ActionExecutorException {
+    /**
+     * test {@code SshActionExecutor.check()} method with invalid
+     * xml configuration
+     */
+    public void testSshCheckWithInvalidXml() throws Exception  {
         String baseDir = getTestCaseDir();
         Path appPath = new Path(getNameNodeUri(), baseDir);
+        WorkflowJobBean workflow = createWorkflowJobBean(appPath);
 
+        WorkflowActionBean action = new WorkflowActionBean();
+        action.setId("actionId");
+        action.setConf("<ssh xmlns='" + getActionXMLSchema() + "'> invalid body ");
+        action.setName("ssh");
+        final SshActionExecutor ssh = new SshActionExecutor();
+        final Context context = new Context(workflow, action);
+        try {
+            ssh.check(context, action);
+            fail("testSshCheckWithInvalidXml expected ex error");
+        } catch (ActionExecutorException aex) {
+            //ActionExecutorException should be thrown to pass the test
+            assertEquals("ERR_XML_PARSE_FAILED", aex.getErrorCode());
+            assertEquals(ActionExecutorException.ErrorType.ERROR, aex.getErrorType());
+        }
+    }
+
+    /**
+     * test {@code SshActionExecutor.start()} method with invalid
+     * xml configuration
+     */
+    public void testSshStartWithInvalidXml() throws Exception {
+        String baseDir = getTestCaseDir();
+        Path appPath = new Path(getNameNodeUri(), baseDir);
+        WorkflowJobBean workflow = createWorkflowJobBean(appPath);
+        WorkflowActionBean action = new WorkflowActionBean();
+        action.setId("actionId");
+        action.setConf("<ssh xmlns='" + getActionXMLSchema() + "'> invalid body ");
+        action.setName("ssh");
+        final SshActionExecutor ssh = new SshActionExecutor();
+        final Context context = new Context(workflow, action);
+        try {
+            ssh.start(context, action);
+            fail("testSshStartWithInvalidXml expected ex error");
+        } catch (ActionExecutorException ex) {
+            //ActionExecutorException should be thrown to pass the test
+        }
+    }
+
+    /**
+     * test {@code SshActionExecutor.start()/kill()}
+     * sequence call
+     */
+    public void testJobStartAndKill() throws Exception {
+        String baseDir = getTestCaseDir();
+        Path appPath = new Path(getNameNodeUri(), baseDir);
+        WorkflowJobBean workflow = createWorkflowJobBean(appPath);
+        WorkflowActionBean action = new WorkflowActionBean();
+        action.setId("actionId");
+        action.setConf("<ssh xmlns='" + getActionXMLSchema() + "'>" +
+                       "<host>localhost</host>" +
+                       "<command>top</command>" +
+                       "<capture-output/>" +
+                       "</ssh>");
+        action.setName("ssh");
+        final SshActionExecutor ssh = new SshActionExecutor();
+        final Context context = new Context(workflow, action);
+        ssh.start(context, action);
+        Context contextMock = Mockito.mock(Context.class);
+        ssh.kill(contextMock, action);
+        verify(contextMock).setEndData(WorkflowAction.Status.KILLED, "ERROR");
+    }
+
+    private WorkflowJobBean createWorkflowJobBean(Path appPath) {
         XConfiguration protoConf = new XConfiguration();
         protoConf.setStrings(WorkflowAppService.HADOOP_USER, getTestUser());
-
 
         XConfiguration wfConf = new XConfiguration();
         wfConf.set(OozieClient.APP_PATH, appPath.toString());
@@ -186,6 +261,14 @@ public class TestSshActionExecutor extends XFsTestCase {
         workflow.setAppPath(wfConf.get(OozieClient.APP_PATH));
         workflow.setProtoActionConf(protoConf.toXmlString());
         workflow.setId(Services.get().get(UUIDService.class).generateId(ApplicationType.WORKFLOW));
+        return workflow;
+    }
+
+    public void testJobStart() throws ActionExecutorException {
+        String baseDir = getTestCaseDir();
+        Path appPath = new Path(getNameNodeUri(), baseDir);
+
+        WorkflowJobBean workflow = createWorkflowJobBean(appPath);
 
         final WorkflowActionBean action = new WorkflowActionBean();
         action.setId("actionId");
@@ -215,18 +298,7 @@ public class TestSshActionExecutor extends XFsTestCase {
         String baseDir = getTestCaseDir();
         Path appPath = new Path(getNameNodeUri(), baseDir);
 
-        XConfiguration protoConf = new XConfiguration();
-        protoConf.setStrings(WorkflowAppService.HADOOP_USER, getTestUser());
-
-
-        XConfiguration wfConf = new XConfiguration();
-        wfConf.set(OozieClient.APP_PATH, appPath.toString());
-
-        WorkflowJobBean workflow = new WorkflowJobBean();
-        workflow.setConf(wfConf.toXmlString());
-        workflow.setAppPath(wfConf.get(OozieClient.APP_PATH));
-        workflow.setProtoActionConf(protoConf.toXmlString());
-        workflow.setId(Services.get().get(UUIDService.class).generateId(ApplicationType.WORKFLOW));
+        WorkflowJobBean workflow = createWorkflowJobBean(appPath);
 
         final WorkflowActionBean action = new WorkflowActionBean();
         action.setId("actionId");
@@ -268,67 +340,11 @@ public class TestSshActionExecutor extends XFsTestCase {
         assertEquals("something", PropertiesUtils.stringToProperties(action1.getData()).getProperty("prop1"));
     }
 
-
-    // TODO Move this test case over to a new class. Conflict between this one
-    // and testConnectionErrors. The property to replace the ssh user cannot be
-    // reset in a good way during runtime.
-    //
-//    public void testOozieUserMismatch() throws ActionExecutorException {
-//        String baseDir = getTestCaseDir();
-//        Path appPath = new Path(getNameNodeUri(), baseDir);
-//
-//        Services.get().getConf().setBoolean(SshActionExecutor.CONF_SSH_ALLOW_USER_AT_HOST, false);
-//        XConfiguration protoConf = new XConfiguration();
-//        protoConf.setStrings(WorkflowAppService.HADOOP_USER, getTestUser());
-//        protoConf.setStrings(WorkflowAppService.HADOOP_UGI, getTestUser() + "," + getTestGroup());
-//
-//        XConfiguration wfConf = new XConfiguration();
-//        wfConf.set(OozieClient.APP_PATH, appPath.toString());
-//
-//        WorkflowJobBean workflow = new WorkflowJobBean();
-//        workflow.setConf(wfConf.toXmlString());
-//        workflow.setAppPath(wfConf.get(OozieClient.APP_PATH));
-//        workflow.setProtoActionConf(protoConf.toXmlString());
-//        workflow.setId("wfId");
-//
-//        final WorkflowActionBean action = new WorkflowActionBean();
-//        action.setId("actionId_" + System.currentTimeMillis());
-//        action.setConf("<ssh xmlns='" + getActionXMLSchema() + "'>" +
-//                       "<host>invalid@localhost</host>" +
-//                       "<command>echo</command>" +
-//                       "<capture-output/>" +
-//                       "<args>\"prop1=something\"</args>" +
-//                       "</ssh>");
-//        action.setName("ssh");
-//
-//        final SshActionExecutor ssh = new SshActionExecutor();
-//
-//        final Context context = new Context(workflow, action);
-//        try {
-//            ssh.start(context, action);
-//            assertTrue(false);
-//        } catch (ActionExecutorException ex) {
-//            System.err.println("Caught exception, Error Code: " + ex.getErrorCode());
-//            assertEquals(SshActionExecutor.ERR_USER_MISMATCH, ex.getErrorCode());
-//        }
-//    }
-
     public void testConnectionErrors() throws ActionExecutorException {
         String baseDir = getTestCaseDir();
         Path appPath = new Path(getNameNodeUri(), baseDir);
 
-        XConfiguration protoConf = new XConfiguration();
-        protoConf.setStrings(WorkflowAppService.HADOOP_USER, getTestUser());
-
-
-        XConfiguration wfConf = new XConfiguration();
-        wfConf.set(OozieClient.APP_PATH, appPath.toString());
-
-        WorkflowJobBean workflow = new WorkflowJobBean();
-        workflow.setConf(wfConf.toXmlString());
-        workflow.setAppPath(wfConf.get(OozieClient.APP_PATH));
-        workflow.setProtoActionConf(protoConf.toXmlString());
-        workflow.setId(Services.get().get(UUIDService.class).generateId(ApplicationType.WORKFLOW));
+        WorkflowJobBean workflow = createWorkflowJobBean(appPath);
 
         final WorkflowActionBean action = new WorkflowActionBean();
         action.setId("actionId");
