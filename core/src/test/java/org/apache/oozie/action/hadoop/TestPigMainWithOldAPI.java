@@ -1,0 +1,163 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.oozie.action.hadoop;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.net.URL;
+import java.util.Properties;
+import java.util.concurrent.Callable;
+
+import javax.imageio.stream.FileImageInputStream;
+
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.oozie.test.XFsTestCase;
+import org.apache.oozie.util.XConfiguration;
+
+public  class TestPigMainWithOldAPI  extends XFsTestCase implements Callable<Void>{
+    private SecurityManager SECURITY_MANAGER;
+    
+    protected void setUp() throws Exception {
+        super.setUp();
+        SECURITY_MANAGER = System.getSecurityManager();
+    }
+
+    protected void tearDown() throws Exception {
+        System.setSecurityManager(SECURITY_MANAGER);
+        super.tearDown();
+    }
+
+    private static String pigScript = "set job.name 'test'\n" +
+             "set debug on\n" +
+             "A = load '$IN' using PigStorage(':');\n" +
+             "B = foreach A generate $0 as id;\n" +
+             "store B into '$OUT' USING PigStorage();";
+
+
+
+    public void testPigScript() throws Exception {
+        MainTestCase.execute(getTestUser(), this);
+    }
+    @Override
+    public Void call() throws Exception {
+        FileSystem fs = getFileSystem();
+
+        Path script = new Path(getTestCaseDir(), "script.pig");
+        Writer w = new FileWriter(script.toString());
+        w.write(pigScript);
+        w.close();
+
+        Path inputDir = new Path(getFsTestCaseDir(), "input");
+        fs.mkdirs(inputDir);
+        Writer writer = new OutputStreamWriter(fs.create(new Path(inputDir, "data.txt")));
+        writer.write("hello");
+        writer.close();
+
+        Path outputDir = new Path(getFsTestCaseDir(), "output");
+
+        XConfiguration jobConf = new XConfiguration();
+        XConfiguration.copy(createJobConf(), jobConf);
+
+        jobConf.set("user.name", getTestUser());
+        jobConf.set("group.name", getTestGroup());
+        jobConf.setInt("mapred.map.tasks", 1);
+        jobConf.setInt("mapred.map.max.attempts", 1);
+        jobConf.setInt("mapred.reduce.max.attempts", 1);
+
+        // option to specify whether stats should be stored or not
+
+
+
+        SharelibUtils.addToDistributedCache("pig", fs, getFsTestCaseDir(), jobConf);
+
+        PigMainWithOldAPI.setPigScript(jobConf, script.toString(), new String[] { "IN=" + inputDir.toUri().getPath(),
+                "OUT=" + outputDir.toUri().getPath() }, new String[] { "-v" });
+
+        File actionXml = new File(getTestCaseDir(), "action.xml");
+        OutputStream os = new FileOutputStream(actionXml);
+        jobConf.writeXml(os);
+        os.close();
+
+//        File statsDataFile = new File(getTestCaseDir(), "statsdata.properties");
+
+        //File hadoopIdsFile = new File(getTestCaseDir(), "hadoopIds.properties");
+        File jobIdsFile = new File(getTestCaseDir(), "jobIds.properties");
+
+        setSystemProperty("oozie.launcher.job.id", "" + System.currentTimeMillis());
+        setSystemProperty("oozie.action.conf.xml", actionXml.getAbsolutePath());
+        setSystemProperty("oozie.action.output.properties",jobIdsFile.getAbsolutePath());
+
+
+        URL url = Thread.currentThread().getContextClassLoader().getResource("PigMain.txt");
+        File classPathDir = new File(url.getPath()).getParentFile();
+        assertTrue(classPathDir.exists());
+        Properties props = jobConf.toProperties();
+        assertEquals(props.getProperty("oozie.pig.args.size"), "1");
+        File pigProps = new File(classPathDir, "pig.properties");
+
+        new LauncherSecurityManager();
+        String user = System.getProperty("user.name");
+        ByteArrayOutputStream data= new ByteArrayOutputStream();
+        PrintStream oldPrintStream=System.out;
+        System.setOut(new PrintStream(data));
+        try {
+            Writer wr = new FileWriter(pigProps);
+            props.store(wr, "");
+            wr.close();
+            PigMainWithOldAPI.main(null);
+        }
+        catch (SecurityException ex) {
+            if (LauncherSecurityManager.getExitInvoked()) {
+                System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
+                System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
+                if (LauncherSecurityManager.getExitCode() != 0) {
+                    fail();
+                }
+            }
+            else {
+                throw ex;
+            }
+        }
+        finally {
+            pigProps.delete();
+            System.setProperty("user.name", user);
+            System.setOut(oldPrintStream);
+        }
+        System.out.println("!!!!!"+data.toString());
+        // Stats should be stored only if option to write stats is set to true
+        
+            assertTrue(jobIdsFile.exists());
+            Properties prop= new Properties();
+            prop.load(new FileReader(jobIdsFile));
+            String gobId=prop.getProperty("hadoopJobs");
+            assertTrue(data.toString().contains(gobId));
+            assertTrue(data.toString().contains("Success!"));
+
+        return null;
+    }
+
+
+}
