@@ -75,6 +75,7 @@
         <hcataloglib.version>${hcatalog.version}.oozie-${project.version}</hcataloglib.version>
 
         <clover.license>${user.home}/.clover.license</clover.license>
+        <clover.version>3.1.7</clover.version>
         <!--
         This is required while we support a a pre 0.23 version of Hadoop which does not have
         the hadoop-auth artifact. After we phase-out pre 0.23 we can get rid of this property.
@@ -720,18 +721,22 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- <dependencies>
+    <!-- This dependency is badly needed to be able to download clover.jar using 
+         dependency:copy-dependencies Maven goal. Otherwize this does not work for some reason.
+         Also that does not work if the clover dependency is placed into "dependencyManagement"
+         section. -->
+    <dependencies>
         <dependency>
             <groupId>com.cenqua.clover</groupId>
             <artifactId>clover</artifactId>
-            <version>3.1.7</version>
+            <version>${clover.version}</version>
         </dependency>
-    </dependencies> -->
+    </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
-	              <plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>1.0</version>
@@ -811,14 +816,13 @@
                 <plugin>
                     <groupId>com.atlassian.maven.plugins</groupId>
                     <artifactId>maven-clover2-plugin</artifactId>
-                    <!-- <version>3.0.5</version> -->
-                    <version>3.1.11</version>
+                    <version>${clover.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
                     <version>2.5.2</version>
-                </plugin>
+                </plugin>               
             </plugins>
         </pluginManagement>
 
