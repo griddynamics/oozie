@@ -570,6 +570,30 @@ public class TestOozieCLI extends DagServletTestCase {
         });
     }
 
+    /**
+     * Negative Test: Invalid options provided for rerun: eitherdate or action expected. Don't use both at the same time 
+     * @throws Exception
+     */
+    public void testCoordReRunNeg4() throws Exception {
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                Path appPath = new Path(getFsTestCaseDir(), "app");
+                getFileSystem().mkdirs(appPath);
+                getFileSystem().create(new Path(appPath, "coordinator.xml")).close();
+                String oozieUrl = getContextURL();
+
+                String[] args = new String[] {"job", "-oozie", oozieUrl, "-config", createConfigFile(appPath.toString()),
+                        "-rerun", MockCoordinatorEngineService.JOB_ID + "0",
+                        "-date", "2009-12-15T01:00Z", "-action", "1"};
+
+                assertEquals(-1, new OozieCLI().run(args));
+                assertNull(MockCoordinatorEngineService.did);
+                assertFalse(MockCoordinatorEngineService.started.get(1));
+                return null;
+            }
+        });
+    }
+
     public void testJobStatus() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
             public Void call() throws Exception {
