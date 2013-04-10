@@ -709,6 +709,9 @@ public class TestOozieCLI extends DagServletTestCase {
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOB_SHOW_INFO, MockDagEngineService.did);
 
+                args = new String[]{"job", "-oozie", oozieUrl, "-info", MockDagEngineService.JOB_ID + "3" +
+                        MockDagEngineService.JOB_ID_END, "-offset", "3"};
+                
                 return null;
             }
         });
@@ -724,6 +727,14 @@ public class TestOozieCLI extends DagServletTestCase {
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOB_SHOW_LOG, MockDagEngineService.did);
 
+                args = new String[]{"job", "-oozie", oozieUrl, "-log", MockCoordinatorEngineService.JOB_ID + "0"};
+                assertEquals(0, new OozieCLI().run(args));
+                assertEquals(RestConstants.JOB_SHOW_LOG, MockDagEngineService.did);
+
+                args = new String[]{"job", "-oozie", oozieUrl, "-log", MockCoordinatorEngineService.JOB_ID + "0",
+                        "-action", "0", "-date", "2009-12-16T01:00Z"};
+                assertEquals(0, new OozieCLI().run(args));
+                assertEquals(RestConstants.JOB_SHOW_LOG, MockDagEngineService.did);
 
                 return null;
             }
