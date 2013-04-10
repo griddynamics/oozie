@@ -119,17 +119,20 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
             props.store(wr, "");
             wr.close();
             PigMainWithOldAPI.main(null);
-        } catch (SecurityException ex) {
+        }
+        catch (SecurityException ex) {
             if (LauncherSecurityManager.getExitInvoked()) {
                 System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 if (LauncherSecurityManager.getExitCode() != 0) {
                     fail("Exit code should be 0");
                 }
-            } else {
+            }
+            else {
                 throw ex;
             }
-        } finally {
+        }
+        finally {
             pigProps.delete();
             System.setProperty("user.name", user);
             System.setOut(oldPrintStream);
