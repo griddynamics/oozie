@@ -30,12 +30,15 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
-
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.oozie.test.XFsTestCase;
 import org.apache.oozie.util.XConfiguration;
 
+/**
+ * Test PigMainWithOldAPI class should run a Pig script and write results to
+ * output
+ */
 public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void> {
     private SecurityManager SECURITY_MANAGER;
 
@@ -49,9 +52,6 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
         super.tearDown();
     }
 
-    private static String pigScript = "set job.name 'test'\n" + "set debug on\n" + "A = load '$IN' using PigStorage(':');\n"
-            + "B = foreach A generate $0 as id;\n" + "store B into '$OUT' USING PigStorage();";
-
     public void testPigScript() throws Exception {
         MainTestCase.execute(getTestUser(), this);
     }
@@ -62,6 +62,8 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
 
         Path script = new Path(getTestCaseDir(), "script.pig");
         Writer w = new FileWriter(script.toString());
+        String pigScript = "set job.name 'test'\n" + "set debug on\n" + "A = load '$IN' using PigStorage(':');\n"
+                + "B = foreach A generate $0 as id;\n" + "store B into '$OUT' USING PigStorage();";
         w.write(pigScript);
         w.close();
 
@@ -73,25 +75,25 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
 
         Path outputDir = new Path(getFsTestCaseDir(), "output");
 
-        XConfiguration jobConf = new XConfiguration();
-        XConfiguration.copy(createJobConf(), jobConf);
+        XConfiguration jobConfiguration = new XConfiguration();
+        XConfiguration.copy(createJobConf(), jobConfiguration);
 
-        jobConf.set("user.name", getTestUser());
-        jobConf.set("group.name", getTestGroup());
-        jobConf.setInt("mapred.map.tasks", 1);
-        jobConf.setInt("mapred.map.max.attempts", 1);
-        jobConf.setInt("mapred.reduce.max.attempts", 1);
+        jobConfiguration.set("user.name", getTestUser());
+        jobConfiguration.set("group.name", getTestGroup());
+        jobConfiguration.setInt("mapred.map.tasks", 1);
+        jobConfiguration.setInt("mapred.map.max.attempts", 1);
+        jobConfiguration.setInt("mapred.reduce.max.attempts", 1);
 
         // option to specify whether stats should be stored or not
 
-        SharelibUtils.addToDistributedCache("pig", fs, getFsTestCaseDir(), jobConf);
+        SharelibUtils.addToDistributedCache("pig", fs, getFsTestCaseDir(), jobConfiguration);
 
-        PigMainWithOldAPI.setPigScript(jobConf, script.toString(), new String[] { "IN=" + inputDir.toUri().getPath(),
+        PigMainWithOldAPI.setPigScript(jobConfiguration, script.toString(), new String[] { "IN=" + inputDir.toUri().getPath(),
                 "OUT=" + outputDir.toUri().getPath() }, new String[] { "-v" });
 
         File actionXml = new File(getTestCaseDir(), "action.xml");
         OutputStream os = new FileOutputStream(actionXml);
-        jobConf.writeXml(os);
+        jobConfiguration.writeXml(os);
         os.close();
 
         File jobIdsFile = new File(getTestCaseDir(), "jobIds.properties");
@@ -103,7 +105,7 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
         URL url = Thread.currentThread().getContextClassLoader().getResource("PigMain.txt");
         File classPathDir = new File(url.getPath()).getParentFile();
         assertTrue(classPathDir.exists());
-        Properties props = jobConf.toProperties();
+        Properties props = jobConfiguration.toProperties();
         assertEquals(props.getProperty("oozie.pig.args.size"), "1");
         File pigProps = new File(classPathDir, "pig.properties");
 

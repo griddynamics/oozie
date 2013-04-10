@@ -29,7 +29,7 @@ import java.sql.Statement;
 import org.apache.oozie.util.XConfiguration;
 /**
  * 
- * Test SqoopMain calss should print into console information about database, 
+ * Test SqoopMain class should print into console information about database,
  * run execute commands for database :import, export... 
  */
 public class TestSqoopMain extends MainTestCase {
@@ -47,7 +47,7 @@ public class TestSqoopMain extends MainTestCase {
 
     public Void call() throws Exception {
 
-        XConfiguration jobConf = new XConfiguration();
+        XConfiguration jobConfiguration = new XConfiguration();
         Class.forName("org.hsqldb.jdbcDriver");
         Connection conn = DriverManager.getConnection(getLocalJdbcUri(), "sa", "");
         Statement st = conn.createStatement();
@@ -57,13 +57,13 @@ public class TestSqoopMain extends MainTestCase {
 
         String[] val = { "list-tables", "--connect", getLocalJdbcUri(), "--driver", "org.hsqldb.jdbcDriver", "--username", "sa" };
 
-        MapReduceMain.setStrings(jobConf, "oozie.sqoop.args", val);
+        MapReduceMain.setStrings(jobConfiguration, "oozie.sqoop.args", val);
 
         File actionXml = new File(getTestCaseDir(), "action.xml");
         File output = new File(getTestCaseDir(), "output.properties");
         OutputStream os = new FileOutputStream(actionXml);
 
-        jobConf.writeXml(os);
+        jobConfiguration.writeXml(os);
         os.close();
 
         setSystemProperty("oozie.action.conf.xml", actionXml.getAbsolutePath());
@@ -78,22 +78,23 @@ public class TestSqoopMain extends MainTestCase {
         System.setOut(new PrintStream(data));
         try {
             SqoopMain.main(args);
-        } catch (SecurityException ex) {
+        }
+        catch (SecurityException ex) {
             if (LauncherSecurityManager.getExitInvoked()) {
                 System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 if (LauncherSecurityManager.getExitCode() != 0) {
                     fail();
                 }
-            } else {
+            }
+            else {
                 throw ex;
             }
-        } finally {
+        }
+        finally {
             System.setOut(oldPrintStream);
         }
-
         assertTrue(data.toString().contains("TableForTest".toUpperCase()));
-
         return null;
     }
 
