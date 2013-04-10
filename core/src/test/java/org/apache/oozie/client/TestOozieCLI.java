@@ -18,7 +18,9 @@
 package org.apache.oozie.client;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.Properties;
@@ -34,6 +36,7 @@ import org.apache.oozie.servlet.MockDagEngineService;
 import org.apache.oozie.servlet.V1AdminServlet;
 import org.apache.oozie.servlet.V1JobServlet;
 import org.apache.oozie.servlet.V1JobsServlet;
+import org.apache.oozie.util.IOUtils;
 import org.apache.oozie.util.XConfiguration;
 
 //hardcoding options instead using constants on purpose, to detect changes to option names if any and correct docs.
@@ -453,6 +456,52 @@ public class TestOozieCLI extends DagServletTestCase {
     }
 
     /**
+     *
+     * Test: oozie -rerun coord_job_id -action 0 -refresh
+     *
+     */
+    public void testCoordReRun3() throws Exception {
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                Path appPath = new Path(getFsTestCaseDir(), "app");
+                getFileSystem().mkdirs(appPath);
+                getFileSystem().create(new Path(appPath, "coordinator.xml")).close();
+                String oozieUrl = getContextURL();
+                String[] args = new String[] { "job", "-oozie", oozieUrl, "-rerun",
+                        MockCoordinatorEngineService.JOB_ID + "0",
+                        "-action", "0", "-refresh" };
+                assertEquals(0, new OozieCLI().run(args));
+                assertEquals(RestConstants.JOB_COORD_ACTION_RERUN, MockCoordinatorEngineService.did);
+                assertTrue(MockCoordinatorEngineService.started.get(0));
+                return null;
+            }
+        });
+    }
+
+    /**
+     *
+     * Test: oozie -rerun coord_job_id -action 0 -nocleanup
+     *
+     */
+    public void testCoordReRun4() throws Exception {
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                Path appPath = new Path(getFsTestCaseDir(), "app");
+                getFileSystem().mkdirs(appPath);
+                getFileSystem().create(new Path(appPath, "coordinator.xml")).close();
+                String oozieUrl = getContextURL();
+                String[] args = new String[] { "job", "-oozie", oozieUrl, "-rerun",
+                        MockCoordinatorEngineService.JOB_ID + "0",
+                        "-action", "0", "-nocleanup" };
+                assertEquals(0, new OozieCLI().run(args));
+                assertEquals(RestConstants.JOB_COORD_ACTION_RERUN, MockCoordinatorEngineService.did);
+                assertTrue(MockCoordinatorEngineService.started.get(0));
+                return null;
+            }
+        });
+    }
+
+    /**
      * Negative Test: oozie -rerun coord_job_id -date 2009-12-15T01:00Z -action 1
      *
      * @throws Exception
@@ -489,6 +538,30 @@ public class TestOozieCLI extends DagServletTestCase {
                 String oozieUrl = getContextURL();
                 String[] args = new String[] { "job", "-oozie", oozieUrl, "-rerun",
                         MockCoordinatorEngineService.JOB_ID + "1" + MockDagEngineService.JOB_ID_END};
+                assertEquals(-1, new OozieCLI().run(args));
+                assertNull(MockCoordinatorEngineService.did);
+                assertFalse(MockCoordinatorEngineService.started.get(1));
+                return null;
+            }
+        });
+    }
+
+    /**
+     *
+     * Negative Test: date or action option expected
+     * @throws Exception
+     *
+     */
+    public void testCoordReRunNeg3() throws Exception {
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                Path appPath = new Path(getFsTestCaseDir(), "app");
+                getFileSystem().mkdirs(appPath);
+                getFileSystem().create(new Path(appPath, "coordinator.xml")).close();
+                String oozieUrl = getContextURL();
+
+                String[] args = new String[] {"job", "-oozie", oozieUrl, "-config", createConfigFile(appPath.toString()),
+                        "-rerun", MockCoordinatorEngineService.JOB_ID + "0" };
                 assertEquals(-1, new OozieCLI().run(args));
                 assertNull(MockCoordinatorEngineService.did);
                 assertFalse(MockCoordinatorEngineService.started.get(1));
@@ -713,5 +786,31 @@ public class TestOozieCLI extends DagServletTestCase {
     public void testInfo() throws Exception {
         String[] args = new String[]{"info"};
         assertEquals(0, new OozieCLI().run(args));
+    }
+
+    public void testValidateWorkFlowCommand() throws Exception {
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                String validFileName = "./test-workflow-app.xml";
+                String invalidFileName = "./test-invalid-workflow-app.xml";
+
+                String validContent = "<workflow-app xmlns=\"uri:oozie:workflow:0.2\" name=\"no-op-wf\"> <start to=\"end\"/> <end name=\"end\"/> </workflow-app>";
+                String invalidContent = "<workflow-app xmlns=\"uri:oozie:workflow:0.2\" name=\"f\"> <tag=\"end\"/> <tag=\"end\"/> </workflow-app>";
+                File validfile = new File(validFileName);
+                File invalidfile = new File(invalidFileName);
+                validfile.delete();
+                invalidfile.delete();
+  
+                IOUtils.copyCharStream(new StringReader(validContent), new FileWriter(validfile));
+                String [] args = new String[] { "validate", validFileName };
+                assertEquals(0, new OozieCLI().run(args));
+  
+                IOUtils.copyCharStream(new StringReader(invalidContent), new FileWriter(invalidfile));
+                args = new String[] { "validate", invalidFileName };
+                assertEquals(-1, new OozieCLI().run(args));
+  
+                return null;
+          }
+      });
     }
 }
