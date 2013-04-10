@@ -83,7 +83,7 @@ public class TestSqoopMain extends MainTestCase {
                 System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 if (LauncherSecurityManager.getExitCode() != 0) {
-                    fail();
+                    fail("Exit code should be 0");
                 }
             }
             else {
