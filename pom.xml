@@ -721,7 +721,7 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- This dependency is badly needed to be able to download clover.jar using 
+    <!-- This dependency is badly needed to be able to download clover.jar using
          dependency:copy-dependencies Maven goal. Otherwize this does not work for some reason.
          Also that does not work if the clover dependency is placed into "dependencyManagement"
          section. -->
@@ -822,7 +822,7 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
                     <version>2.5.2</version>
-                </plugin>               
+                </plugin>
             </plugins>
         </pluginManagement>
 

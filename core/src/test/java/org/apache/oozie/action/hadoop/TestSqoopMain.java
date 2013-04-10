@@ -28,9 +28,8 @@ import java.sql.Statement;
 
 import org.apache.oozie.util.XConfiguration;
 /**
- * 
  * Test SqoopMain class should print into console information about database,
- * run execute commands for database :import, export... 
+ * run execute commands for database :import, export...
  */
 public class TestSqoopMain extends MainTestCase {
     private SecurityManager SECURITY_MANAGER;
