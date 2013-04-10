@@ -800,17 +800,41 @@ public class TestOozieCLI extends DagServletTestCase {
                 File invalidfile = new File(invalidFileName);
                 validfile.delete();
                 invalidfile.delete();
-  
+
                 IOUtils.copyCharStream(new StringReader(validContent), new FileWriter(validfile));
                 String [] args = new String[] { "validate", validFileName };
                 assertEquals(0, new OozieCLI().run(args));
-  
+
                 IOUtils.copyCharStream(new StringReader(invalidContent), new FileWriter(invalidfile));
                 args = new String[] { "validate", invalidFileName };
                 assertEquals(-1, new OozieCLI().run(args));
-  
+
                 return null;
           }
       });
+    }
+    
+    /**
+     *
+     * oozie -change coord_job_id -value concurrency=10
+     *
+     */
+    public void testChangeValue() throws Exception {
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                Path appPath = new Path(getFsTestCaseDir(), "app");
+                getFileSystem().mkdirs(appPath);
+                getFileSystem().create(new Path(appPath, "coordinator.xml")).close();
+                String oozieUrl = getContextURL();
+
+                String[] args = new String[] {"job", "-oozie", oozieUrl, "-change",
+                    MockCoordinatorEngineService.JOB_ID + "0", "-value", "concurrency=10" };
+
+                assertEquals(0, new OozieCLI().run(args));
+                assertEquals(RestConstants.JOB_ACTION_CHANGE, MockCoordinatorEngineService.did);                
+
+                return null;
+            }
+        });
     }
 }
