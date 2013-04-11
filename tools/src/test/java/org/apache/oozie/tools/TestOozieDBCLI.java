@@ -25,8 +25,6 @@ import java.io.PrintStream;
 import java.security.Permission;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.hadoop.fs.FileUtil;
@@ -73,7 +71,9 @@ public class TestOozieDBCLI extends XTestCase {
 
   
     public void test1() throws Exception {
-        String[] args = { "create", "-sqlfile", "out.sql", "-run" };
+        
+        File createSql=new File(getTestCaseConfDir() + File.separator + "out.sql");
+        String[] args = { "create", "-sqlfile",createSql.getAbsolutePath(), "-run" };
         new LauncherSecurityManager();
         try {
             OozieDBCLI.main(args);
@@ -91,7 +91,7 @@ public class TestOozieDBCLI extends XTestCase {
                 throw ex;
             }
         }
-        assertTrue(new File("out.sql").exists());
+        assertTrue(createSql.exists());
 
         ByteArrayOutputStream data = new ByteArrayOutputStream();
         PrintStream oldOut = System.out;
@@ -117,10 +117,7 @@ public class TestOozieDBCLI extends XTestCase {
         System.setOut(oldOut);
 
         File upgrage = new File(getTestCaseConfDir() + File.separator + "update.sql");
-        FileWriter writer = new FileWriter(upgrage);
-        writer.write("CREATE TABLE TABLEFORTEST (ID INTEGER PRIMARY KEY, Name VARCHAR(256))");
-        writer.flush();
-        writer.close();
+     
         execSQL("DROP table OOZIE_SYS");
 
         try {
@@ -140,7 +137,27 @@ public class TestOozieDBCLI extends XTestCase {
                 throw ex;
             }
         }
-        assertTrue(new File("target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/test1/conf/update.sql").exists());
+        assertTrue(upgrage.exists());
+        File postupgrade=new File(getTestCaseConfDir() + File.separator + "postUpdate.sql");
+        try {
+            String[] argsv = { "postupgrade", "-sqlfile", postupgrade.getAbsolutePath(), "-run" };
+            OozieDBCLI.main(argsv);
+
+        }
+        catch (SecurityException ex) {
+            if (LauncherSecurityManager.getExitInvoked()) {
+                System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
+                System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
+                if (LauncherSecurityManager.getExitCode() != 0) {
+                    fail();
+                }
+            }
+            else {
+                throw ex;
+            }
+        }
+        assertTrue(postupgrade.exists());
+
     }
 
 }
