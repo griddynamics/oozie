@@ -18,34 +18,36 @@
 
 package org.apache.oozie.tools;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintStream;
 import java.security.Permission;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.hadoop.fs.FileUtil;
 import org.apache.oozie.test.XTestCase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 public class TestOozieDBCLI extends XTestCase {
     private SecurityManager SECURITY_MANAGER;
+    private static String url = "jdbc:derby:target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/data.db;create=true";
 
     @BeforeClass
     protected void setUp() throws Exception {
         SECURITY_MANAGER = System.getSecurityManager();
+        FileUtil.fullyDelete(new File("target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/data.db"));
         File oozieConfig = new File("src/test/resources/hsqldb-oozie-site.xml");
         System.setProperty("oozie.test.config.file", oozieConfig.getAbsolutePath());
-        Class.forName("org.hsqldb.jdbcDriver");
-        Connection conn = DriverManager.getConnection(
-                "jdbc:hsqldb:mem:target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/db.hsqldb;create=true", "sa", "");
-
-        Statement st = conn.createStatement();
-        st.executeUpdate("CREATE USER oozie PASSWORD oozie ADMIN");
-      //  st.executeUpdate("CREATE TABLE TableForTest (ID INTEGER PRIMARY KEY, Name VARCHAR(256))");
-
-        st.close();
+        Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+        Connection conn = DriverManager.getConnection(url, "sa", "");
         conn.close();
+
         super.setUp();
 
     }
@@ -57,11 +59,25 @@ public class TestOozieDBCLI extends XTestCase {
 
     }
 
-    public void test1() {
+
+    private void execSQL(String sql) throws Exception {
+        Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+        Connection conn = DriverManager.getConnection(url, "sa", "");
+
+        Statement st = conn.createStatement();
+        st.executeUpdate(sql);
+
+        st.close();
+        conn.close();
+    }
+
+  
+    public void test1() throws Exception {
         String[] args = { "create", "-sqlfile", "out.sql", "-run" };
         new LauncherSecurityManager();
         try {
             OozieDBCLI.main(args);
+
         }
         catch (SecurityException ex) {
             if (LauncherSecurityManager.getExitInvoked()) {
@@ -75,6 +91,56 @@ public class TestOozieDBCLI extends XTestCase {
                 throw ex;
             }
         }
+        assertTrue(new File("out.sql").exists());
+
+        ByteArrayOutputStream data = new ByteArrayOutputStream();
+        PrintStream oldOut = System.out;
+        System.setOut(new PrintStream(data));
+        try {
+            String[] argsv = { "version" };
+            OozieDBCLI.main(argsv);
+
+        }
+        catch (SecurityException ex) {
+            if (LauncherSecurityManager.getExitInvoked()) {
+                System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
+                System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
+                if (LauncherSecurityManager.getExitCode() != 0) {
+                    fail();
+                }
+            }
+            else {
+                throw ex;
+            }
+        }
+        assertTrue(data.toString().contains("db.version: 1"));
+        System.setOut(oldOut);
+
+        File upgrage = new File(getTestCaseConfDir() + File.separator + "update.sql");
+        FileWriter writer = new FileWriter(upgrage);
+        writer.write("CREATE TABLE TABLEFORTEST (ID INTEGER PRIMARY KEY, Name VARCHAR(256))");
+        writer.flush();
+        writer.close();
+        execSQL("DROP table OOZIE_SYS");
+
+        try {
+            String[] argsv = { "upgrade", "-sqlfile", upgrage.getAbsolutePath(), "-run" };
+            OozieDBCLI.main(argsv);
+
+        }
+        catch (SecurityException ex) {
+            if (LauncherSecurityManager.getExitInvoked()) {
+                System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
+                System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
+                if (LauncherSecurityManager.getExitCode() != 0) {
+                    fail();
+                }
+            }
+            else {
+                throw ex;
+            }
+        }
+        assertTrue(new File("target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/test1/conf/update.sql").exists());
     }
 
 }

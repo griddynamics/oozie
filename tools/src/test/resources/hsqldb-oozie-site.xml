@@ -21,19 +21,19 @@
 
     <property>
         <name>oozie.service.JPAService.jdbc.driver</name>
-        <value>org.hsqldb.jdbcDriver</value>
+        <value>org.apache.derby.jdbc.EmbeddedDriver</value>
     </property>
     <property>
         <name>oozie.service.JPAService.jdbc.username</name>
-        <value>oozie</value>
+        <value>sa</value>
     </property>
     <property>
         <name>oozie.service.JPAService.jdbc.url</name>
-        <value>jdbc:hsqldb:mem:target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/db.hsqldb</value>
+        <value>jdbc:derby:target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/data.db</value>
     </property>
     <property>
         <name>oozie.service.JPAService.jdbc.password</name>
-        <value>oozie</value>
+        <value> </value>
     </property>
     
 </configuration>
