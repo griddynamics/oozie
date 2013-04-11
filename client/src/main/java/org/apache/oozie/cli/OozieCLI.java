@@ -1043,7 +1043,8 @@ public class OozieCLI {
         }
     }
 
-    private void printCoordAction(CoordinatorAction coordAction, String timeZoneId) {
+    @VisibleForTesting
+    void printCoordAction(CoordinatorAction coordAction, String timeZoneId) {
         System.out.println("ID : " + maskIfNull(coordAction.getId()));
 
         System.out.println(RULER);
@@ -1114,7 +1115,8 @@ public class OozieCLI {
     private static final String COORD_ACTION_FORMATTER = "%-43s%-10s%-37s%-10s%-21s%-21s";
     private static final String BULK_RESPONSE_FORMATTER = "%-41s%-41s%-37s%-37s%-13s%-21s%-24s";
 
-    private void printJob(WorkflowJob job, String timeZoneId, boolean verbose) throws IOException {
+    @VisibleForTesting
+    void printJob(WorkflowJob job, String timeZoneId, boolean verbose) throws IOException {
         System.out.println("Job ID : " + maskIfNull(job.getId()));
 
         System.out.println(RULER);

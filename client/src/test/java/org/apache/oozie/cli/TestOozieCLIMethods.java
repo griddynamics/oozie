@@ -26,46 +26,123 @@ import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
 import org.apache.oozie.client.CoordinatorAction;
 import org.apache.oozie.client.CoordinatorJob;
+import org.apache.oozie.client.WorkflowAction;
+import org.apache.oozie.client.WorkflowJob;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-public class TestOozieCLIMethods extends TestCase {
-
-    final ImmutableSet<String> actionIds = ImmutableSet.of("1", "2");
-    final String coordinatorName = "coord-job-C";
-    final String appName = "testApp";
-    final String appPath = "testAppPath";
+public class TestOozieCLIMethods extends TestCase {           
     
-    public void testValidatePrintCoordJobMethod() throws IOException {
-        CoordinatorJob coordJob = createCoordinator();
-        
-        ByteArrayOutputStream output = readCoordJobOutput(coordJob, true);
-        String line = new String(output.toByteArray());
-        assertPrintCoordJobOutputHeader(line);
-        
-        output = readCoordJobOutput(coordJob, false);
-        line = new String(output.toByteArray());
-        assertPrintCoordJobOutputHeader(line);
+    static final String jobIdPattern = "Job ID[\\s|:]+";
+    static final String jobNamePattern = "Job Name[\\s|:]+";
+    static final String appPathPattern = "App Path[\\s|:]+";
+    static final String statusPattern = "Status[\\s|:]+RUNNING";
+    static final String actionIdPattern = "ID[\\s|:]+";
+    static final String actionJobIdPattern = "Job ID[\\s|:]+";
+    
+    final ImmutableSet<String> actionIds = ImmutableSet.of("1", "2");
+
+    static class DataObject {
+        String deamonName;
+        String appName;
+        String appPath;        
+    }
+    
+    public void testValidatePrintCoordJobMethod() throws IOException {        
+        final DataObject dtObject = 
+                new DataObject() {{
+                    this.deamonName = "test-coord-job";
+                    this.appName = "testCoordinatorJobApp";
+                    this.appPath = "testCoordinatorJobAppPath";
+                }};
+
+        CoordinatorJob coordJob = createCoordinator(dtObject);
+
+        assertPrintCoordJobOutputHeader(readCoordJobOutput(coordJob, true), dtObject);
+        assertPrintCoordJobOutputHeader(readCoordJobOutput(coordJob, false), dtObject);
     }
 
-    private void assertPrintCoordJobOutputHeader(String line) {
-        assertTrue("testValidatePrintCoordJobMethod Job ID error ",
-                line.contains("Job ID : " + coordinatorName));
+    public void testValidateReadPrintCoordAction() throws IOException {
+        final DataObject dtObject = 
+                new DataObject() {{
+                    this.deamonName = "testCoordinatorAction";
+                    this.appName = "testCoordinatorJobApp";
+                    this.appPath = "testCoordinatorJobAppPath";
+                }};
+        
+        CoordinatorAction coordinatorAction = createCoordinatorAction(dtObject);
+        assertPrintCoordActionOutput(readPrintCoordAction(coordinatorAction), dtObject);
+    }
+
+    public void testValidatePrintJob() throws IOException {
+        final DataObject dtObject = 
+                new DataObject() {{
+                    this.deamonName = "testCoordinatorAction";
+                    this.appName = "testCoordinatorJobApp";
+                    this.appPath = "testCoordinatorJobAppPath";
+                }};
+                
+        WorkflowJob workflowJob = createWorkflowJob(dtObject);
+        assertPrintWorkflowJobOutput(readWorkflowJobOutput(workflowJob, true), dtObject);
+    }
+
+    private void assertPrintWorkflowJobOutput(String readWorkflowJobOutput, DataObject dtObject) {
+        //TO DO : needed assertion
+        assertTrue(true);
+    }
+
+    private String readWorkflowJobOutput(WorkflowJob workflowJob, boolean b) throws IOException {
+        ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+        PipedOutputStream pipeOut = new PipedOutputStream();
+        PipedInputStream pipeIn = new PipedInputStream(pipeOut, 1024 * 50);
+        System.setOut(new PrintStream(pipeOut));
+        new OozieCLI().printJob(workflowJob, null, true);
+        pipeOut.close();
+        copyByteStream(pipeIn, outBytes);
+        pipeIn.close();
+        return new String(outBytes.toByteArray());        
+    }
+
+    private void assertPrintCoordActionOutput(String output, DataObject dtObject) {
+        assertTrue("assertPrintCoordActionOutput Job ID error ",
+                Pattern.compile(actionIdPattern + dtObject.deamonName).matcher(output).find());
+
+        assertTrue("assertPrintCoordActionOutput ID error ",
+                Pattern.compile(actionJobIdPattern + dtObject.appName).matcher(output).find());
+        
+    }
+
+    private String readPrintCoordAction(CoordinatorAction coordinatorAction) throws IOException {
+        ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+        PipedOutputStream pipeOut = new PipedOutputStream();
+        PipedInputStream pipeIn = new PipedInputStream(pipeOut, 1024 * 50);
+        System.setOut(new PrintStream(pipeOut));
+        new OozieCLI().printCoordAction(coordinatorAction, null);
+        pipeOut.close();
+        copyByteStream(pipeIn, outBytes);
+        pipeIn.close();
+        return new String(outBytes.toByteArray());
+    }
+
+    private void assertPrintCoordJobOutputHeader(String line, DataObject dtObject) {
+        assertTrue("testValidatePrintCoordJobMethod Job ID error ",        
+                Pattern.compile(jobIdPattern + dtObject.deamonName).matcher(line).find());
         assertTrue("testValidatePrintCoordJobMethod Job Name error ",
-                line.contains("Job Name    : "+ appName));
+                Pattern.compile(jobNamePattern + dtObject.appName).matcher(line).find());
         assertTrue("testValidatePrintCoordJobMethod App Path error ",
-                line.contains("App Path    : " +  appPath));
+                Pattern.compile(appPathPattern +  dtObject.appPath).matcher(line).find());
         assertTrue("testValidatePrintCoordJobMethod Status error",
-                line.contains("Status      : RUNNING"));
+                Pattern.compile(statusPattern).matcher(line).find());
     }
 
-    private ByteArrayOutputStream readCoordJobOutput(CoordinatorJob coordJob, boolean verbose) throws IOException {
+    private String readCoordJobOutput(CoordinatorJob coordJob, boolean verbose) throws IOException {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         PipedOutputStream pipeOut = new PipedOutputStream();
         PipedInputStream pipeIn = new PipedInputStream(pipeOut, 1024 * 50);
@@ -74,7 +151,7 @@ public class TestOozieCLIMethods extends TestCase {
         pipeOut.close();
         copyByteStream(pipeIn, outBytes);
         pipeIn.close();
-        return outBytes;
+        return new String(outBytes.toByteArray());
     }
 
     private static void copyByteStream(InputStream in, OutputStream out) throws IOException {
@@ -87,12 +164,12 @@ public class TestOozieCLIMethods extends TestCase {
         out.close();
     }
 
-    private CoordinatorJob createCoordinator() {
+    private CoordinatorJob createCoordinator(DataObject dtObject) {
         CoordinatorJobImpl coordJob = new CoordinatorJobImpl();
-        coordJob.setId(coordinatorName);
-        coordJob.setAppName(appName);
-        coordJob.setConcurrency(1);
-        coordJob.setAppPath(appPath);
+        coordJob.setId(dtObject.deamonName);
+        coordJob.setAppName(dtObject.appName);
+        coordJob.setConcurrency(15);
+        coordJob.setAppPath(dtObject.appPath);
         coordJob.setStatus(CoordinatorJob.Status.RUNNING);
         coordJob.setCreatedTime(new Date());
         coordJob.setLastModifiedTime(new Date());
@@ -102,18 +179,32 @@ public class TestOozieCLIMethods extends TestCase {
         coordJob.setEndTime(new Date());
 
         ImmutableList.Builder<CoordinatorAction> builder = ImmutableList
-                .builder();
-        for (String id : actionIds)
-            builder.add(createAction(id));
+                    .builder();
+        
+        for (final String id : actionIds)
+            builder.add(createCoordinatorAction(new DataObject() {{
+                this.deamonName = id;
+                this.appName = "testCoordinatorAction";
+            }}));
 
         coordJob.setActions(builder.build());
         return coordJob;
     }
 
-    private static CoordinatorAction createAction(String actionId) {
+    private WorkflowJob createWorkflowJob(DataObject dtObject) {
+        WorkflowJobImpl workflowJob = new WorkflowJobImpl();
+        workflowJob.setId(dtObject.deamonName);
+        workflowJob.setAppName(dtObject.appName);
+        workflowJob.setAppPath(dtObject.appPath);
+        workflowJob.setStatus(WorkflowJob.Status.RUNNING);
+        //workflowJob.setActions(ImmutableList.of(createAction("1"), createAction("2")));
+        return workflowJob;
+    }
+
+    private static CoordinatorAction createCoordinatorAction(DataObject dtObject) {
         CoordinatorActionImpl action = new CoordinatorActionImpl();
-        action.setId(actionId);
-        action.setJobId("jobId");
+        action.setId(dtObject.deamonName);
+        action.setJobId(dtObject.appName);
         action.setActionNumber(11);
         action.setStatus(CoordinatorAction.Status.SUBMITTED);
         action.setNominalTime(new Date());
@@ -121,7 +212,121 @@ public class TestOozieCLIMethods extends TestCase {
         action.setCreatedTime(new Date());
         return action;
     }
+    
+    static final class WorkflowJobImpl implements WorkflowJob {
+        String id;
+        String appName;
+        String appPath;
+        WorkflowJob.Status status;
+        ImmutableList<WorkflowAction> actions;
+                       
+        public void setId(String id) {
+            this.id = id;
+        }
 
+        @Override
+        public String getId() {
+            return id;
+        }
+        
+        public void setAppPath(String appPath) {
+            this.appPath = appPath;
+        }
+        
+        @Override
+        public String getAppPath() {
+            return appPath;
+        }
+
+        public void setAppName(String appName) {
+            this.appName = appName;
+        }
+
+        @Override
+        public String getAppName() {
+            return appName;
+        }
+
+        @Override
+        public String getConf() {
+            return "WorkflowJobImpl_Conf";
+        }
+        
+        public void setStatus(WorkflowJob.Status status) {
+            this.status = status;
+        }
+
+        @Override
+        public Status getStatus() {
+            return status;
+        }
+
+        @Override
+        public Date getLastModifiedTime() {
+            return new Date();
+        }
+
+        @Override
+        public Date getCreatedTime() {
+            return new Date();
+        }
+
+        @Override
+        public Date getStartTime() {
+            return new Date();
+        }
+
+        @Override
+        public Date getEndTime() {
+            return new Date();
+        }
+
+        @Override
+        public String getUser() {
+            return "user";
+        }
+
+        @Override
+        @Deprecated
+        public String getGroup() {
+            return "group";
+        }
+
+        @Override
+        public String getAcl() {
+            return "acl";
+        }
+
+        @Override
+        public int getRun() {
+            return 0;
+        }
+
+        @Override
+        public String getConsoleUrl() {
+            return "url";
+        }
+
+        @Override
+        public String getParentId() {
+            return "ParentId";
+        }
+
+        @Override
+        public List<WorkflowAction> getActions() {
+            return actions;
+        }
+        
+        public void setActions(List<WorkflowAction> actions) {
+            this.actions = ImmutableList.copyOf(actions);
+        }
+
+        @Override
+        public String getExternalId() {
+            return "ExternalId";
+        }
+    }
+    
     static final class CoordinatorActionImpl implements CoordinatorAction {
         String id;
         String jobId;

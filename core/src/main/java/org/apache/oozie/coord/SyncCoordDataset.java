@@ -42,7 +42,7 @@ public class SyncCoordDataset {
     }
 
     /**
-     * @param name the name to set
+     * @param deamonName the name to set
      */
     public void setDoneFlag(String doneFlag) {
         this.doneFlag = doneFlag;
