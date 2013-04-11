@@ -34,14 +34,6 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-core</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
@@ -65,6 +57,15 @@
             <artifactId>hadoop-minicluster</artifactId>
             <version>1.1.1</version>
             <scope>compile</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.apache.oozie</groupId>
+            <artifactId>oozie-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
         </dependency>
 
         <dependency>
