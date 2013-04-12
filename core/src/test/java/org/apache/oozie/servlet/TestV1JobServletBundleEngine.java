@@ -18,6 +18,7 @@ import org.apache.oozie.test.XDataTestCase;
 import org.apache.oozie.util.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.junit.Ignore;
 
 public class TestV1JobServletBundleEngine extends DagServletTestCase {
     static {
@@ -26,7 +27,10 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
 
     private static final boolean IS_SECURITY_ENABLED = false;
 
-    private final XDataTestCase xDataTestCase = new XDataTestCase() {};
+    @Ignore
+    private static class XDataTestCase1 extends XDataTestCase {}
+    
+    private final XDataTestCase xDataTestCase = new XDataTestCase1();
 
     @Override
     protected void setUp() throws Exception {
