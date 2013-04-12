@@ -43,7 +43,6 @@ import org.apache.oozie.WorkflowJobBean;
 import org.apache.oozie.WorkflowsInfo;
 import org.apache.oozie.cli.OozieCLI;
 import org.apache.oozie.client.OozieClient;
-import org.apache.oozie.client.XOozieClient;
 import org.apache.oozie.client.rest.BulkResponseImpl;
 import org.apache.oozie.client.rest.JsonTags;
 import org.apache.oozie.client.rest.RestConstants;

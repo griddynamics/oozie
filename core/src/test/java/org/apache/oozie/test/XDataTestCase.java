@@ -102,6 +102,9 @@ public abstract class XDataTestCase extends XHCatTestCase {
     protected String bundleName;
     protected String CREATE_TIME = "2012-07-22T00:00Z";
 
+    public XDataTestCase() {
+    }
+    
     /*
      * The following 2 methods are "published" versions of 
      * #setUp() and #tearDown() respectively. Created to be able to 

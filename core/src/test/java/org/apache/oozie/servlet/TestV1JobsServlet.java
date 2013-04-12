@@ -34,7 +34,6 @@ import org.apache.oozie.DagEngine;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.rest.JsonTags;
 import org.apache.oozie.client.rest.RestConstants;
-import org.apache.oozie.service.AuthorizationService;
 import org.apache.oozie.service.DagEngineService;
 import org.apache.oozie.service.Services;
 import org.apache.oozie.util.XConfiguration;
@@ -57,6 +56,7 @@ public class TestV1JobsServlet extends DagServletTestCase {
 
     public void testSubmit() throws Exception {
         runTest("/v1/jobs", V1JobsServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 MockDagEngineService.reset();
 
@@ -171,6 +171,7 @@ public class TestV1JobsServlet extends DagServletTestCase {
 
     public void testJobs() throws Exception {
         runTest("/v1/jobs", V1JobsServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 MockDagEngineService.reset();
 

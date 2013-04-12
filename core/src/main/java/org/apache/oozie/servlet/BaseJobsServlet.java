@@ -28,8 +28,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.oozie.ErrorCode;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.rest.RestConstants;
-import org.apache.oozie.service.Services;
-import org.apache.oozie.service.WorkflowAppService;
 import org.apache.oozie.util.JobUtils;
 import org.apache.oozie.util.XConfiguration;
 import org.json.simple.JSONObject;

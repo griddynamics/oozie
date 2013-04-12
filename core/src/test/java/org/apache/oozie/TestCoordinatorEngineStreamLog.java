@@ -150,19 +150,19 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
      * String, Writer) with RestConstants.JOB_LOG_DATE.
      */
     public void testStreamLog4JobLogDate() throws Exception {
-        CeData ced = runJobsImpl();
+        final CeData ced = runJobsImpl();
 
         CoordinatorJobBean cjb = ced.ce.getCoordJob(ced.jobId);
-        Date createdDate = cjb.getCreatedTime();
-        Date endDate = cjb.getEndTime();
-        if (endDate.getTime() < createdDate.getTime()) {
-            throw new IllegalStateException("Incorrect end date.");
-        }
-        long middle = (createdDate.getTime() + endDate.getTime()) / 2;
-
+        Date createdDate = cjb.getCreatedTime(); 
+        Date endDate     = new Date();           
+        assertTrue(endDate.after(createdDate));
+        
+        long middle = (createdDate.getTime() + endDate.getTime())/2;
+        Date middleDate = new Date(middle);
+        
         ced.ce.streamLog(ced.jobId, DateUtils.formatDateOozieTZ(createdDate)
-                + "::" + DateUtils.formatDateOozieTZ(new Date(middle)) + ","
-                + DateUtils.formatDateOozieTZ(new Date(middle)) + "::"
+                + "::" + DateUtils.formatDateOozieTZ(middleDate) + ","
+                + DateUtils.formatDateOozieTZ(middleDate) + "::"
                 + DateUtils.formatDateOozieTZ(endDate),
                 RestConstants.JOB_LOG_DATE, new StringWriter()/* unused */);
 
@@ -187,15 +187,17 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         // NB: need to re-define the parameters that are cleared upon the
         // service reset:
         new DagXLogInfoService().init(services);
-        services.init(); 
+        services.init();
 
         Configuration conf = new XConfiguration();
 
         final String appPath = "file://" + getTestCaseDir() + File.separator
                 + "coordinator.xml";
+        final CeData ced = new CeData();
         final long now = System.currentTimeMillis();
         final String start = DateUtils.formatDateOozieTZ(new Date(now));
-        final String end = DateUtils.formatDateOozieTZ(new Date(now + 1000 * 90)); // now + 1.5 min
+        long e = now + 1000 * 119; 
+        final String end = DateUtils.formatDateOozieTZ(new Date(e)); 
 
         String wfXml = IOUtils.getResourceAsString("wf-no-op.xml", -1);
         writeToFile(wfXml, getFsTestCaseDir(), "workflow.xml");
@@ -228,7 +230,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         final CoordinatorEngine ce = new CoordinatorEngine(getTestUser(),
                 "UNIT_TESTING");
         final String jobId = ce.submitJob(conf, true);
-        waitFor(1000 * 90 /* 1.5 min*/, new Predicate() {
+        waitFor(1000 * 119, new Predicate() {
             @Override
             public boolean evaluate() throws Exception {
                 try {
@@ -252,7 +254,6 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
             }
         });
 
-        CeData ced = new CeData();
         ced.ce = ce;
         ced.jobId = jobId;
         return ced;
