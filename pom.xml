@@ -99,7 +99,6 @@
         <module>hbaselibs</module>
         <module>hcataloglibs</module>
         <module>core</module>
-        <module>tests</module>
         <module>webapp</module>
         <module>examples</module>
         <module>docs</module>
@@ -941,10 +940,6 @@
                              to test the SSH action
                         -->
                         <exclude>**/TestSsh*.java</exclude>
-
-
-                        <!-- See 'testSqoop' profile in core/pom.xml and the Building doc-->
-                        <exclude>**/TestSqoop*.java</exclude>
 
                         <!-- Explictly use -Dtest=TestMapReduceActionExecutorUberJar to test the uber jar functionality.
                              Requires at least Hadoop 1.2.0 or 2.2.0.
