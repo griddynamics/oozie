@@ -1080,7 +1080,8 @@ public class OozieCLI {
         }
     }
 
-    private void printWorkflowAction(WorkflowAction action, String timeZoneId, boolean verbose) {
+    @VisibleForTesting
+    void printWorkflowAction(WorkflowAction action, String timeZoneId, boolean verbose) {
         System.out.println("ID : " + maskIfNull(action.getId()));
 
         System.out.println(RULER);
@@ -1219,7 +1220,8 @@ public class OozieCLI {
         }
     }
 
-    private void printCoordJobs(List<CoordinatorJob> jobs, String timeZoneId, boolean verbose) throws IOException {
+    @VisibleForTesting
+    void printCoordJobs(List<CoordinatorJob> jobs, String timeZoneId, boolean verbose) throws IOException {
         if (jobs != null && jobs.size() > 0) {
             if (verbose) {
                 System.out.println("Job ID" + VERBOSE_DELIMITER + "App Name" + VERBOSE_DELIMITER + "App Path"
@@ -1283,7 +1285,8 @@ public class OozieCLI {
         }
     }
 
-    private void printBundleJobs(List<BundleJob> jobs, String timeZoneId, boolean verbose) throws IOException {
+    @VisibleForTesting
+    void printBundleJobs(List<BundleJob> jobs, String timeZoneId, boolean verbose) throws IOException {
         if (jobs != null && jobs.size() > 0) {
             if (verbose) {
                 System.out.println("Job ID" + VERBOSE_DELIMITER + "Bundle Name" + VERBOSE_DELIMITER + "Bundle Path"
@@ -1399,7 +1402,8 @@ public class OozieCLI {
                 + BuildInfo.getBuildInfo().getProperty(BuildInfo.BUILD_VERSION));
     }
 
-    private void printJobs(List<WorkflowJob> jobs, String timeZoneId, boolean verbose) throws IOException {
+    @VisibleForTesting
+    void printJobs(List<WorkflowJob> jobs, String timeZoneId, boolean verbose) throws IOException {
         if (jobs != null && jobs.size() > 0) {
             if (verbose) {
                 System.out.println("Job ID" + VERBOSE_DELIMITER + "App Name" + VERBOSE_DELIMITER + "App Path"

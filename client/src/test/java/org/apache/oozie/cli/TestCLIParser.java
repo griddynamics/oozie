@@ -19,8 +19,6 @@ package org.apache.oozie.cli;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
@@ -30,6 +28,8 @@ import junit.framework.TestCase;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
+import com.google.common.io.ByteStreams;
 
 public class TestCLIParser extends TestCase {
 
@@ -73,8 +73,7 @@ public class TestCLIParser extends TestCase {
         CLIParser parser = new CLIParser("ozzie", new String[]{});
         parser.addCommand("job", "<A>", "AAAAA", new Options(), false);
         CLIParser.Command c = parser.parse(new String[]{"job", "b"});
-        ByteArrayOutputStream outBytes = readCommandOutput(parser, c);
-        assertTrue(new String(outBytes.toByteArray()).contains(pattern));
+        assertTrue("", readCommandOutput(parser, c).contains(pattern));
     }
 
     public void testCommandParserShowHelpWithOptions() throws Exception {
@@ -82,8 +81,7 @@ public class TestCLIParser extends TestCase {
         CLIParser parser = new CLIParser("ozzie", new String[]{});
         parser.addCommand("job", "", "job operations", createCommandOptions(), false);
         CLIParser.Command c = parser.parse(new String[]{ "job", "-url", "test-name", "-verbose" });
-        ByteArrayOutputStream outBytes = readCommandOutput(parser, c);
-        assertTrue(new String(outBytes.toByteArray()).contains(pattern));
+        assertTrue("", readCommandOutput(parser, c).contains(pattern));
     }
 
     private Options createCommandOptions() {
@@ -95,7 +93,7 @@ public class TestCLIParser extends TestCase {
         return complexOptions;
     }
 
-    private ByteArrayOutputStream readCommandOutput(CLIParser parser,
+    private String readCommandOutput(CLIParser parser,
             CLIParser.Command c) throws IOException {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         PipedOutputStream pipeOut = new PipedOutputStream();
@@ -104,18 +102,8 @@ public class TestCLIParser extends TestCase {
 
         parser.showHelp(c.getCommandLine());
         pipeOut.close();
-        copyByteStream(pipeIn, outBytes);
+        ByteStreams.copy(pipeIn, outBytes);
         pipeIn.close();
-        return outBytes;
-    }
-
-    private static void copyByteStream(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024 * 4];
-        int read;
-        while ((read = in.read(buffer)) > -1) {
-            out.write(buffer, 0, read);
-        }
-        in.close();
-        out.close();
+        return new String(outBytes.toByteArray());
     }
 }
