@@ -985,6 +985,11 @@
                         <exclude>**/build/**</exclude>
                         <exclude>.git/**</exclude>
                         <exclude>test-patch/**</exclude>
+                        <!-- Aditionally exclude Eclipse and Clover files: --> 
+                        <exclude>**/.project</exclude>
+                        <exclude>**/.classpath</exclude>
+                        <exclude>**/org.eclipse.jdt.core.prefs</exclude>
+                        <exclude>**/.clover/**/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
