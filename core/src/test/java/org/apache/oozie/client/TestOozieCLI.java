@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -613,15 +613,16 @@ public class TestOozieCLI extends DagServletTestCase {
                     MockDagEngineService.JOB_ID + "1" + MockDagEngineService.JOB_ID_END};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOB_SHOW_INFO, MockDagEngineService.did);
-                
+
                 args = new String[]{"job", "-oozie", oozieUrl, "-info", MockDagEngineService.JOB_ID + "2" +
                     MockDagEngineService.JOB_ID_END};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOB_SHOW_INFO, MockDagEngineService.did);
-                
+
                 args = new String[]{"job", "-oozie", oozieUrl, "-info",
                         MockDagEngineService.JOB_ID + (MockDagEngineService.workflows.size() + 1)};
                 assertEquals(-1, new OozieCLI().run(args));
+
                 return null;
             }
         });
@@ -640,15 +641,15 @@ public class TestOozieCLI extends DagServletTestCase {
                         "name=x"};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);
-                
+
                 args = new String[]{"jobs", "-timezone", "PST", "-len", "3", "-offset", "2", "-oozie", oozieUrl, 
                     "-filter", "name=x"};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);
-                
+
                 args = new String[]{"jobs", "-jobtype", "coord",  "-filter", "status=FAILED", "-oozie", oozieUrl};
                 assertEquals(0, new OozieCLI().run(args));
-                assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);                
+                assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);
                 return null;
             }
         });
@@ -735,7 +736,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
                 args = new String[]{"job", "-oozie", oozieUrl, "-info", MockDagEngineService.JOB_ID + "3" +
                         MockDagEngineService.JOB_ID_END, "-offset", "3"};
-                
+
                 return null;
             }
         });
@@ -821,6 +822,9 @@ public class TestOozieCLI extends DagServletTestCase {
     public void testInfo() throws Exception {
         String[] args = new String[]{"info"};
         assertEquals(0, new OozieCLI().run(args));
+
+        args = new String[]{"info", "-timezones"};
+        assertEquals(0, new OozieCLI().run(args));
     }
 
     public void testValidateWorkFlowCommand() throws Exception {
@@ -848,7 +852,7 @@ public class TestOozieCLI extends DagServletTestCase {
           }
       });
     }
-    
+
     /**
      *
      * oozie -change coord_job_id -value concurrency=10
@@ -866,7 +870,7 @@ public class TestOozieCLI extends DagServletTestCase {
                     MockCoordinatorEngineService.JOB_ID + "0", "-value", "concurrency=10" };
 
                 assertEquals(0, new OozieCLI().run(args));
-                assertEquals(RestConstants.JOB_ACTION_CHANGE, MockCoordinatorEngineService.did);                
+                assertEquals(RestConstants.JOB_ACTION_CHANGE, MockCoordinatorEngineService.did);
 
                 return null;
             }
@@ -892,5 +896,4 @@ public class TestOozieCLI extends DagServletTestCase {
             }
         });
     }
-
 }

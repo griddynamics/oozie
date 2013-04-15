@@ -1018,7 +1018,8 @@ public class OozieCLI {
         }
     }
 
-    private void printBundleJob(BundleJob bundleJob, String timeZoneId, boolean verbose) {
+    @VisibleForTesting
+    void printBundleJob(BundleJob bundleJob, String timeZoneId, boolean verbose) {
         System.out.println("Job ID : " + bundleJob.getId());
 
         System.out.println(RULER);
@@ -1267,7 +1268,8 @@ public class OozieCLI {
         }
     }
 
-    private void printBulkJobs(List<BulkResponse> jobs, String timeZoneId) throws IOException {
+    @VisibleForTesting
+    void printBulkJobs(List<BulkResponse> jobs, String timeZoneId) throws IOException {
         if (jobs != null && jobs.size() > 0) {
             System.out.println(String.format(BULK_RESPONSE_FORMATTER, "Bundle Name", "Coordinator Name",
                     "Coord Action ID", "External ID", "Status", "Created Time", "Error Message"));

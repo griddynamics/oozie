@@ -26,10 +26,12 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
+import org.apache.oozie.client.BulkResponse;
 import org.apache.oozie.client.BundleJob;
 import org.apache.oozie.client.CoordinatorAction;
 import org.apache.oozie.client.CoordinatorJob;
@@ -89,7 +91,7 @@ public class TestOozieCLIMethods extends TestCase {
             }
         };
 
-        CoordinatorJob coordJob = createCoordinator(dtObject);
+        CoordinatorJob coordJob = createCoordinatorJob(dtObject);
 
         assertPrintCoordJobOutput(readCoordJobOutput(coordJob, true), dtObject);
         assertPrintCoordJobOutput(readCoordJobOutput(coordJob, false), dtObject);
@@ -132,8 +134,8 @@ public class TestOozieCLIMethods extends TestCase {
         };
 
         WorkflowJob workflowJob = createWorkflowJob(dtObject);
-        assertPrintWorkflowJobOutput(readWorkflowJobOutput(workflowJob, true), dtObject);
-        assertPrintWorkflowJobOutput(readWorkflowJobOutput(workflowJob, false), dtObject);
+        assertPrintWorkflowJobOutput1(readWorkflowJobOutput(workflowJob, true), dtObject);
+        assertPrintWorkflowJobOutput1(readWorkflowJobOutput(workflowJob, false), dtObject);
     }
 
     /**
@@ -179,9 +181,13 @@ public class TestOozieCLIMethods extends TestCase {
         };
 
         final ImmutableList<CoordinatorJob> coordJobs =
-                ImmutableList.of(createCoordinator(dtObject1), createCoordinator(dtObject2));
-        assertPrintCoordJobsOutput(readCoordinatorsJobOutput(coordJobs, true), ImmutableList.of(dtObject1, dtObject2));
-        assertPrintCoordJobsOutput(readCoordinatorsJobOutput(coordJobs, false), ImmutableList.of(dtObject1, dtObject2));
+                ImmutableList.of(createCoordinatorJob(dtObject1), createCoordinatorJob(dtObject2));
+        
+        Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName + "[\\s]+" + dtObject1.appPath);
+        assertPrintCoordJobsOutput(readCoordinatorsJobOutput(coordJobs, true), pattern);
+        
+        pattern = Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName);
+        assertPrintCoordJobsOutput(readCoordinatorsJobOutput(coordJobs, false), pattern);
     }
 
     /**
@@ -201,15 +207,19 @@ public class TestOozieCLIMethods extends TestCase {
         };
         final DataObject dtObject2 = new DataObject() {
             {
-                this.deamonName = "testWorkflowJob1";
-                this.appName = "testWorkflowJobApp1";
-                this.appPath = "testWorkflowJobAppPath1";
+                this.deamonName = "testWorkflowJob2";
+                this.appName = "testWorkflowJobApp2";
+                this.appPath = "testWorkflowJobAppPath2";
             }
         };
 
         ImmutableList<WorkflowJob> workflowJobs = ImmutableList.of(createWorkflowJob(dtObject1), createWorkflowJob(dtObject2));
-        assertPrintWorkflowJobOutput(readWorkflowJobsOutput(workflowJobs, true), workflowJobs);
-        assertPrintWorkflowJobOutput(readWorkflowJobsOutput(workflowJobs, false), workflowJobs);
+
+        Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName + "[\\s]+" + dtObject1.appPath);
+        assertPrintWorkflowJobOutput(readWorkflowJobsOutput(workflowJobs, true), pattern);
+
+        pattern = Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName);
+        assertPrintWorkflowJobOutput(readWorkflowJobsOutput(workflowJobs, false), pattern);
     }
 
     /**
@@ -226,11 +236,71 @@ public class TestOozieCLIMethods extends TestCase {
             }
         };
 
-        BundleJob bundleJob = createBundleJob(dtObject1);
-        ImmutableList<BundleJob> bundleJobs = ImmutableList.of(bundleJob);
+        final DataObject dtObject2 = new DataObject() {
+            {
+                this.deamonName = "testBundleJob2";
+                this.appName = "testBundleJobApp2";
+                this.appPath = "testBundleJobAppPath2";
+            }
+        };
 
-        assertPrintBundleJobOutput(readBundleJobsOutput(bundleJobs, true), bundleJobs);
-        assertPrintBundleJobOutput(readBundleJobsOutput(bundleJobs, false), bundleJobs);
+        ImmutableList<BundleJob> bundleJobs = ImmutableList.of(createBundleJob(dtObject1), createBundleJob(dtObject2));
+
+        Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName + "[\\s]+" + dtObject1.appPath);
+        assertPrintBundleJobsOutput(readBundleJobsOutput(bundleJobs, true), pattern);
+
+        pattern = Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName);
+        assertPrintBundleJobsOutput(readBundleJobsOutput(bundleJobs, false), pattern);
+    }
+    /**
+    *
+    *
+    */
+    public void testValidationPrintBundleJobOutput() throws IOException {
+        final DataObject dtObject = new DataObject() {
+            {
+                this.deamonName = "testBundleJob99";
+                this.appName = "testBundleJobApp99";
+                this.appPath = "testBundleJobAppPath99";
+            }
+        };
+
+        assertPrintBundleJobsOutput(readBundleJobOutput(createBundleJob(dtObject), true), dtObject);
+        assertPrintBundleJobsOutput(readBundleJobOutput(createBundleJob(dtObject), false), dtObject);
+    }
+
+    public void testValidationPrintBulkJobsOutput() throws IOException {
+        final DataObject dtObject = new DataObject() {
+            {
+                this.deamonName = "";
+                this.appName = "testBundleName";
+                this.appPath = "";
+            }
+        };
+
+        Pattern pattern = Pattern.compile("Bundle Name" + "[\\s]+" + "Coordinator Name" + "[\\s]+" + " Coord Action ID");
+        assertPrintBulkResponseOutput(readBulkResponseOutput(ImmutableList.of(createBuilkResponse(dtObject))), pattern);
+
+        pattern = Pattern.compile(dtObject.appPath + "[\\s]+" + dtObject.appPath + "[\\s]+" + dtObject.appPath);
+        assertPrintBulkResponseOutput(readBulkResponseOutput(ImmutableList.of(createBuilkResponse(dtObject))), pattern);
+    }
+
+    private String readBulkResponseOutput(final List<BulkResponse> bulkResponses) throws IOException {
+        return new OutputReaderTemplate() {
+            @Override
+            void execute() throws IOException {
+                new OozieCLI().printBulkJobs(bulkResponses, null);
+            }
+        }.read();
+    }
+
+    private String readBundleJobOutput(final BundleJob bundleJob, final boolean verbose) throws IOException {
+        return new OutputReaderTemplate() {
+            @Override
+            void execute() throws IOException {
+                new OozieCLI().printBundleJob(bundleJob, null, verbose);
+            }
+        }.read();
     }
 
     private String readBundleJobsOutput(final ImmutableList<BundleJob> bundleJobs, final boolean verbose) throws IOException {
@@ -300,31 +370,39 @@ public class TestOozieCLIMethods extends TestCase {
         }.read();
     }
 
-    private void assertPrintBundleJobOutput(String string, ImmutableList<BundleJob> bundleJobsString) {
-        //TO DO: Implement regexp check's
-        assertTrue(true);
+    private void assertPrintBulkResponseOutput(String bulkResponseOutput, Pattern pattern) {
+        assertTrue("assertPrintBulkResponseOutput error", pattern.matcher(bulkResponseOutput).find());
     }
 
-    private void assertPrintWorkflowJobOutput(String workflowJobOutput, ImmutableList<WorkflowJob> dtObjects) {
-        //TO DO: Implement regexp check's
-        assertTrue(true);
+    private void assertPrintBundleJobsOutput(String bundleJobOutput, DataObject dtObject) {
+        assertTrue("assertPrintBundleJobsOutput Job ID error", Pattern.compile(jobIdPattern + dtObject.deamonName)
+                .matcher(bundleJobOutput).find());
+        assertTrue("assertPrintBundleJobsOutput Job Name error", Pattern.compile(jobNamePattern + dtObject.appName)
+                .matcher(bundleJobOutput).find());
+        assertTrue("assertPrintBundleJobsOutput App Path error", Pattern.compile(appPathPattern + dtObject.appPath)
+                .matcher(bundleJobOutput).find());
     }
 
-    private void assertPrintCoordJobsOutput(String coordJobsOutput, ImmutableList<DataObject> dtObjects) {
-        //TO DO: Implement regexp check's
-        assertTrue(true);
+    private void assertPrintBundleJobsOutput(String bundleJobsOutput, Pattern pattern) {
+        assertTrue("assertPrintWorkflowJobOutput error", pattern.matcher(bundleJobsOutput).find());
     }
 
-    
+    private void assertPrintWorkflowJobOutput(String workflowJobOutput, Pattern pattern) {
+        assertTrue("assertPrintWorkflowJobOutput error", pattern.matcher(workflowJobOutput).find());
+    }
+
+    private void assertPrintCoordJobsOutput(String coordJobsOutput, Pattern pattern) {
+        assertTrue("assertPrintCoordJobsOutput error", pattern.matcher(coordJobsOutput).find());
+    }
+
     private void assertPrintWorkflowActionOutput(String workflowActionOutput, DataObject dtObject) {
-        assertTrue("assertPrintWorkflowJobOutput ID error", Pattern.compile(actionIdPattern + dtObject.deamonName)
+        assertTrue("assertPrintWorkflowActionOutput ID error", Pattern.compile(actionIdPattern + dtObject.deamonName)
                 .matcher(workflowActionOutput).find());
-        assertTrue("assertPrintWorkflowJobOutput Name error", Pattern.compile(actionNamePattern + dtObject.appName)
+        assertTrue("assertPrintWorkflowActionOutput Name error", Pattern.compile(actionNamePattern + dtObject.appName)
                 .matcher(workflowActionOutput).find());
     }
 
-    private void assertPrintWorkflowJobOutput(String workflowJobOutput,
-            DataObject dtObject) {
+    private void assertPrintWorkflowJobOutput1(String workflowJobOutput, DataObject dtObject) {
         assertTrue("assertPrintWorkflowJobOutput Job ID error", Pattern.compile(jobIdPattern + dtObject.deamonName)
                         .matcher(workflowJobOutput).find());
         assertTrue("assertPrintWorkflowJobOutput Job Name error", Pattern.compile(workflowNamePattern + dtObject.appName)
@@ -350,16 +428,19 @@ public class TestOozieCLIMethods extends TestCase {
         assertTrue("assertPrintCoordJobOutput Status error", Pattern.compile(statusPattern).matcher(line).find());
     }
 
-    private BundleJob createBundleJob(DataObject dtObject) {
+    private static BundleJob createBundleJob(DataObject dtObject) {
         BundleJob bundleJobMock = mock(BundleJob.class);
         when(bundleJobMock.getId()).thenReturn(dtObject.deamonName);
         when(bundleJobMock.getAppName()).thenReturn(dtObject.appName);
         when(bundleJobMock.getAppPath()).thenReturn(dtObject.appPath);
         when(bundleJobMock.getStatus()).thenReturn(org.apache.oozie.client.Job.Status.RUNNING);
+
+        CoordinatorJob coordinatorJobMock = createCoordinatorJob(dtObject);
+        when(bundleJobMock.getCoordinators()).thenReturn(ImmutableList.of(coordinatorJobMock));
         return bundleJobMock;
     }
 
-    private CoordinatorJob createCoordinator(DataObject dtObject) {
+    private static CoordinatorJob createCoordinatorJob(DataObject dtObject) {
         CoordinatorJob coordinatorJobMock = mock(CoordinatorJob.class);
         when(coordinatorJobMock.getId()).thenReturn(dtObject.deamonName);
         when(coordinatorJobMock.getAppName()).thenReturn(dtObject.appName);
@@ -367,10 +448,9 @@ public class TestOozieCLIMethods extends TestCase {
         when(coordinatorJobMock.getConcurrency()).thenReturn(15);
         when(coordinatorJobMock.getStatus()).thenReturn(CoordinatorJob.Status.RUNNING);
         when(coordinatorJobMock.getUser()).thenReturn("test");
-        when(coordinatorJobMock.getGroup()).thenReturn("test-group");        
+        when(coordinatorJobMock.getGroup()).thenReturn("test-group");
                 
-        ImmutableList.Builder<CoordinatorAction> builder = ImmutableList
-                .builder();
+        ImmutableList.Builder<CoordinatorAction> builder = ImmutableList.builder();
 
         for (final String id : Arrays.asList("1", "2"))
             builder.add(createCoordinatorAction(new DataObject() {
@@ -408,7 +488,21 @@ public class TestOozieCLIMethods extends TestCase {
     private static WorkflowAction createWorkflowAction(DataObject dtObject) {
         WorkflowAction workflowActionMock = mock(WorkflowAction.class);
         when(workflowActionMock.getId()).thenReturn(dtObject.deamonName);
-        when(workflowActionMock.getName()).thenReturn(dtObject.appName);                
+        when(workflowActionMock.getName()).thenReturn(dtObject.appName);
         return workflowActionMock;
+    }
+
+    private static BulkResponse createBuilkResponse(DataObject dtObject) {
+        BulkResponse bulkResponse = mock(BulkResponse.class);
+
+        BundleJob bundleJob = createBundleJob(dtObject);
+        when(bulkResponse.getBundle()).thenReturn(bundleJob);
+
+        CoordinatorAction coordinatorAction = createCoordinatorAction(dtObject);
+        when(bulkResponse.getAction()).thenReturn(coordinatorAction);
+
+        CoordinatorJob coordinatorJob = createCoordinatorJob(dtObject);
+        when(bulkResponse.getCoordinator()).thenReturn(coordinatorJob);
+        return bulkResponse;
     }
 }
