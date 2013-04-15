@@ -38,6 +38,7 @@ import org.apache.oozie.util.XConfiguration;
 public class TestCoordinatorEngine extends XTestCase {
     private Services services;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         services = new Services();
@@ -45,6 +46,7 @@ public class TestCoordinatorEngine extends XTestCase {
         cleanUpDBTables();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         services.destroy();
         super.tearDown();
@@ -90,6 +92,7 @@ public class TestCoordinatorEngine extends XTestCase {
         final CoordinatorEngine ce = new CoordinatorEngine(getTestUser(), "UNIT_TESTING");
         final String jobId = ce.submitJob(conf, true);
         waitFor(5000, new Predicate() {
+            @Override
             public boolean evaluate() throws Exception {
                 try {
                     List<CoordinatorAction> actions = ce.getCoordJob(jobId).getActions();
@@ -145,6 +148,7 @@ public class TestCoordinatorEngine extends XTestCase {
         final String jobId = ce.submitJob(conf, true);
 
         waitFor(5000, new Predicate() {
+            @Override
             public boolean evaluate() throws Exception {
                 try {
                     List<CoordinatorAction> actions = ce.getCoordJob(jobId).getActions();
@@ -199,6 +203,7 @@ public class TestCoordinatorEngine extends XTestCase {
         final String jobId = ce.submitJob(conf, true);
 
         waitFor(5000, new Predicate() {
+            @Override
             public boolean evaluate() throws Exception {
                 try {
                     List<CoordinatorAction> actions = ce.getCoordJob(jobId).getActions();
@@ -267,6 +272,7 @@ public class TestCoordinatorEngine extends XTestCase {
         }
 
         waitFor(10000, new Predicate() {
+            @Override
             public boolean evaluate() throws Exception {
                 try {
                     List<CoordinatorAction> actions = ce.getCoordJob(jobId).getActions();
@@ -321,6 +327,7 @@ public class TestCoordinatorEngine extends XTestCase {
         final CoordinatorEngine ce = new CoordinatorEngine(getTestUser(), "UNIT_TESTING");
         final String jobId = ce.submitJob(conf, true);
         waitFor(5000, new Predicate() {
+            @Override
             public boolean evaluate() throws Exception {
                 try {
                     ce.getJob(jobId).getStatus();
@@ -429,6 +436,7 @@ public class TestCoordinatorEngine extends XTestCase {
 
     private void _testStatus(final String jobId) throws Exception {
         waitFor(6000, new Predicate() {
+            @Override
             public boolean evaluate() throws Exception {
                 CoordinatorEngine ce = new CoordinatorEngine(getTestUser(), "UNIT_TESTING");
                 CoordinatorJob job = ce.getCoordJob(jobId);

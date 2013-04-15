@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.oozie.client.CoordinatorAction;
@@ -54,6 +53,8 @@ import org.apache.oozie.service.XLogService;
 import org.apache.oozie.util.ParamChecker;
 import org.apache.oozie.util.XLog;
 import org.apache.oozie.util.XLogStreamer;
+
+import com.google.common.annotations.VisibleForTesting;
 
 public class CoordinatorEngine extends BaseEngine {
     private static XLog LOG = XLog.getLog(CoordinatorEngine.class);
@@ -516,7 +517,8 @@ public class CoordinatorEngine extends BaseEngine {
      * @return Map<String, List<String>>
      * @throws CoordinatorEngineException
      */
-    private Map<String, List<String>> parseFilter(String filter) throws CoordinatorEngineException {
+    @VisibleForTesting
+    Map<String, List<String>> parseFilter(String filter) throws CoordinatorEngineException {
         Map<String, List<String>> map = new HashMap<String, List<String>>();
         boolean isTimeUnitSpecified = false;
         String timeUnit = "MINUTE";
