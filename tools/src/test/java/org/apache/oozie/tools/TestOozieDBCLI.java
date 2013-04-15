@@ -149,14 +149,12 @@ public class TestOozieDBCLI extends XTestCase {
         String oozieHome = System.getProperty(OozieSharelibCLI.OOZIE_HOME);
         File libDirectory = new File(oozieHome);
 
-       log.info("oozieHome:"+oozieHome);
        System.out.println("oozieHome:"+oozieHome);
         if (!libDirectory.exists()) {
             libDirectory.mkdirs();
         }
         File source = new File("src/test/resources");
         FileUtils.copyDirectory(source, libDirectory);
-        log.info("oozieHome conteins:"+libDirectory.listFiles().toString());
         System.out.println("oozieHome conteins:"+libDirectory.listFiles().toString());
 
         FileSystem fs = getTargetFileSysyem();
