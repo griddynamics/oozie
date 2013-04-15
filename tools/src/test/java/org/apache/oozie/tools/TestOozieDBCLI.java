@@ -146,27 +146,24 @@ public class TestOozieDBCLI extends XTestCase {
     public void testOozieSharelibCLItarGz() throws Exception {
         new LauncherSecurityManager();
 
-        String oozieHome = System.getProperty(OozieSharelibCLI.OOZIE_HOME);
-        File libDirectory = new File(oozieHome);
+        File fnewOozieHome = new File("src/test/resources");
+        String currentOozieHome = System.getProperty(OozieSharelibCLI.OOZIE_HOME);
+        try {
+            System.setProperty(OozieSharelibCLI.OOZIE_HOME, fnewOozieHome.getAbsolutePath());
 
-       log.info("oozieHome:"+oozieHome);
-        if (!libDirectory.exists()) {
-            libDirectory.mkdirs();
+            FileSystem fs = getTargetFileSysyem();
+            fs.delete(getDistPath(), true);
+
+            String[] argsc = { "create", "-fs", outPath };
+            execOozieSharelibCLICommands(argsc);
+
+            assertEquals(9, fs.getFileStatus(new Path(getDistPath(), "file1")).getLen());
+            assertEquals(10, fs.getFileStatus(new Path(getDistPath(), "file2")).getLen());
         }
-        File source = new File("src/test/resources");
-        FileUtils.copyDirectory(source, libDirectory);
-        log.info("oozieHome conteins:"+libDirectory.listFiles().toString());
+        finally {
+            System.setProperty(OozieSharelibCLI.OOZIE_HOME, currentOozieHome);
 
-        FileSystem fs = getTargetFileSysyem();
-        fs.delete(getDistPath(), true);
-
-
-        String[] argsc = { "create", "-fs", outPath };
-        execOozieSharelibCLICommands(argsc);
-
-        assertEquals(9, fs.getFileStatus(new Path(getDistPath(), "file1")).getLen());
-        assertEquals(10, fs.getFileStatus(new Path(getDistPath(), "file2")).getLen());
-
+        }
     }
 
     private FileSystem getTargetFileSysyem() throws Exception {
