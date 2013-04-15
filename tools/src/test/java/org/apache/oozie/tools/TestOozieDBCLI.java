@@ -162,6 +162,10 @@ public class TestOozieDBCLI extends XTestCase {
         FileUtils.copyDirectory(source, libDirectory);
         Collection<File> files =
                 FileUtils.listFiles(libDirectory, new WildcardFileFilter("oozie-sharelib*.tar.gz"), null);
+        for (File file : files) {
+            System.out.println("oozieHome file:"+file.getAbsolutePath());
+            
+        }
         assertFalse(files.isEmpty());
         System.out.println("oozieHome conteins:"+libDirectory.listFiles().toString());
 
