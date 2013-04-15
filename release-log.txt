@@ -1,5 +1,12 @@
 -- Oozie 4.1.0 release (trunk - unreleased)
 
+OOZIE-1307 Cover package org.apache.oozie.action.ssh with unit tests (vbondarev via rkanter)
+OOZIE-1317 TestEventGeneration.testCoordinatorActionEvent fails (mona)
+OOZIE-1292 Add Hadoop 0.23 Poms in hadooplibs to enable a build/tests against branch 0.23 (mona)
+OOZIE-1320 Tests for sharelib actions fail with ClassNotFoundException against Hadoop 2 (rkanter)
+OOZIE-1311 Refactor action Main classes into sharelibs (rkanter)
+OOZIE-897 remove special build handling for sqoop testcase (rkanter)
+OOZIE-1209 Event generation and handling for workflow and coordinator (mona)
 OOZIE-1118 improve logic of purge service (rkanter)
 OOZIE-1205 If the JobTracker is restarted during a Fork, Oozie doesn't fail all of the currently running actions (rkanter)
 OOZIE-1286 SSH Action does not properly handle arguments that have spaces (rkanter)
