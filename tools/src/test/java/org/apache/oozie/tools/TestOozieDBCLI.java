@@ -28,8 +28,10 @@ import java.security.Permission;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
@@ -155,6 +157,9 @@ public class TestOozieDBCLI extends XTestCase {
         }
         File source = new File("src/test/resources");
         FileUtils.copyDirectory(source, libDirectory);
+        Collection<File> files =
+                FileUtils.listFiles(new File(oozieHome), new WildcardFileFilter("oozie-sharelib*.tar.gz"), null);
+        assertFalse(files.isEmpty());
         System.out.println("oozieHome conteins:"+libDirectory.listFiles().toString());
 
         FileSystem fs = getTargetFileSysyem();
