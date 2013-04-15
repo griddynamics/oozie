@@ -182,10 +182,11 @@ public class TestOozieCLIMethods extends TestCase {
 
         final ImmutableList<CoordinatorJob> coordJobs =
                 ImmutableList.of(createCoordinatorJob(dtObject1), createCoordinatorJob(dtObject2));
-        
-        Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName + "[\\s]+" + dtObject1.appPath);
+
+        Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+" +
+                    dtObject1.appName + "[\\s]+" + dtObject1.appPath);
         assertPrintCoordJobsOutput(readCoordinatorsJobOutput(coordJobs, true), pattern);
-        
+
         pattern = Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName);
         assertPrintCoordJobsOutput(readCoordinatorsJobOutput(coordJobs, false), pattern);
     }
@@ -213,9 +214,11 @@ public class TestOozieCLIMethods extends TestCase {
             }
         };
 
-        ImmutableList<WorkflowJob> workflowJobs = ImmutableList.of(createWorkflowJob(dtObject1), createWorkflowJob(dtObject2));
+        ImmutableList<WorkflowJob> workflowJobs = ImmutableList.of(createWorkflowJob(dtObject1),
+                createWorkflowJob(dtObject2));
 
-        Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName + "[\\s]+" + dtObject1.appPath);
+        Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+" +
+                    dtObject1.appName + "[\\s]+" + dtObject1.appPath);
         assertPrintWorkflowJobOutput(readWorkflowJobsOutput(workflowJobs, true), pattern);
 
         pattern = Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName);
@@ -223,9 +226,9 @@ public class TestOozieCLIMethods extends TestCase {
     }
 
     /**
-     *
-     *
-     *
+     * Create list of {@code BundleJob} implementation,
+     * call {@code new OozieCLI().printBundleJobs()}
+     * and validate {@code System.out} output
      */
     public void testValidationPrintBundleJobsOutput() throws IOException {
         final DataObject dtObject1 = new DataObject() {
@@ -246,15 +249,17 @@ public class TestOozieCLIMethods extends TestCase {
 
         ImmutableList<BundleJob> bundleJobs = ImmutableList.of(createBundleJob(dtObject1), createBundleJob(dtObject2));
 
-        Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName + "[\\s]+" + dtObject1.appPath);
+        Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+"
+                    + dtObject1.appName + "[\\s]+" + dtObject1.appPath);
         assertPrintBundleJobsOutput(readBundleJobsOutput(bundleJobs, true), pattern);
 
         pattern = Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName);
         assertPrintBundleJobsOutput(readBundleJobsOutput(bundleJobs, false), pattern);
     }
     /**
-    *
-    *
+    * Create {@code BundleJob} implementation,
+    * call {@code new OozieCLI().printBundleJobs()}
+    * and validate {@code System.out} output
     */
     public void testValidationPrintBundleJobOutput() throws IOException {
         final DataObject dtObject = new DataObject() {
@@ -303,7 +308,8 @@ public class TestOozieCLIMethods extends TestCase {
         }.read();
     }
 
-    private String readBundleJobsOutput(final ImmutableList<BundleJob> bundleJobs, final boolean verbose) throws IOException {
+    private String readBundleJobsOutput(final ImmutableList<BundleJob> bundleJobs, final boolean verbose)
+            throws IOException {
         return new OutputReaderTemplate() {
             @Override
             void execute() throws IOException {
@@ -312,7 +318,8 @@ public class TestOozieCLIMethods extends TestCase {
         }.read();
     }
 
-    private String readWorkflowJobsOutput(final ImmutableList<WorkflowJob> workflowJobs, final boolean verbose) throws IOException {
+    private String readWorkflowJobsOutput(final ImmutableList<WorkflowJob> workflowJobs, final boolean verbose)
+            throws IOException {
         return new OutputReaderTemplate() {
             @Override
             void execute() throws IOException {
@@ -331,7 +338,8 @@ public class TestOozieCLIMethods extends TestCase {
         }.read();
     }
 
-    private String readWorkflowActionOutput(final WorkflowAction workflowAction, final boolean verbose) throws IOException {
+    private String readWorkflowActionOutput(final WorkflowAction workflowAction, final boolean verbose)
+            throws IOException {
         return new OutputReaderTemplate() {
             @Override
             void execute() throws IOException {
@@ -449,7 +457,7 @@ public class TestOozieCLIMethods extends TestCase {
         when(coordinatorJobMock.getStatus()).thenReturn(CoordinatorJob.Status.RUNNING);
         when(coordinatorJobMock.getUser()).thenReturn("test");
         when(coordinatorJobMock.getGroup()).thenReturn("test-group");
-                
+
         ImmutableList.Builder<CoordinatorAction> builder = ImmutableList.builder();
 
         for (final String id : Arrays.asList("1", "2"))

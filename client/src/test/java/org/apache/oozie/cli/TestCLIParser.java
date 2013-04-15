@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -93,8 +93,7 @@ public class TestCLIParser extends TestCase {
         return complexOptions;
     }
 
-    private String readCommandOutput(CLIParser parser,
-            CLIParser.Command c) throws IOException {
+    private String readCommandOutput(CLIParser parser, CLIParser.Command c) throws IOException {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         PipedOutputStream pipeOut = new PipedOutputStream();
         PipedInputStream pipeIn = new PipedInputStream(pipeOut, 1024 * 10);

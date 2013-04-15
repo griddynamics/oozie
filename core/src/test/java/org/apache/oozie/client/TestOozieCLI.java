@@ -160,6 +160,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testSubmit() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 int wfCount = MockDagEngineService.INIT_WF_COUNT;
@@ -202,6 +203,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testSubmitPig() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 int wfCount = MockDagEngineService.INIT_WF_COUNT;
@@ -221,6 +223,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testSubmitMapReduce() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 int wfCount = MockDagEngineService.INIT_WF_COUNT;
@@ -240,6 +243,7 @@ public class TestOozieCLI extends DagServletTestCase {
     public void testSubmitDoAs() throws Exception {
         setSystemProperty("oozie.authentication.simple.anonymous.allowed", "false");
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
 
@@ -259,6 +263,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testSubmitWithPropertyArguments() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 int wfCount = MockDagEngineService.INIT_WF_COUNT;
@@ -282,6 +287,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testRun() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -301,11 +307,12 @@ public class TestOozieCLI extends DagServletTestCase {
 
     /**
      * Check if "-debug" option is accepted at CLI with job run command
-     * 
+     *
      * @throws Exception
      */
     public void testRunWithDebug() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -325,6 +332,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testStart() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 String[] args = new String[]{"job", "-oozie", oozieUrl, "-start", MockDagEngineService.JOB_ID + "1" +
@@ -343,6 +351,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testSuspend() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 String[] args = new String[]{"job", "-oozie", oozieUrl, "-suspend", MockDagEngineService.JOB_ID + "1" +
@@ -360,6 +369,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testResume() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 String[] args = new String[]{"job", "-oozie", oozieUrl, "-resume", MockDagEngineService.JOB_ID + "1" +
@@ -377,6 +387,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testKill() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 String[] args = new String[]{"job", "-oozie", oozieUrl, "-kill", MockDagEngineService.JOB_ID + "1" +
@@ -394,6 +405,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testReRun() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -416,6 +428,7 @@ public class TestOozieCLI extends DagServletTestCase {
      */
     public void testCoordReRun1() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -439,6 +452,7 @@ public class TestOozieCLI extends DagServletTestCase {
      */
     public void testCoordReRun2() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -462,6 +476,7 @@ public class TestOozieCLI extends DagServletTestCase {
      */
     public void testCoordReRun3() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -485,6 +500,7 @@ public class TestOozieCLI extends DagServletTestCase {
      */
     public void testCoordReRun4() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -508,6 +524,7 @@ public class TestOozieCLI extends DagServletTestCase {
      */
     public void testCoordReRunNeg1() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -531,6 +548,7 @@ public class TestOozieCLI extends DagServletTestCase {
      */
     public void testCoordReRunNeg2() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -554,6 +572,7 @@ public class TestOozieCLI extends DagServletTestCase {
      */
     public void testCoordReRunNeg3() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -571,11 +590,12 @@ public class TestOozieCLI extends DagServletTestCase {
     }
 
     /**
-     * Negative Test: Invalid options provided for rerun: eitherdate or action expected. Don't use both at the same time 
+     * Negative Test: Invalid options provided for rerun: eitherdate or action expected. Don't use both at the same time
      * @throws Exception
      */
     public void testCoordReRunNeg4() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -596,6 +616,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testJobStatus() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 MockDagEngineService.reset();
@@ -609,7 +630,7 @@ public class TestOozieCLI extends DagServletTestCase {
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOB_SHOW_INFO, MockDagEngineService.did);
 
-                args = new String[]{"job", "-timezone", "PST", "-oozie", oozieUrl, "-info", 
+                args = new String[]{"job", "-timezone", "PST", "-oozie", oozieUrl, "-info",
                     MockDagEngineService.JOB_ID + "1" + MockDagEngineService.JOB_ID_END};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOB_SHOW_INFO, MockDagEngineService.did);
@@ -630,6 +651,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testJobsStatus() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 String[] args = new String[]{"jobs", "-len", "3", "-offset", "2", "-oozie", oozieUrl, "-filter",
@@ -642,7 +664,7 @@ public class TestOozieCLI extends DagServletTestCase {
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);
 
-                args = new String[]{"jobs", "-timezone", "PST", "-len", "3", "-offset", "2", "-oozie", oozieUrl, 
+                args = new String[]{"jobs", "-timezone", "PST", "-len", "3", "-offset", "2", "-oozie", oozieUrl,
                     "-filter", "name=x"};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);
@@ -657,6 +679,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testHeaderPropagation() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 HeaderTestingVersionServlet.OOZIE_HEADERS.clear();
                 setSystemProperty(OozieCLI.WS_HEADER_PREFIX + "header", "test");
@@ -676,6 +699,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testOozieStatus() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 HeaderTestingVersionServlet.OOZIE_HEADERS.clear();
 
@@ -692,6 +716,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testServerBuildVersion() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 HeaderTestingVersionServlet.OOZIE_HEADERS.clear();
 
@@ -711,6 +736,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testJobInfo() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 MockDagEngineService.reset();
@@ -744,6 +770,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testJobLog() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 MockDagEngineService.reset();
@@ -768,6 +795,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testJobDefinition() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 MockDagEngineService.reset();
@@ -784,6 +812,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testPropertiesWithTrailingSpaces() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 MockDagEngineService.reset();
                 String oozieUrl = getContextURL();
@@ -807,6 +836,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testAdminQueueDump() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 HeaderTestingVersionServlet.OOZIE_HEADERS.clear();
 
@@ -818,7 +848,7 @@ public class TestOozieCLI extends DagServletTestCase {
             }
         });
     }
-    
+
     public void testInfo() throws Exception {
         String[] args = new String[]{"info"};
         assertEquals(0, new OozieCLI().run(args));
@@ -829,16 +859,20 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testValidateWorkFlowCommand() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 String validFileName = "./test-workflow-app.xml";
                 String invalidFileName = "./test-invalid-workflow-app.xml";
 
-                String validContent = "<workflow-app xmlns=\"uri:oozie:workflow:0.2\" name=\"no-op-wf\"> <start to=\"end\"/> <end name=\"end\"/> </workflow-app>";
-                String invalidContent = "<workflow-app xmlns=\"uri:oozie:workflow:0.2\" name=\"f\"> <tag=\"end\"/> <tag=\"end\"/> </workflow-app>";
+                String validContent = "<workflow-app xmlns=\"uri:oozie:workflow:0.2\" name=\"no-op-wf\"> "+
+                        " <start to=\"end\"/> <end name=\"end\"/> </workflow-app>";
+                String invalidContent = "<workflow-app xmlns=\"uri:oozie:workflow:0.2\" name=\"f\"> "+
+                        " <tag=\"end\"/> <tag=\"end\"/> </workflow-app>";
                 File validfile = new File(validFileName);
                 File invalidfile = new File(invalidFileName);
                 validfile.delete();
                 invalidfile.delete();
+
 
                 IOUtils.copyCharStream(new StringReader(validContent), new FileWriter(validfile));
                 String [] args = new String[] { "validate", validFileName };
@@ -860,6 +894,7 @@ public class TestOozieCLI extends DagServletTestCase {
      */
     public void testChangeValue() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
@@ -878,12 +913,11 @@ public class TestOozieCLI extends DagServletTestCase {
     }
 
     /**
-     *
      * Could not authenticate, Authentication failed, status: 404, message: Not Found
-     *
      */
     public void testSlaEvents() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            @Override
             public Void call() throws Exception {
                 Path appPath = new Path(getFsTestCaseDir(), "app");
                 getFileSystem().mkdirs(appPath);
