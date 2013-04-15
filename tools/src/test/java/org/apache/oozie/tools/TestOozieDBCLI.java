@@ -48,7 +48,7 @@ public class TestOozieDBCLI extends XTestCase {
     private String outPath = "outFolder";
     private Services services = null;
     private Path dstPath = null;
-    private  FileSystem fs ;
+    private FileSystem fs;
 
     @BeforeClass
     protected void setUp() throws Exception {
@@ -149,15 +149,17 @@ public class TestOozieDBCLI extends XTestCase {
         String oozieHome = System.getProperty(OozieSharelibCLI.OOZIE_HOME);
         File libDirectory = new File(oozieHome);
 
+       log.info("oozieHome:{}",oozieHome);
         if (!libDirectory.exists()) {
             libDirectory.mkdirs();
         }
+        File source = new File("src/test/resources");
+        FileUtils.copyDirectory(source, libDirectory);
+        log.info("oozieHome conteins:{}",libDirectory.listFiles().toString());
 
         FileSystem fs = getTargetFileSysyem();
         fs.delete(getDistPath(), true);
 
-        File source = new File("src/test/resources");
-        FileUtils.copyDirectory(source, libDirectory);
 
         String[] argsc = { "create", "-fs", outPath };
         execOozieSharelibCLICommands(argsc);
@@ -168,12 +170,12 @@ public class TestOozieDBCLI extends XTestCase {
     }
 
     private FileSystem getTargetFileSysyem() throws Exception {
-if (fs==null){
-        HadoopAccessorService has = getServices().get(HadoopAccessorService.class);
-        URI uri = new Path(outPath).toUri();
-        Configuration fsConf = has.createJobConf(uri.getAuthority());
-         fs = has.createFileSystem(System.getProperty("user.name"), uri, fsConf);
-}
+        if (fs == null) {
+            HadoopAccessorService has = getServices().get(HadoopAccessorService.class);
+            URI uri = new Path(outPath).toUri();
+            Configuration fsConf = has.createJobConf(uri.getAuthority());
+            fs = has.createFileSystem(System.getProperty("user.name"), uri, fsConf);
+        }
         return fs;
 
     }
