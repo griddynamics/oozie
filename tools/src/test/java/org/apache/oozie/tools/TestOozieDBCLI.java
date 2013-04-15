@@ -95,13 +95,24 @@ public class TestOozieDBCLI extends XTestCase {
 
         ByteArrayOutputStream data = new ByteArrayOutputStream();
         PrintStream oldOut = System.out;
-        System.setOut(new PrintStream(data));
+        try {
+            System.setOut(new PrintStream(data));
+            String[] argsv = { "version" };
+            execOozieDBCLICommands(argsv);
 
-        String[] argsv = { "version" };
-        execOozieDBCLICommands(argsv);
+            assertTrue(data.toString().contains("db.version: 1"));
 
-        assertTrue(data.toString().contains("db.version: 1"));
-        System.setOut(oldOut);
+            data.reset();
+
+            String[] argsh = { "help" };
+            execOozieDBCLICommands(argsh);
+            assertTrue(data.toString().contains("ooziedb.sh create <OPTIONS> : create Oozie DB schema"));
+            assertTrue(data.toString().contains("ooziedb.sh upgrade <OPTIONS> : upgrade Oozie DB"));
+            assertTrue(data.toString().contains("ooziedb.sh postupgrade <OPTIONS> : post upgrade Oozie DB"));
+        }
+        finally {
+            System.setOut(oldOut);
+        }
 
         File upgrage = new File(getTestCaseConfDir() + File.separator + "update.sql");
         execSQL("DROP table OOZIE_SYS");
@@ -147,31 +158,35 @@ public class TestOozieDBCLI extends XTestCase {
 
     public void testOozieSharelibCLItarGz() throws Exception {
         new LauncherSecurityManager();
-        
+
         String oozieHome = System.getProperty(OozieSharelibCLI.OOZIE_HOME);
         File libDirectory = new File(oozieHome);
 
-       System.out.println("oozieHome:"+oozieHome);
+        System.out.println("oozieHome:" + oozieHome);
         if (!libDirectory.exists()) {
             libDirectory.mkdirs();
         }
         File source = new File("src/test/resources");
-        System.out.println("source:"+source.getAbsolutePath());
-        System.out.println("source2:"+source.listFiles());
+        System.out.println("source:" + source.getAbsolutePath());
+        System.out.println("source2:" + source.listFiles());
         
+        for (File file : source.listFiles()) {
+            System.out.println("source file:" + file.getAbsolutePath());
+        }
+
         FileUtils.copyDirectory(source, libDirectory);
-        Collection<File> files =
-                FileUtils.listFiles(libDirectory, new WildcardFileFilter("oozie-sharelib*.tar.gz"), null);
+        for (File file : libDirectory.listFiles()) {
+            System.out.println("oozieHome file:" + file.getAbsolutePath());
+        }
+        Collection<File> files = FileUtils.listFiles(libDirectory, new WildcardFileFilter("oozie-sharelib*.tar.gz"), null);
         for (File file : files) {
-            System.out.println("oozieHome file:"+file.getAbsolutePath());
-            
+            System.out.println("oozieHome file:" + file.getAbsolutePath());
         }
         assertFalse(files.isEmpty());
-        System.out.println("oozieHome conteins:"+libDirectory.listFiles().toString());
+        System.out.println("oozieHome conteins:" + libDirectory.listFiles().toString());
 
         FileSystem fs = getTargetFileSysyem();
         fs.delete(getDistPath(), true);
-
 
         String[] argsc = { "create", "-fs", outPath };
         execOozieSharelibCLICommands(argsc);
