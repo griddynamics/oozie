@@ -89,8 +89,8 @@ public class TestOozieDBCLI extends XTestCase {
 
         File createSql = new File(getTestCaseConfDir() + File.separator + "out.sql");
         String[] argsC = { "create", "-sqlfile", createSql.getAbsolutePath(), "-run" };
-        execOozieDBCLICommands(argsC);
-
+        int result=execOozieDBCLICommands(argsC);
+        assertEquals(0, result);
         assertTrue(createSql.exists());
 
         ByteArrayOutputStream data = new ByteArrayOutputStream();
@@ -98,17 +98,24 @@ public class TestOozieDBCLI extends XTestCase {
         try {
             System.setOut(new PrintStream(data));
             String[] argsv = { "version" };
-            execOozieDBCLICommands(argsv);
+            result=execOozieDBCLICommands(argsv);
+            assertEquals(0, result);
 
             assertTrue(data.toString().contains("db.version: 1"));
 
             data.reset();
-
             String[] argsh = { "help" };
-            execOozieDBCLICommands(argsh);
+            result=execOozieDBCLICommands(argsh);
+            assertEquals(0, result);
             assertTrue(data.toString().contains("ooziedb.sh create <OPTIONS> : create Oozie DB schema"));
             assertTrue(data.toString().contains("ooziedb.sh upgrade <OPTIONS> : upgrade Oozie DB"));
             assertTrue(data.toString().contains("ooziedb.sh postupgrade <OPTIONS> : post upgrade Oozie DB"));
+
+            data.reset();
+            String[] argsw = { "invalidCommand" };
+            result=execOozieDBCLICommands(argsw);
+            assertEquals(1, result);
+
         }
         finally {
             System.setOut(oldOut);
@@ -252,7 +259,7 @@ public class TestOozieDBCLI extends XTestCase {
         }
     }
 
-    private void execOozieDBCLICommands(String[] args) {
+    private int  execOozieDBCLICommands(String[] args) {
         try {
             OozieDBCLI.main(args);
 
@@ -261,14 +268,14 @@ public class TestOozieDBCLI extends XTestCase {
             if (LauncherSecurityManager.getExitInvoked()) {
                 System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
-                if (LauncherSecurityManager.getExitCode() != 0) {
-                    fail();
-                }
+                return LauncherSecurityManager.getExitCode();
+               
             }
             else {
                 throw ex;
             }
         }
+        return 1;
     }
 }
 
