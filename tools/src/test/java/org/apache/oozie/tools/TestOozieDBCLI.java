@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,11 @@
 
 package org.apache.oozie.tools;
 
+import org.apache.hadoop.fs.FileUtil;
+import org.apache.oozie.test.XTestCase;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
@@ -25,11 +30,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-import org.apache.hadoop.fs.FileUtil;
-import org.apache.oozie.test.XTestCase;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-
+/**
+ * Test OozieDBCLI for data base derby
+ */
 public class TestOozieDBCLI extends XTestCase {
     private SecurityManager SECURITY_MANAGER;
     private static String url = "jdbc:derby:target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/data.db;create=true";
@@ -38,7 +41,7 @@ public class TestOozieDBCLI extends XTestCase {
     protected void setUp() throws Exception {
         SECURITY_MANAGER = System.getSecurityManager();
         new LauncherSecurityManager();
-
+        // remove an old variant
         FileUtil.fullyDelete(new File("target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/data.db"));
         File oozieConfig = new File("src/test/resources/hsqldb-oozie-site.xml");
         System.setProperty("oozie.test.config.file", oozieConfig.getAbsolutePath());
@@ -69,57 +72,52 @@ public class TestOozieDBCLI extends XTestCase {
     }
 
     public void testOozieDBCLI() throws Exception {
-
+        // test script for create database
         File createSql = new File(getTestCaseConfDir() + File.separator + "out.sql");
-        String[] argsC = { "create", "-sqlfile", createSql.getAbsolutePath(), "-run" };
-        int result=execOozieDBCLICommands(argsC);
+        String[] argsCreate = { "create", "-sqlfile", createSql.getAbsolutePath(), "-run" };
+        int result = execOozieDBCLICommands(argsCreate);
         assertEquals(0, result);
         assertTrue(createSql.exists());
 
         ByteArrayOutputStream data = new ByteArrayOutputStream();
         PrintStream oldOut = System.out;
         try {
+            // show versions
             System.setOut(new PrintStream(data));
-            String[] argsv = { "version" };
-            result=execOozieDBCLICommands(argsv);
-            assertEquals(0, result);
+            String[] argsVersion = { "version" };
+            assertEquals(0, execOozieDBCLICommands(argsVersion));
 
             assertTrue(data.toString().contains("db.version: 1"));
-
+            // show help information
             data.reset();
-            String[] argsh = { "help" };
-            result=execOozieDBCLICommands(argsh);
-            assertEquals(0, result);
+            String[] argsHelp = { "help" };
+            assertEquals(0, execOozieDBCLICommands(argsHelp));
             assertTrue(data.toString().contains("ooziedb.sh create <OPTIONS> : create Oozie DB schema"));
             assertTrue(data.toString().contains("ooziedb.sh upgrade <OPTIONS> : upgrade Oozie DB"));
             assertTrue(data.toString().contains("ooziedb.sh postupgrade <OPTIONS> : post upgrade Oozie DB"));
-
+            // try run invalid command
             data.reset();
-            String[] argsw = { "invalidCommand" };
-            result=execOozieDBCLICommands(argsw);
-            assertEquals(1, result);
+            String[] argsInvalidCommand = { "invalidCommand" };
+            assertEquals(1, execOozieDBCLICommands(argsInvalidCommand));
 
         }
         finally {
             System.setOut(oldOut);
         }
-
-        File upgrage = new File(getTestCaseConfDir() + File.separator + "update.sql");
+        // generate an upgrade script
+        File upgrade = new File(getTestCaseConfDir() + File.separator + "update.sql");
         execSQL("DROP table OOZIE_SYS");
-        String[] argsu = { "upgrade", "-sqlfile", upgrage.getAbsolutePath(), "-run" };
-        execOozieDBCLICommands(argsu);
+        String[] argsUpgrade = { "upgrade", "-sqlfile", upgrade.getAbsolutePath(), "-run" };
+        assertEquals(0, execOozieDBCLICommands(argsUpgrade));
 
-        assertTrue(upgrage.exists());
-        File postupgrade = new File(getTestCaseConfDir() + File.separator + "postUpdate.sql");
-        String[] argspu = { "postupgrade", "-sqlfile", postupgrade.getAbsolutePath(), "-run" };
-        execOozieDBCLICommands(argspu);
-        assertTrue(postupgrade.exists());
-
+        assertTrue(upgrade.exists());
+        File postUpgrade = new File(getTestCaseConfDir() + File.separator + "postUpdate.sql");
+        String[] argsPostUpgrade = { "postupgrade", "-sqlfile", postUpgrade.getAbsolutePath(), "-run" };
+        assertEquals(0, execOozieDBCLICommands(argsPostUpgrade));
+        assertTrue(postUpgrade.exists());
     }
 
-   
-
-    private int  execOozieDBCLICommands(String[] args) {
+    private int execOozieDBCLICommands(String[] args) {
         try {
             OozieDBCLI.main(args);
 
@@ -129,7 +127,7 @@ public class TestOozieDBCLI extends XTestCase {
                 System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 return LauncherSecurityManager.getExitCode();
-               
+
             }
             else {
                 throw ex;

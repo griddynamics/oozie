@@ -1,3 +1,21 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.oozie.tools;
 
 import java.io.ByteArrayOutputStream;
@@ -19,6 +37,9 @@ import org.apache.oozie.test.XTestCase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+/**
+ * Test OozieSharelibCLI
+ */
 public class TestOozieSharelibCLI extends XTestCase {
     private SecurityManager SECURITY_MANAGER;
     private String outPath = "outFolder";
@@ -41,13 +62,16 @@ public class TestOozieSharelibCLI extends XTestCase {
 
     }
 
+  /**
+   * Test help command
+   */
     public void testHelp() throws Exception {
         ByteArrayOutputStream data = new ByteArrayOutputStream();
         PrintStream oldPrintStream = System.out;
         System.setOut(new PrintStream(data));
         try {
-            String[] argsh = { "help" };
-            assertEquals(0, execOozieSharelibCLICommands(argsh));
+            String[] argsHelp = { "help" };
+            assertEquals(0, execOozieSharelibCLICommands(argsHelp));
             assertTrue(data.toString().contains("oozie-setup.sh create <OPTIONS> : create oozie sharelib"));
             assertTrue(data.toString().contains("oozie-setup.sh upgrade <OPTIONS> : upgrade oozie sharelib"));
             assertTrue(data.toString().contains(" oozie-setup.sh help"));
@@ -58,10 +82,11 @@ public class TestOozieSharelibCLI extends XTestCase {
 
     }
 
+  /**
+   * test copy libraries 
+   */
     public void testOozieSharelibCLI() throws Exception {
 
-        String[] argsh = { "help" };
-        execOozieSharelibCLICommands(argsh);
 
         File libDirectory = new File(getTestCaseConfDir() + File.separator + "lib");
 
@@ -76,24 +101,27 @@ public class TestOozieSharelibCLI extends XTestCase {
         writeFile(libDirectory, "file1", "test File");
         writeFile(libDirectory, "file2", "test File2");
 
-        String[] argsc = { "create", "-fs", outPath, "-locallib", libDirectory.getParentFile().getAbsolutePath() };
-        assertEquals(0, execOozieSharelibCLICommands(argsc));
+        String[] argsCreate = { "create", "-fs", outPath, "-locallib", libDirectory.getParentFile().getAbsolutePath() };
+        assertEquals(0, execOozieSharelibCLICommands(argsCreate));
 
         FileSystem fs = getTargetFileSysyem();
-
+        // test files in new folder
         assertEquals(9, fs.getFileStatus(new Path(getDistPath(), "file1")).getLen());
         assertEquals(10, fs.getFileStatus(new Path(getDistPath(), "file2")).getLen());
 
     }
 
+  /**
+   * test fake command
+   */
     public void testFakeCommand() throws Exception {
-        
+
         ByteArrayOutputStream data = new ByteArrayOutputStream();
         PrintStream oldPrintStream = System.err;
         System.setErr(new PrintStream(data));
         try {
-            String[] argsf = { "fakeCommand" };
-            assertEquals(1, execOozieSharelibCLICommands(argsf));
+            String[] argsFake = { "fakeCommand" };
+            assertEquals(1, execOozieSharelibCLICommands(argsFake));
             assertTrue(data.toString().contains("Invalid sub-command: invalid sub-command [fakeCommand]"));
             assertTrue(data.toString().contains("use 'help [sub-command]' for help details"));
         }

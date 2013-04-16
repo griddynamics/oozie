@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,14 +18,17 @@
 
 package org.apache.oozie.tools;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-
 import org.apache.oozie.test.XTestCase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+/**
+ *  Test OozieDBCLI for mysql
+ */
 public class TestOozieMySqlDBCLI extends XTestCase {
     private SecurityManager SECURITY_MANAGER;
     private static String url = "jdbc:mysql:fake";
@@ -33,9 +36,10 @@ public class TestOozieMySqlDBCLI extends XTestCase {
     @BeforeClass
     protected void setUp() throws Exception {
         SECURITY_MANAGER = System.getSecurityManager();
-        DriverManager.registerDriver( new FakeDriver());
+        DriverManager.registerDriver(new FakeDriver());
+        new LauncherSecurityManager();
 
-        File oozieConfig = new File("src/test/resources/fake-oozie-site.xml");
+      File oozieConfig = new File("src/test/resources/fake-oozie-site.xml");
         System.setProperty("oozie.test.config.file", oozieConfig.getAbsolutePath());
         Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
         Connection conn = DriverManager.getConnection(url, "sa", "");
@@ -52,46 +56,43 @@ public class TestOozieMySqlDBCLI extends XTestCase {
 
     }
 
-   
     /**
-     * addfasdf
+     * Test generate create script
      */
-    public void testCreateMysql() throws Exception{
-        new LauncherSecurityManager();
-        FakeConnection.SYSTEM_TABLE=false;
+    public void testCreateMysql() throws Exception {
+        FakeConnection.SYSTEM_TABLE = false;
 
         File createSql = new File(getTestCaseConfDir() + File.separator + "create.sql");
-        String[] argsC = { "create", "-sqlfile", createSql.getAbsolutePath(), "-run" };
-        int result=execOozieDBCLICommands(argsC);
+        String[] argsCreate = { "create", "-sqlfile", createSql.getAbsolutePath(), "-run" };
+        int result = execOozieDBCLICommands(argsCreate);
         assertEquals(0, result);
         assertTrue(createSql.exists());
 
     }
 
-    public void testUpdateMysql() throws Exception{
+  /**
+   * Test create upgrade script
+   */
+    public void testUpdateMysql() throws Exception {
         new LauncherSecurityManager();
-        FakeConnection.SYSTEM_TABLE=true;
+        FakeConnection.SYSTEM_TABLE = true;
+        FakeConnection.CREATE = false;
 
-        FakeConnection.CREATE=false;
-        File upgrage = new File(getTestCaseConfDir() + File.separator + "update.sql");
-        String[] argsu = { "upgrade", "-sqlfile", upgrage.getAbsolutePath(), "-run" ,"-mysqlmediumtext", "true"};
+        File upgrade = new File(getTestCaseConfDir() + File.separator + "update.sql");
+        String[] argsUpgrade = { "upgrade", "-sqlfile", upgrade.getAbsolutePath(), "-run", "-mysqlmediumtext", "true" };
 
-        int result=execOozieDBCLICommands(argsu);
-        assertEquals(0, result);
-        assertTrue(upgrage.exists());
+        assertEquals(0, execOozieDBCLICommands(argsUpgrade));
+        assertTrue(upgrade.exists());
 
-        FakeConnection.SYSTEM_TABLE=false;
-        upgrage.delete();
+        FakeConnection.SYSTEM_TABLE = false;
+        upgrade.delete();
 
-        result=execOozieDBCLICommands(argsu);
-        assertEquals(0, result);
-        assertTrue(upgrage.exists());
+        assertEquals(0, execOozieDBCLICommands(argsUpgrade));
+        assertTrue(upgrade.exists());
 
     }
-    
 
-  
-    private int  execOozieDBCLICommands(String[] args) {
+    private int execOozieDBCLICommands(String[] args) {
         try {
             OozieDBCLI.main(args);
 
@@ -101,7 +102,7 @@ public class TestOozieMySqlDBCLI extends XTestCase {
                 System.out.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 System.err.println("Intercepting System.exit(" + LauncherSecurityManager.getExitCode() + ")");
                 return LauncherSecurityManager.getExitCode();
-               
+
             }
             else {
                 throw ex;
@@ -110,6 +111,3 @@ public class TestOozieMySqlDBCLI extends XTestCase {
         return 1;
     }
 }
-
-
-
