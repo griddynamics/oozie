@@ -32,25 +32,15 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-core</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-           <dependency>
-            <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-sharelib-hive</artifactId>
-            <scope>test</scope>
-        </dependency>
          <dependency>
              <groupId>org.apache.oozie</groupId>
              <artifactId>oozie-hcatalog</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.apache.oozie</groupId>
+            <artifactId>oozie-sharelib-hive</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -58,10 +48,15 @@
             <version>1.1.1</version>
             <scope>compile</scope>
         </dependency>
-            <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
+         <dependency>
+            <groupId>org.apache.oozie</groupId>
+            <artifactId>oozie-core</artifactId>
+            <classifier>tests</classifier>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
     
         <dependency>
