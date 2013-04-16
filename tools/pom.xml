@@ -58,7 +58,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-    
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-client</artifactId>
