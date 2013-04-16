@@ -82,9 +82,9 @@ public class TestOozieSharelibCLI extends XTestCase {
 
     }
 
-  /**
-   * test copy libraries 
-   */
+    /**
+    * test copy libraries
+    */
     public void testOozieSharelibCLI() throws Exception {
 
 
@@ -111,9 +111,9 @@ public class TestOozieSharelibCLI extends XTestCase {
 
     }
 
-  /**
-   * test fake command
-   */
+    /**
+    * test fake command
+    */
     public void testFakeCommand() throws Exception {
 
         ByteArrayOutputStream data = new ByteArrayOutputStream();

@@ -533,7 +533,7 @@ public class OozieDBCLI {
     }
 
     private final static String DB_VERSION = "1";
-    
+
     private final static String GET_OOZIE_DB_VERSION = "select data from OOZIE_SYS where name = 'db.version'";
 
     private void verifyOozieDBVersion() throws Exception {
