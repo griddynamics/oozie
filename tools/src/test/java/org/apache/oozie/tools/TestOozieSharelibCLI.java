@@ -62,9 +62,9 @@ public class TestOozieSharelibCLI extends XTestCase {
 
     }
 
-  /**
-   * Test help command
-   */
+    /**
+     * Test help command
+     */
     public void testHelp() throws Exception {
         ByteArrayOutputStream data = new ByteArrayOutputStream();
         PrintStream oldPrintStream = System.out;
@@ -83,10 +83,9 @@ public class TestOozieSharelibCLI extends XTestCase {
     }
 
     /**
-    * test copy libraries
-    */
+     * test copy libraries
+     */
     public void testOozieSharelibCLI() throws Exception {
-
 
         File libDirectory = new File(getTestCaseConfDir() + File.separator + "lib");
 
@@ -112,8 +111,8 @@ public class TestOozieSharelibCLI extends XTestCase {
     }
 
     /**
-    * test fake command
-    */
+     * test fake command
+     */
     public void testFakeCommand() throws Exception {
 
         ByteArrayOutputStream data = new ByteArrayOutputStream();

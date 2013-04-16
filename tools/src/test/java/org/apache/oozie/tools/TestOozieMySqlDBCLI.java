@@ -32,12 +32,14 @@ import java.sql.DriverManager;
 public class TestOozieMySqlDBCLI extends XTestCase {
     private SecurityManager SECURITY_MANAGER;
     private static String url = "jdbc:mysql:fake";
+    private String oozieConfig;
 
     @BeforeClass
     protected void setUp() throws Exception {
         SECURITY_MANAGER = System.getSecurityManager();
         DriverManager.registerDriver(new FakeDriver());
         new LauncherSecurityManager();
+        this.oozieConfig = System.getProperty("oozie.test.config.file");
 
       File oozieConfig = new File("src/test/resources/fake-oozie-site.xml");
         System.setProperty("oozie.test.config.file", oozieConfig.getAbsolutePath());
@@ -52,6 +54,12 @@ public class TestOozieMySqlDBCLI extends XTestCase {
     @AfterClass
     protected void tearDown() throws Exception {
         System.setSecurityManager(SECURITY_MANAGER);
+        DriverManager.registerDriver(new FakeDriver());
+        if(oozieConfig!=null){
+            System.setProperty("oozie.test.config.file", oozieConfig);
+        }else{
+            System.getProperties().remove("oozie.test.config.file");
+        }
         super.tearDown();
 
     }

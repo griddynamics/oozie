@@ -36,6 +36,7 @@ import java.sql.Statement;
 public class TestOozieDBCLI extends XTestCase {
     private SecurityManager SECURITY_MANAGER;
     private static String url = "jdbc:derby:target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/data.db;create=true";
+    private String oozieConfig;
 
     @BeforeClass
     protected void setUp() throws Exception {
@@ -43,7 +44,9 @@ public class TestOozieDBCLI extends XTestCase {
         new LauncherSecurityManager();
         // remove an old variant
         FileUtil.fullyDelete(new File("target/test-data/oozietests/org.apache.oozie.tools.TestOozieDBCLI/data.db"));
+        this.oozieConfig = System.getProperty("oozie.test.config.file");
         File oozieConfig = new File("src/test/resources/hsqldb-oozie-site.xml");
+
         System.setProperty("oozie.test.config.file", oozieConfig.getAbsolutePath());
         Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
         Connection conn = DriverManager.getConnection(url, "sa", "");
@@ -56,6 +59,11 @@ public class TestOozieDBCLI extends XTestCase {
     @AfterClass
     protected void tearDown() throws Exception {
         System.setSecurityManager(SECURITY_MANAGER);
+        if(oozieConfig!=null){
+            System.setProperty("oozie.test.config.file", oozieConfig);
+        }else{
+            System.getProperties().remove("oozie.test.config.file");
+        }
         super.tearDown();
 
     }
