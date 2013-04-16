@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,10 +55,10 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        
+
         xDataTestCase.setName(getName());
         xDataTestCase.setUpPub();
-        
+
         new Services().init();
         Services services = Services.get();
         services.setService(UUIDService.class);
@@ -76,7 +76,7 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
      */
     public void testGetBundleJobs() throws Exception {
         final BundleJobBean bundleJobBean = xDataTestCase.addRecordToBundleJobTable(Job.Status.PREP, false);
-        
+
         runTest("/v1/jobs", V1JobsServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -84,19 +84,19 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(RestConstants.JOBTYPE_PARAM, "bundle");
-                params.put(RestConstants.JOBS_FILTER_PARAM, 
+                params.put(RestConstants.JOBS_FILTER_PARAM,
                          OozieClient.FILTER_STATUS+"=PREP;"
                        + OozieClient.FILTER_NAME+"=BUNDLE-TEST;"
                        + OozieClient.FILTER_USER+"="+getTestUser());
-                
+
                 URL url = createURL("", params);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 assertEquals(HttpServletResponse.SC_OK, conn.getResponseCode());
                 assertTrue(conn.getHeaderField("content-type").startsWith(RestConstants.JSON_CONTENT_TYPE));
-                
+
                 JSONObject json = (JSONObject) JSONValue.parse(new InputStreamReader(conn.getInputStream()));
-                
+
                 //System.out.println("["+json+"]");
                 assertEquals(Long.valueOf(1L), json.get("total"));
                 JSONArray array = (JSONArray)json.get("bundlejobs");
@@ -107,5 +107,5 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
             }
         });
     }
-    
+
 }

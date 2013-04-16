@@ -46,16 +46,16 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
 
     @Ignore
     private static class XDataTestCase1 extends XDataTestCase {}
-    
+
     private final XDataTestCase xDataTestCase = new XDataTestCase1();
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        
+
         xDataTestCase.setName(getName());
         xDataTestCase.setUpPub();
-        
+
         new Services().init();
         Services services = Services.get();
         services.setService(UUIDService.class);
@@ -66,10 +66,10 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
         xDataTestCase.tearDownPub();
         super.tearDown();
     }
-    
+
     public void testBundleEngineGetBundleJob() throws Exception {
         final BundleJobBean bundleJobBean = xDataTestCase.addRecordToBundleJobTable(Job.Status.PREP, false);
-        
+
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -80,9 +80,9 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
                 URL url = createURL(id, params);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-                
+
                 assertEquals(HttpServletResponse.SC_OK, conn.getResponseCode());
-                
+
                 assertTrue(conn.getHeaderField("content-type").startsWith(RestConstants.JSON_CONTENT_TYPE));
                 JSONObject obj = (JSONObject) JSONValue.parse(new InputStreamReader(conn.getInputStream()));
                 assertEquals(id, obj.get("bundleJobId"));
@@ -90,10 +90,10 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
             }
         });
     }
-    
+
     public void testBundleEngineChange() throws Exception {
         final BundleJobBean bundleJobBean = xDataTestCase.addRecordToBundleJobTable(Job.Status.PREP, false);
-        
+
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -106,16 +106,16 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
                 URL url = createURL(id, params);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT");
-                
+
                 assertEquals(HttpServletResponse.SC_OK, conn.getResponseCode());
                 return null;
             }
         });
     }
-    
+
     public void testBundleEngineGetDefinition() throws Exception {
         final BundleJobBean bundleJobBean = xDataTestCase.addRecordToBundleJobTable(Job.Status.PREP, false);
-        
+
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -126,22 +126,22 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
                 URL url = createURL(id, params);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-                
+
                 assertEquals(HttpServletResponse.SC_OK, conn.getResponseCode());
-                
+
                 String ct = conn.getHeaderField("content-type");
                 assertTrue(ct.startsWith(RestConstants.XML_CONTENT_TYPE));
                 String response = IOUtils.getReaderAsString(new InputStreamReader(conn.getInputStream()), -1);
                 assertTrue(response!= null && response.length() > 0);
-                
+
                 return null;
             }
         });
     }
-    
+
     public void testBundleEngineStreamLog() throws Exception {
         final BundleJobBean bundleJobBean = xDataTestCase.addRecordToBundleJobTable(Job.Status.PREP, false);
-        
+
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -152,17 +152,17 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
                 URL url = createURL(id, params);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-                
+
                 assertEquals(HttpServletResponse.SC_OK, conn.getResponseCode());
                 return null;
             }
         });
     }
-    
+
     public void testBundleEngineKill() throws Exception {
         testBundleEnginePutImpl(RestConstants.JOB_ACTION_KILL);
     }
-    
+
     public void testBundleEngineResume() throws Exception {
         testBundleEnginePutImpl(RestConstants.JOB_ACTION_RESUME);
     }
@@ -170,18 +170,18 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
     public void testBundleEngineSuspend() throws Exception {
         testBundleEnginePutImpl(RestConstants.JOB_ACTION_SUSPEND);
     }
-    
+
     public void testBundleEngineStart() throws Exception {
         testBundleEnginePutImpl(RestConstants.JOB_ACTION_START);
     }
-    
+
     public void testBundleEngineReRun() throws Exception {
         testBundleEnginePutImpl(RestConstants.JOB_BUNDLE_ACTION_RERUN);
     }
-    
+
     private void testBundleEnginePutImpl(final String jobAction) throws Exception {
         final BundleJobBean bundleJobBean = xDataTestCase.addRecordToBundleJobTable(Job.Status.PREP, false);
-        
+
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -193,11 +193,11 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("content-type", RestConstants.XML_CONTENT_TYPE);
                 conn.setRequestMethod("PUT");
-                
+
                 assertEquals(HttpServletResponse.SC_OK, conn.getResponseCode());
                 return null;
             }
         });
-    }    
-    
+    }
+
 }

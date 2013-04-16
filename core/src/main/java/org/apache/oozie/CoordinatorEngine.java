@@ -101,7 +101,7 @@ public class CoordinatorEngine extends BaseEngine {
      */
     private CoordinatorJobBean getCoordJobWithNoActionInfo(String jobId) throws BaseEngineException {
         try {
-			return new CoordJobXCommand(jobId).call();
+            return new CoordJobXCommand(jobId).call();
         }
         catch (CommandException ex) {
             throw new BaseEngineException(ex);
@@ -115,7 +115,7 @@ public class CoordinatorEngine extends BaseEngine {
      */
     public CoordinatorActionBean getCoordAction(String actionId) throws BaseEngineException {
         try {
-			return new CoordActionInfoXCommand(actionId).call();
+            return new CoordActionInfoXCommand(actionId).call();
         }
         catch (CommandException ex) {
             throw new BaseEngineException(ex);
@@ -130,7 +130,7 @@ public class CoordinatorEngine extends BaseEngine {
     @Override
     public CoordinatorJobBean getCoordJob(String jobId) throws BaseEngineException {
         try {
-			return new CoordJobXCommand(jobId).call();
+            return new CoordJobXCommand(jobId).call();
         }
         catch (CommandException ex) {
             throw new BaseEngineException(ex);
@@ -146,8 +146,8 @@ public class CoordinatorEngine extends BaseEngine {
     public CoordinatorJobBean getCoordJob(String jobId, String filter, int start, int length) throws BaseEngineException {
         List<String> filterList = parseStatusFilter(filter);
         try {
-			return new CoordJobXCommand(jobId, filterList, start, length)
-					.call();
+            return new CoordJobXCommand(jobId, filterList, start, length)
+                    .call();
         }
         catch (CommandException ex) {
             throw new BaseEngineException(ex);
@@ -172,7 +172,7 @@ public class CoordinatorEngine extends BaseEngine {
     @Override
     public void kill(String jobId) throws CoordinatorEngineException {
         try {
-			new CoordKillXCommand(jobId).call();
+            new CoordKillXCommand(jobId).call();
             LOG.info("User " + user + " killed the Coordinator job " + jobId);
         }
         catch (CommandException e) {
@@ -213,8 +213,8 @@ public class CoordinatorEngine extends BaseEngine {
     public CoordinatorActionInfo reRun(String jobId, String rerunType, String scope, boolean refresh, boolean noCleanup)
             throws BaseEngineException {
         try {
-			return new CoordRerunXCommand(jobId, rerunType, scope, refresh,
-					noCleanup).call();
+            return new CoordRerunXCommand(jobId, rerunType, scope, refresh,
+                    noCleanup).call();
         }
         catch (CommandException ex) {
             throw new BaseEngineException(ex);
@@ -229,7 +229,7 @@ public class CoordinatorEngine extends BaseEngine {
     @Override
     public void resume(String jobId) throws CoordinatorEngineException {
         try {
-			new CoordResumeXCommand(jobId).call();
+            new CoordResumeXCommand(jobId).call();
         }
         catch (CommandException e) {
             throw new CoordinatorEngineException(e);
@@ -376,9 +376,9 @@ public class CoordinatorEngine extends BaseEngine {
     @Override
     public String submitJob(Configuration conf, boolean startJob) throws CoordinatorEngineException {
         try {
-			CoordSubmitXCommand submit = new CoordSubmitXCommand(conf,
-					getAuthToken());
-			return submit.call();
+            CoordSubmitXCommand submit = new CoordSubmitXCommand(conf,
+                    getAuthToken());
+            return submit.call();
         }
         catch (CommandException ex) {
             throw new CoordinatorEngineException(ex);
@@ -394,9 +394,9 @@ public class CoordinatorEngine extends BaseEngine {
     @Override
     public String dryRunSubmit(Configuration conf) throws CoordinatorEngineException {
         try {
-			CoordSubmitXCommand submit = new CoordSubmitXCommand(true, conf,
-					getAuthToken());
-			return submit.call();
+            CoordSubmitXCommand submit = new CoordSubmitXCommand(true, conf,
+                    getAuthToken());
+            return submit.call();
         }
         catch (CommandException ex) {
             throw new CoordinatorEngineException(ex);
@@ -411,7 +411,7 @@ public class CoordinatorEngine extends BaseEngine {
     @Override
     public void suspend(String jobId) throws CoordinatorEngineException {
         try {
-			new CoordSuspendXCommand(jobId).call();
+            new CoordSuspendXCommand(jobId).call();
         }
         catch (CommandException e) {
             throw new CoordinatorEngineException(e);
@@ -462,7 +462,7 @@ public class CoordinatorEngine extends BaseEngine {
         Map<String, List<String>> filterList = parseFilter(filter);
 
         try {
-			return new CoordJobsXCommand(filterList, start, len).call();
+            return new CoordJobsXCommand(filterList, start, len).call();
         }
         catch (CommandException ex) {
             throw new CoordinatorEngineException(ex);

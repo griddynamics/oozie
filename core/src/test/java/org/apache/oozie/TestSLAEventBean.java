@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,10 +27,10 @@ import org.apache.oozie.util.XmlUtils;
 import org.jdom.Element;
 
 public class TestSLAEventBean extends XTestCase {
-  
-  private static final Date ee = new Date(1L); 
-  private static final Date es = new Date(2L); 
-  private static final Date st = new Date(3L); 
+
+  private static final Date ee = new Date(1L);
+  private static final Date es = new Date(2L);
+  private static final Date st = new Date(3L);
 
   private void set(SLAEventBean bean) {
     bean.setAlertContact("ac");
@@ -58,12 +58,12 @@ public class TestSLAEventBean extends XTestCase {
     bean.setUpstreamApps("ua");
     bean.setUser("u");
   }
-  
+
   public void testSetGet() {
     final SLAEventBean bean = new SLAEventBean();
-    
+
     set(bean);
-    
+
     assertEquals("ac", bean.getAlertContact());
     assertEquals("af", bean.getAlertFrequency());
     assertEquals("ap", bean.getAlertPercentage());
@@ -84,16 +84,16 @@ public class TestSLAEventBean extends XTestCase {
     assertEquals("si", bean.getSlaId());
     assertEquals("ua", bean.getUpstreamApps());
     assertEquals("u", bean.getUser());
-    
+
     assertEquals(ee, bean.getExpectedEnd());
     assertEquals(es, bean.getExpectedStart());
     assertEquals(st, bean.getStatusTimestamp());
-   
+
     assertEquals(DateUtils.convertDateToTimestamp(st), bean.getStatusTimestampTS());
     assertEquals(DateUtils.convertDateToTimestamp(ee), bean.getExpectedEndTS());
     assertEquals(DateUtils.convertDateToTimestamp(es), bean.getExpectedStartTS());
   }
-  
+
   public void testToXmlStatusEvent() {
     final SLAEventBean bean = new SLAEventBean();
     set(bean);
@@ -150,5 +150,5 @@ public class TestSLAEventBean extends XTestCase {
 "</event>"
 , actualXml);
   }
-  
+
 }

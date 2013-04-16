@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@ import org.apache.oozie.client.WorkflowJob;
 import org.apache.oozie.client.rest.BulkResponseImpl;
 
 /**
- * Test non-argument constructor and methods of {@link BundleEngine} that 
+ * Test non-argument constructor and methods of {@link BundleEngine} that
  * either throw exceptions or return null.
  * {@link BundleEngineException} covered as well.
  */
@@ -36,40 +36,40 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             CoordinatorJob cj = be.getCoordJob("foo");
             assertTrue("Expected BundleEngineException was not thrown.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.getErrorCode() == ErrorCode.E0301);
         }
     }
-    
+
     public void testGetCoordJob4() {
         BundleEngine be = new BundleEngine();
         try {
             CoordinatorJob cj = be.getCoordJob("foo", "filter", 0, 1);
             assertTrue("Expected BundleEngineException was not thrown.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.getErrorCode() == ErrorCode.E0301);
         }
     }
-    
+
     public void testGetJob1() {
         BundleEngine be = new BundleEngine();
         try {
             WorkflowJob wj = be.getJob("foo");
             assertTrue("Expected BundleEngineException was not thrown.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.getErrorCode() == ErrorCode.E0301);
         }
     }
-    
+
     public void testGetJob3() {
         BundleEngine be = new BundleEngine();
         try {
             WorkflowJob wj = be.getJob("foo", 0, 1);
             assertTrue("Expected BundleEngineException was not thrown.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.getErrorCode() == ErrorCode.E0301);
         }
@@ -82,18 +82,18 @@ public class TestBundleEngineSimple extends TestCase {
             Configuration c = new Configuration();
             be.reRun("foo", c);
             assertTrue("Expected BundleEngineException was not thrown.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.getErrorCode() == ErrorCode.E0301);
         }
     }
-    
+
     public void testGetJobForExternalId() throws BundleEngineException {
         BundleEngine be = new BundleEngine();
         String job = be.getJobIdForExternalId("externalFoo");
         assertTrue(job == null);
     }
-    
+
     /**
      * Test negative cases of the filter parsing by {@link BundleEngine#parseFilter(String)}.
      */
@@ -103,7 +103,7 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             be.parseFilter("vinnypooh");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(ErrorCode.E0420 == bee.getErrorCode());
         }
@@ -111,7 +111,7 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             be.parseFilter("xx=yy=zz");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(ErrorCode.E0420 == bee.getErrorCode());
         }
@@ -119,7 +119,7 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             be.parseFilter("foo=moo");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(ErrorCode.E0420 == bee.getErrorCode());
         }
@@ -127,7 +127,7 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             be.parseFilter("status=foo");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(ErrorCode.E0420 == bee.getErrorCode());
         }
@@ -141,7 +141,7 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             BundleEngine.parseBulkFilter("xx=yy=zz");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
         }
@@ -149,7 +149,7 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             BundleEngine.parseBulkFilter("vinnypooh");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
         }
@@ -157,15 +157,15 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_BUNDLE_NAME+"=aaa, ,bbb");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
         }
         // unparseable time value:
-        try { 
+        try {
             BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_START_CREATED_EPOCH + "=blah-blah");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
         }
@@ -173,7 +173,7 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_STATUS+"=foo");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
         }
@@ -181,10 +181,10 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_LEVEL + "=foo");
             assertTrue("BundleEngineException expected.", false);
-        } 
+        }
         catch (BundleEngineException bee) {
             assertTrue(bee.toString(), ErrorCode.E0305 == bee.getErrorCode());
         }
     }
-    
+
 }

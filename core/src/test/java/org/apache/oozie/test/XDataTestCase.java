@@ -104,22 +104,22 @@ public abstract class XDataTestCase extends XHCatTestCase {
 
     public XDataTestCase() {
     }
-    
+
     /*
-     * The following 2 methods are "published" versions of 
-     * #setUp() and #tearDown() respectively. Created to be able to 
-     * use them in composition. 
+     * The following 2 methods are "published" versions of
+     * #setUp() and #tearDown() respectively. Created to be able to
+     * use them in composition.
      */
     @VisibleForTesting
     public void setUpPub() throws Exception {
         setUp();
     }
-    
+
     @VisibleForTesting
     public void tearDownPub() throws Exception {
         tearDown();
     }
-    
+
     /**
      * Insert coord job for testing.
      *

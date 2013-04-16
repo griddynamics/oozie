@@ -153,13 +153,13 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         final CeData ced = runJobsImpl();
 
         CoordinatorJobBean cjb = ced.ce.getCoordJob(ced.jobId);
-        Date createdDate = cjb.getCreatedTime(); 
-        Date endDate     = new Date();           
+        Date createdDate = cjb.getCreatedTime();
+        Date endDate     = new Date();
         assertTrue(endDate.after(createdDate));
-        
+
         long middle = (createdDate.getTime() + endDate.getTime())/2;
         Date middleDate = new Date(middle);
-        
+
         ced.ce.streamLog(ced.jobId, DateUtils.formatDateOozieTZ(createdDate)
                 + "::" + DateUtils.formatDateOozieTZ(middleDate) + ","
                 + DateUtils.formatDateOozieTZ(middleDate) + "::"
@@ -183,7 +183,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
     }
 
     private CeData runJobsImpl() throws Exception {
-        services.setService(TestXLogService.class); 
+        services.setService(TestXLogService.class);
         // NB: need to re-define the parameters that are cleared upon the
         // service reset:
         new DagXLogInfoService().init(services);
@@ -196,8 +196,8 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         final CeData ced = new CeData();
         final long now = System.currentTimeMillis();
         final String start = DateUtils.formatDateOozieTZ(new Date(now));
-        long e = now + 1000 * 119; 
-        final String end = DateUtils.formatDateOozieTZ(new Date(e)); 
+        long e = now + 1000 * 119;
+        final String end = DateUtils.formatDateOozieTZ(new Date(e));
 
         String wfXml = IOUtils.getResourceAsString("wf-no-op.xml", -1);
         writeToFile(wfXml, getFsTestCaseDir(), "workflow.xml");

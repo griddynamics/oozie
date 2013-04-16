@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ import org.apache.oozie.service.Services;
 import org.apache.oozie.test.XDataTestCase;
 
 public class TestLocalOozieClientCoord extends XDataTestCase {
-    
+
     private Services services;
 
     @Override
@@ -53,7 +53,7 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
         services.destroy();
         super.tearDown();
     }
-    
+
     public void testGetOozieUrl() {
         OozieClient client = LocalOozie.getCoordClient();
         assertEquals("localoozie", client.getOozieUrl());
@@ -63,12 +63,12 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
         OozieClient client = LocalOozie.getCoordClient();
         assertEquals("localoozie", client.getProtocolUrl());
     }
-    
+
     public void testValidateWSVersion() throws OozieClientException {
         OozieClient client = LocalOozie.getCoordClient();
         client.validateWSVersion();
     }
-    
+
     public void testHeaderMethods() {
         OozieClient client = LocalOozie.getCoordClient();
         client.setHeader("h", "v");
@@ -78,39 +78,39 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
         try {
             hit.next();
             assertTrue(false);
-        } 
+        }
         catch (NoSuchElementException nsee) {
             // expected
         }
         client.removeHeader("h");
         assertNull(client.getHeader("h"));
     }
-    
+
     public void testGetJobsInfo() {
         OozieClient client = LocalOozie.getCoordClient();
         try {
             client.getJobsInfo("foo");
             assertTrue(false);
-        } 
+        }
         catch (OozieClientException oce) {
             assertEquals(ErrorCode.E0301.toString(), oce.getErrorCode());
         }
         try {
             client.getJobsInfo("foo", 0, 5);
             assertTrue(false);
-        } 
+        }
         catch (OozieClientException oce) {
             assertEquals(ErrorCode.E0301.toString(), oce.getErrorCode());
         }
         try {
             client.getJobInfo("foo-id");
             assertTrue(false);
-        } 
+        }
         catch (OozieClientException oce) {
             assertEquals(ErrorCode.E0301.toString(), oce.getErrorCode());
         }
     }
-    
+
     public void testReRun2() {
         OozieClient client = LocalOozie.getCoordClient();
         try {
@@ -137,11 +137,11 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
             }
         }
     }
-    
+
     public void testJobMethods() throws Exception {
         OozieClient client = LocalOozie.getCoordClient();
         Properties conf = client.createConfiguration();
-        
+
         String appPath = "file://" + getTestCaseDir() + File.separator + "coordinator.xml";
         String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:minutes(20)}\" start=\"2009-02-01T01:00Z\" end=\"2009-02-03T23:59Z\" timezone=\"UTC\" "
                 + "xmlns=\"uri:oozie:coordinator:0.1\"> <controls> <timeout>10</timeout> <concurrency>2</concurrency> "
@@ -159,20 +159,20 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
                 + "<property> <name>inputB</name> <value>${coord:dataOut('LOCAL_A')}</value> "
                 + "</property></configuration> </workflow> </action> </coordinator-app>";
         writeToFile(appXml, appPath);
-        
+
         conf.setProperty(OozieClient.COORDINATOR_APP_PATH, appPath);
         String jobId0 = client.submit(conf);
         client.kill(jobId0);
-        
+
         String jobId = client.run(conf);
         client.suspend(jobId);
         client.resume(jobId);
         client.kill(jobId);
-        
+
         CoordinatorJob job = client.getCoordJobInfo(jobId);
         String appName = job.getAppName();
         assertEquals("NAME", appName);
-        
+
         List<CoordinatorJob> list = client.getCoordJobsInfo("", 1, 5);
         assertEquals(2, list.size());
     }
