@@ -45,7 +45,7 @@ public class CoordActionsInDateRange {
      * Get the list of Coordinator action Ids for given date ranges
      *
      * @param jobId coordinator job id
-     * @param scope the date range for log. format is comma-separated list of date ranges. 
+     * @param scope the date range for log. format is comma-separated list of date ranges.
      * Each date range element is specified with two dates separated by '::'
      * @return the list of coordinator action Ids for the date range
      *
@@ -84,8 +84,9 @@ public class CoordActionsInDateRange {
             String[] dateRange = range.split("::");
             // This block checks for errors in the format of specifying date range
             if (dateRange.length != 2) {
-                throw new XException(ErrorCode.E0308, "'" + range + 
+                throw new XException(ErrorCode.E0308, "'" + range +
                     "'. Date value expected on both sides of the scope resolution operator '::' to signify start and end of range");
+
             }
             Date start;
             Date end;
@@ -98,7 +99,7 @@ public class CoordActionsInDateRange {
                 throw new XException(ErrorCode.E0308, "Error in parsing start or end date. " + dx);
             }
             if (start.after(end)) {
-                throw new XException(ErrorCode.E0308, "'" + range + "'. Start date '" + start + "' is older than end date: '" + end 
+                throw new XException(ErrorCode.E0308, "'" + range + "'. Start date '" + start + "' is older than end date: '" + end
                         + "'");
             }
             List<CoordinatorActionBean> listOfActions = getActionsFromDateRange(jobId, start, end);
@@ -116,8 +117,9 @@ public class CoordActionsInDateRange {
             String[] dateRange = range.split("::");
             // This block checks for errors in the format of specifying date range
             if (dateRange.length != 2) {
-                throw new XException(ErrorCode.E0308, "'" + range 
+                throw new XException(ErrorCode.E0308, "'" + range
                   + "'. Date value expected on both sides of the scope resolution operator '::' to signify start and end of range");
+
             }
             Date start;
             Date end;
@@ -130,7 +132,7 @@ public class CoordActionsInDateRange {
                 throw new XException(ErrorCode.E0308, "Error in parsing start or end date. " + dx);
             }
             if (start.after(end)) {
-                throw new XException(ErrorCode.E0308, "'" + range + "'. Start date '" + start + "' is older than end date: '" + end 
+                throw new XException(ErrorCode.E0308, "'" + range + "'. Start date '" + start + "' is older than end date: '" + end
 + "'");
             }
             List<String> list = null;

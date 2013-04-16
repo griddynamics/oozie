@@ -243,6 +243,7 @@ public class SshActionExecutor extends ActionExecutor {
                             args[i] = argsElement.getValue();
                             // Even though we're keeping the args as an array, if they contain a space we still have to either quote
 
+
                             // them or escape their space (because the scripts will split them up otherwise)
                             if (args[i].contains(" ") &&
                                     !(args[i].startsWith("\"") && args[i].endsWith("\"") ||
@@ -588,16 +589,16 @@ public class SshActionExecutor extends ActionExecutor {
                                 } // Permission denied while connecting
                                 else {
                                     if (errorMessage.contains("Permission denied")) {
-                                        throw new ActionExecutorException(ActionExecutorException.ErrorType.NON_TRANSIENT, 
+                                        throw new ActionExecutorException(ActionExecutorException.ErrorType.NON_TRANSIENT,
                                                 ERR_AUTH_FAILED, ex.getMessage(), ex);
                                     } // Permission denied while executing
                                     else {
                                         if (errorMessage.contains(": Permission denied")) {
-                                            throw new ActionExecutorException(ActionExecutorException.ErrorType.NON_TRANSIENT, 
+                                            throw new ActionExecutorException(ActionExecutorException.ErrorType.NON_TRANSIENT,
                                                     ERR_NO_EXEC_PERM, ex.getMessage(), ex);
                                         }
                                         else {
-                                            throw new ActionExecutorException(ActionExecutorException.ErrorType.ERROR, 
+                                            throw new ActionExecutorException(ActionExecutorException.ErrorType.ERROR,
                                                     ERR_UNKNOWN_ERROR, ex.getMessage(), ex);
                                         }
                                     }
@@ -633,7 +634,7 @@ public class SshActionExecutor extends ActionExecutor {
             if (host.contains("@")) {
                 if (!host.toLowerCase().startsWith(oozieUser + "@")) {
                     throw new ActionExecutorException(ActionExecutorException.ErrorType.ERROR, ERR_USER_MISMATCH,
-                                                      XLog.format("user mismatch between oozie user [{0}] and ssh host [{1}]", 
+                                                      XLog.format("user mismatch between oozie user [{0}] and ssh host [{1}]",
                                                               oozieUser, host));
                 }
             }

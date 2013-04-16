@@ -47,11 +47,13 @@ import org.apache.openjpa.persistence.jdbc.Index;
         +":nextMaterializedTime, w.origJobXml = :origJobXml, w.slaXml=:slaXml, w.startTimestamp = :startTime, w.status = "
         +":status, w.timeUnitStr = :timeUnit where w.id = :id"),
 
-   @NamedQuery(name = "UPDATE_COORD_JOB_STATUS", 
+   @NamedQuery(name = "UPDATE_COORD_JOB_STATUS",
         query = "update CoordinatorJobBean w set w.status = :status, w.lastModifiedTimestamp = :lastModifiedTime where w.id = :id"),
 
-   @NamedQuery(name = "UPDATE_COORD_JOB_PENDING", 
+
+   @NamedQuery(name = "UPDATE_COORD_JOB_PENDING",
       query = "update CoordinatorJobBean w set w.pending = :pending, w.lastModifiedTimestamp = :lastModifiedTime where w.id = :id"),
+
 
    @NamedQuery(name = "DELETE_COORD_JOB", query = "delete from CoordinatorJobBean w where w.id = :id"),
 
@@ -81,7 +83,7 @@ import org.apache.openjpa.persistence.jdbc.Index;
        +"( w.status = 'SUCCEEDED' OR w.status = 'FAILED' or w.status = 'KILLED') AND "
        +"w.lastModifiedTimestamp <= :lastModTime order by w.lastModifiedTimestamp"),
 
-   @NamedQuery(name = "GET_COMPLETED_COORD_JOBS_WITH_NO_PARENT_OLDER_THAN_STATUS", 
+   @NamedQuery(name = "GET_COMPLETED_COORD_JOBS_WITH_NO_PARENT_OLDER_THAN_STATUS",
        query = "select w.id from CoordinatorJobBean w where "
        +"( w.status = 'SUCCEEDED' OR w.status = 'FAILED' or w.status = 'KILLED' or w.status = 'DONEWITHERROR') "
        +"AND w.lastModifiedTimestamp <= :lastModTime and w.bundleId is null order by w.lastModifiedTimestamp"),
@@ -98,7 +100,7 @@ import org.apache.openjpa.persistence.jdbc.Index;
    @NamedQuery(name = "GET_COORD_JOBS_WITH_PARENT_ID", query = "select w.id from CoordinatorJobBean w where "
        +"w.bundleId = :parentId"),
 
-   @NamedQuery(name = "GET_COORD_COUNT_WITH_PARENT_ID_NOT_READY_FOR_PURGE", 
+   @NamedQuery(name = "GET_COORD_COUNT_WITH_PARENT_ID_NOT_READY_FOR_PURGE",
        query = "select count(w) from CoordinatorJobBean w where w.bundleId = :parentId and "
        +"(w.status NOT IN ('SUCCEEDED', 'FAILED', 'KILLED', 'DONEWITHERROR') OR w.lastModifiedTimestamp >= :lastModTime)"),
 
