@@ -495,7 +495,7 @@ public class CoordinatorEngine extends BaseEngine {
                             }
                             // Check for incorrect status value
                             throw new CoordinatorEngineException(ErrorCode.E0421, filter, XLog.format(
-                                    "invalid status value [{0}]." + " Valid status values are: [{1}]", statusValue, validStatusList));
+                                "invalid status value [{0}]." + " Valid status values are: [{1}]", statusValue, validStatusList));
                         }
                         filterList.add(statusValue);
                     } else {

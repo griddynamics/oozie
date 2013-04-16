@@ -71,7 +71,8 @@ public class TestCoordinatorEngine extends XTestCase {
         Configuration conf = new XConfiguration();
         String appPath = "file://" + getTestCaseDir() + File.separator + "coordinator.xml";
 
-        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:days(1)}\" start=\"2009-02-01T01:00Z\" end=\"2009-02-01T02:00Z\" timezone=\"UTC\" "
+        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:days(1)}\" start=\"2009-02-01T01:00Z\" " 
+                + "end=\"2009-02-01T02:00Z\" timezone=\"UTC\" "
                 + "xmlns=\"uri:oozie:coordinator:0.1\"> <controls> <timeout>10</timeout> <concurrency>2</concurrency> "
                 + "<execution>LIFO</execution> </controls> <datasets> "
                 + "<dataset name=\"local_a\" frequency=\"${coord:days(1)}\" initial-instance=\"2009-02-01T01:00Z\" "
@@ -87,7 +88,6 @@ public class TestCoordinatorEngine extends XTestCase {
         writeToFile(appXml, appPath);
         conf.set(OozieClient.COORDINATOR_APP_PATH, appPath);
         conf.set(OozieClient.USER_NAME, getTestUser());
-
 
         final CoordinatorEngine ce = new CoordinatorEngine(getTestUser(), "UNIT_TESTING");
         final String jobId = ce.submitJob(conf, true);
@@ -127,11 +127,12 @@ public class TestCoordinatorEngine extends XTestCase {
     public void testCustomDoneFlag() throws Exception {
         Configuration conf = new XConfiguration();
         String appPath = "file://" + getTestCaseDir() + File.separator + "coordinator.xml";
-        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:days(1)}\" start=\"2009-02-01T01:00Z\" end=\"2009-02-01T02:00Z\" timezone=\"UTC\" "
+        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:days(1)}\" start=\"2009-02-01T01:00Z\" " +
+        		"end=\"2009-02-01T02:00Z\" timezone=\"UTC\" "
                 + "xmlns=\"uri:oozie:coordinator:0.1\"> <controls> <timeout>10</timeout> <concurrency>2</concurrency> "
                 + "<execution>LIFO</execution> </controls> <datasets> "
                 + "<dataset name=\"local_a\" frequency=\"${coord:days(1)}\" initial-instance=\"2009-02-01T01:00Z\" "
-                + "timezone=\"UTC\"> <uri-template>file://" + getTestCaseDir() + "/workflows/${YEAR}/${MONTH}/${DAY}</uri-template> "
+                + "timezone=\"UTC\"> <uri-template>file://" + getTestCaseDir() + "/workflows/${YEAR}/${MONTH}/${DAY}</uri-template>"
                 + "<done-flag>consume_me</done-flag> </dataset>"
                 + "</datasets> <input-events> "
                 + "<data-in name=\"A\" dataset=\"local_a\"> <instance>${coord:current(0)}</instance> </data-in>  "
@@ -182,11 +183,12 @@ public class TestCoordinatorEngine extends XTestCase {
     public void testEmptyDoneFlag() throws Exception {
         Configuration conf = new XConfiguration();
         String appPath = "file://" + getTestCaseDir() + File.separator + "coordinator.xml";
-        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:days(1)}\" start=\"2009-02-01T01:00Z\" end=\"2009-02-01T02:00Z\" timezone=\"UTC\" "
+        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:days(1)}\" start=\"2009-02-01T01:00Z\" " +
+        		"end=\"2009-02-01T02:00Z\" timezone=\"UTC\" "
                 + "xmlns=\"uri:oozie:coordinator:0.1\"> <controls> <timeout>10</timeout> <concurrency>2</concurrency> "
                 + "<execution>LIFO</execution> </controls> <datasets> "
                 + "<dataset name=\"local_a\" frequency=\"${coord:days(1)}\" initial-instance=\"2009-02-01T01:00Z\" "
-                + "timezone=\"UTC\"> <uri-template>file://" + getTestCaseDir() + "/workflows/${YEAR}/${MONTH}/${DAY}</uri-template> "
+                + "timezone=\"UTC\"> <uri-template>file://" + getTestCaseDir() + "/workflows/${YEAR}/${MONTH}/${DAY}</uri-template>"
                 + "<done-flag></done-flag> </dataset>"
                 + "</datasets> <input-events> "
                 + "<data-in name=\"A\" dataset=\"local_a\"> <instance>${coord:current(0)}</instance> </data-in>  "
@@ -237,11 +239,12 @@ public class TestCoordinatorEngine extends XTestCase {
     public void testDoneFlagCreation() throws Exception {
         Configuration conf = new XConfiguration();
         String appPath = "file://" + getTestCaseDir() + File.separator + "coordinator.xml";
-        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:days(1)}\" start=\"2009-02-01T01:00Z\" end=\"2009-02-01T02:00Z\" timezone=\"UTC\" "
+        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:days(1)}\" start=\"2009-02-01T01:00Z\" " +
+        		"end=\"2009-02-01T02:00Z\" timezone=\"UTC\" "
                 + "xmlns=\"uri:oozie:coordinator:0.1\"> <controls> <timeout>10</timeout> <concurrency>2</concurrency> "
                 + "<execution>LIFO</execution> </controls> <datasets> "
                 + "<dataset name=\"local_a\" frequency=\"${coord:days(1)}\" initial-instance=\"2009-02-01T01:00Z\" "
-                + "timezone=\"UTC\"> <uri-template>file://" + getTestCaseDir() + "/workflows/${YEAR}/${MONTH}/${DAY}</uri-template> "
+                + "timezone=\"UTC\"> <uri-template>file://" + getTestCaseDir() + "/workflows/${YEAR}/${MONTH}/${DAY}</uri-template>"
                 + "<done-flag>consume_me</done-flag> </dataset>"
                 + "</datasets> <input-events> "
                 + "<data-in name=\"A\" dataset=\"local_a\"> <instance>${coord:current(0)}</instance> </data-in>  "
@@ -304,7 +307,8 @@ public class TestCoordinatorEngine extends XTestCase {
     private String _testSubmitJob(String appPath) throws Exception {
         Configuration conf = new XConfiguration();
 
-        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:minutes(20)}\" start=\"2009-02-01T01:00Z\" end=\"2009-02-03T23:59Z\" timezone=\"UTC\" "
+        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:minutes(20)}\" start=\"2009-02-01T01:00Z\" " +
+        		"end=\"2009-02-03T23:59Z\" timezone=\"UTC\" "
                 + "xmlns=\"uri:oozie:coordinator:0.1\"> <controls> <timeout>10</timeout> <concurrency>2</concurrency> "
                 + "<execution>LIFO</execution> </controls> <datasets> "
                 + "<dataset name=\"a\" frequency=\"${coord:minutes(20)}\" initial-instance=\"2009-02-01T01:00Z\" "
@@ -315,7 +319,8 @@ public class TestCoordinatorEngine extends XTestCase {
                 + "<data-in name=\"A\" dataset=\"a\"> <instance>${coord:latest(0)}</instance> </data-in>  "
                 + "</input-events> "
                 + "<output-events> <data-out name=\"LOCAL_A\" dataset=\"local_a\"> "
-                + "<instance>${coord:current(-1)}</instance> </data-out> </output-events> <action> <workflow> <app-path>hdfs:///tmp/workflows/</app-path> "
+                + "<instance>${coord:current(-1)}</instance> </data-out> </output-events> <action> <workflow> " 
+                  + "<app-path>hdfs:///tmp/workflows/</app-path> "
                 + "<configuration> <property> <name>inputA</name> <value>${coord:dataIn('A')}</value> </property> "
                 + "<property> <name>inputB</name> <value>${coord:dataOut('LOCAL_A')}</value> "
                 + "</property></configuration> </workflow> </action> </coordinator-app>";
@@ -495,7 +500,9 @@ public class TestCoordinatorEngine extends XTestCase {
         }
         catch (CoordinatorEngineException ex) {
             assertEquals(ErrorCode.E0421, ex.getErrorCode());
-            assertEquals("E0421: Invalid job filter [status=blahblah], invalid status value [blahblah]. Valid status values are: [WAITING READY SUBMITTED RUNNING SUSPENDED TIMEDOUT SUCCEEDED KILLED FAILED DISCARDED ]", ex.getMessage());
+            assertEquals("E0421: Invalid job filter [status=blahblah], invalid status value [blahblah]. " +
+                "Valid status values are: [WAITING READY SUBMITTED RUNNING SUSPENDED TIMEDOUT SUCCEEDED KILLED FAILED DISCARDED ]",
+                ex.getMessage());
         }
 
         // Check for empty status value
@@ -504,7 +511,9 @@ public class TestCoordinatorEngine extends XTestCase {
         }
         catch (CoordinatorEngineException ex) {
             assertEquals(ErrorCode.E0421, ex.getErrorCode());
-            assertEquals("E0421: Invalid job filter [status=\"\"], invalid status value [\"\"]. Valid status values are: [WAITING READY SUBMITTED RUNNING SUSPENDED TIMEDOUT SUCCEEDED KILLED FAILED DISCARDED ]", ex.getMessage());
+            assertEquals("E0421: Invalid job filter [status=\"\"], invalid status value [\"\"]. "
+              + "Valid status values are: [WAITING READY SUBMITTED RUNNING SUSPENDED TIMEDOUT SUCCEEDED KILLED FAILED DISCARDED ]",
+              ex.getMessage());
         }
 
         // Check for invalid filter option
@@ -513,7 +522,8 @@ public class TestCoordinatorEngine extends XTestCase {
         }
         catch (CoordinatorEngineException ex) {
             assertEquals(ErrorCode.E0421, ex.getErrorCode());
-            assertEquals("E0421: Invalid job filter [blahblah=blahblah], invalid filter [blahblah]. The only valid filter is \"status\"", ex.getMessage());
+            assertEquals("E0421: Invalid job filter [blahblah=blahblah], invalid filter [blahblah]. " +
+                "The only valid filter is \"status\"", ex.getMessage());
         }
     }
 }
