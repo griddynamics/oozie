@@ -78,6 +78,7 @@ public class TestBundleJobBean extends XTestCase {
         testGet(bean, true);
     }
 
+    @SuppressWarnings("deprecation")
     private void testGet(BundleJobBean bean, boolean checkAllFields) {
         assertEquals("an", bean.getAppName());
         assertEquals("ap", bean.getAppPath());

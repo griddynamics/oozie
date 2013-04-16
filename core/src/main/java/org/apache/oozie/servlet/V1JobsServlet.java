@@ -305,6 +305,7 @@ public class V1JobsServlet extends BaseJobsServlet {
      * v1 service implementation to get a list of workflows, with filtering or interested windows embedded in the
      * request object
      */
+    @SuppressWarnings("unchecked")
     private JSONObject getWorkflowJobs(HttpServletRequest request) throws XServletException {
         JSONObject json = new JSONObject();
         try {
