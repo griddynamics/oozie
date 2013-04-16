@@ -78,14 +78,14 @@ public class TestBundleJobBean extends XTestCase {
         testGet(bean, true);
     }
 
-    private void testGet(BundleJobBean bean, boolean checkDeserialization) {
+    private void testGet(BundleJobBean bean, boolean checkAllFields) {
         assertEquals("an", bean.getAppName());
         assertEquals("ap", bean.getAppPath());
-        if (checkDeserialization) {
+        if (checkAllFields) {
             assertEquals("at", bean.getAuthToken());
         }
         assertEquals("c", bean.getConf());
-        if (checkDeserialization) {
+        if (checkAllFields) {
             assertEquals("cu", bean.getConsoleUrl());
             assertEquals(ct, bean.getCreatedTime());
         }
@@ -95,25 +95,25 @@ public class TestBundleJobBean extends XTestCase {
         assertEquals("ei", bean.getExternalId());
         assertEquals("group", bean.getGroup());
         assertEquals("id", bean.getId());
-        if (checkDeserialization) {
+        if (checkAllFields) {
             assertEquals("jx", bean.getJobXml());
         }
         assertEquals(kt, bean.getKickoffTime());
         assertEquals(DateUtils.convertDateToTimestamp(kt),
                 bean.getKickoffTimestamp());
-        if (checkDeserialization) {
+        if (checkAllFields) {
             assertEquals(lmt, bean.getLastModifiedTime());
             assertEquals(DateUtils.convertDateToTimestamp(lmt),
                     bean.getLastModifiedTimestamp());
         }
-        if (checkDeserialization) {
+        if (checkAllFields) {
             assertEquals("ojx", bean.getOrigJobXml());
             assertEquals(pt, bean.getPauseTime());
             assertEquals(true, bean.isPending());
         }
         assertEquals(st, bean.getStartTime());
         assertEquals(Status.KILLED, bean.getStatus());
-        if (checkDeserialization) {
+        if (checkAllFields) {
             assertEquals(DateUtils.convertDateToTimestamp(spt),
                     bean.getSuspendedTimestamp());
         }

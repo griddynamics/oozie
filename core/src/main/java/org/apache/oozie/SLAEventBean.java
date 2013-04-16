@@ -248,12 +248,6 @@ public class SLAEventBean extends JsonSLAEvent implements Writable {
         return e;
     }
 
-//    private Element createATagElement(String tag, Element content) {
-//        Element e = new Element(tag);
-//        e.addContent(content);
-//        return e;
-//    }
-
     private String getDateString(Date d) {
         try {
             return DateUtils.formatDateOozieTZ(d);
