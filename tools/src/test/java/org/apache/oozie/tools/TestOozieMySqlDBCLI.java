@@ -82,37 +82,23 @@ public class TestOozieMySqlDBCLI extends XTestCase {
         new LauncherSecurityManager();
         FakeConnection.CREATE=false;
         File upgrage = new File(getTestCaseConfDir() + File.separator + "update.sql");
-        String[] argsu = { "upgrade", "-sqlfile", upgrage.getAbsolutePath(), "-run" };
+        String[] argsu = { "upgrade", "-sqlfile", upgrage.getAbsolutePath(), "-run" ,"-mysqlmediumtext", "true"};
 
         int result=execOozieDBCLICommands(argsu);
         assertEquals(0, result);
         assertTrue(upgrage.exists());
 
-    }
+        FakeConnection.SYSTEM_TABLE=false;
+        upgrage.delete();
 
-    private FileSystem getTargetFileSysyem() throws Exception {
-        if (fs == null) {
-            HadoopAccessorService has = getServices().get(HadoopAccessorService.class);
-            URI uri = new Path(outPath).toUri();
-            Configuration fsConf = has.createJobConf(uri.getAuthority());
-            fs = has.createFileSystem(System.getProperty("user.name"), uri, fsConf);
-        }
-        return fs;
+        result=execOozieDBCLICommands(argsu);
+        assertEquals(0, result);
+        assertTrue(upgrage.exists());
 
     }
+    
 
-    private Services getServices() throws ServiceException {
-        if (services == null) {
-            services = new Services();
-            services.getConf().set(Services.CONF_SERVICE_CLASSES,
-                    "org.apache.oozie.service.LiteWorkflowAppService, org.apache.oozie.service.HadoopAccessorService");
-            services.init();
-        }
-        return services;
-    }
-
-
-
+  
     private int  execOozieDBCLICommands(String[] args) {
         try {
             OozieDBCLI.main(args);

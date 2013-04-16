@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 
 public class FakeConnection implements Connection {
     public static boolean CREATE = true;
-
+    public static boolean SYSTEM_TABLE=true;
     @Override
     public boolean isWrapperFor(Class<?> arg0) throws SQLException {
         // TODO Auto-generated method stub
@@ -98,7 +98,6 @@ public class FakeConnection implements Connection {
     @Override
     public Statement createStatement() throws SQLException {
         Statement result = mock(Statement.class);
-        when(result.executeQuery("select count(*) from OOZIE_SYS")).thenReturn(new FakeResultSet(-1));
         if (CREATE) {
             when(result.executeQuery("select count(*) from WF_JOBS where status IN ('RUNNING', 'SUSPENDED')")).thenReturn(
                     new FakeResultSet(-1));
@@ -106,6 +105,13 @@ public class FakeConnection implements Connection {
         else {
             when(result.executeQuery("select count(*) from WF_JOBS where status IN ('RUNNING', 'SUSPENDED')")).thenReturn(
                     new FakeResultSet(1));
+        }
+        if(SYSTEM_TABLE){
+            when(result.executeQuery("select count(*) from OOZIE_SYS")).thenReturn(new FakeResultSet(1));
+
+        }else{
+            when(result.executeQuery("select count(*) from OOZIE_SYS")).thenReturn(new FakeResultSet(-1));
+
         }
         return result;
     }
