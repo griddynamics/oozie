@@ -19,16 +19,9 @@
 package org.apache.oozie.tools;
 
 import java.io.File;
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.oozie.service.HadoopAccessorService;
-import org.apache.oozie.service.ServiceException;
-import org.apache.oozie.service.Services;
 import org.apache.oozie.test.XTestCase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,10 +29,6 @@ import org.junit.BeforeClass;
 public class TestOozieMySqlDBCLI extends XTestCase {
     private SecurityManager SECURITY_MANAGER;
     private static String url = "jdbc:mysql:fake";
-    private String outPath = "outFolder";
-    private Services services = null;
-    private Path dstPath = null;
-    private FileSystem fs;
 
     @BeforeClass
     protected void setUp() throws Exception {
@@ -66,10 +55,11 @@ public class TestOozieMySqlDBCLI extends XTestCase {
    
     /**
      * addfasdf
-     * @throws Exception 
      */
     public void testCreateMysql() throws Exception{
         new LauncherSecurityManager();
+        FakeConnection.SYSTEM_TABLE=false;
+
         File createSql = new File(getTestCaseConfDir() + File.separator + "create.sql");
         String[] argsC = { "create", "-sqlfile", createSql.getAbsolutePath(), "-run" };
         int result=execOozieDBCLICommands(argsC);
@@ -80,6 +70,8 @@ public class TestOozieMySqlDBCLI extends XTestCase {
 
     public void testUpdateMysql() throws Exception{
         new LauncherSecurityManager();
+        FakeConnection.SYSTEM_TABLE=true;
+
         FakeConnection.CREATE=false;
         File upgrage = new File(getTestCaseConfDir() + File.separator + "update.sql");
         String[] argsu = { "upgrade", "-sqlfile", upgrage.getAbsolutePath(), "-run" ,"-mysqlmediumtext", "true"};
