@@ -95,7 +95,7 @@ public class TestOozieDBCLI extends XTestCase {
             String[] argsVersion = { "version" };
             assertEquals(0, execOozieDBCLICommands(argsVersion));
 
-            assertTrue(data.toString().contains("db.version: 1"));
+            assertTrue(data.toString().contains("db.version: 2"));
             // show help information
             data.reset();
             String[] argsHelp = { "help" };

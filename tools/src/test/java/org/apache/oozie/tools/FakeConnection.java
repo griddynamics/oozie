@@ -106,6 +106,12 @@ public class FakeConnection implements Connection {
     @Override
     public Statement createStatement() throws SQLException {
         Statement result = mock(Statement.class);
+        ResultSet rsFordbVersion = mock(ResultSet.class);
+        when(rsFordbVersion.next()).thenReturn(true);
+        when(rsFordbVersion.getString(1)).thenReturn("1");
+
+        when(result.executeQuery("select data from OOZIE_SYS where name = 'db.version'")).thenReturn(rsFordbVersion);
+
         if (CREATE) {
             when(result.executeQuery("select count(*) from WF_JOBS where status IN ('RUNNING', 'SUSPENDED')")).thenReturn(
                     new FakeResultSet(-1));
