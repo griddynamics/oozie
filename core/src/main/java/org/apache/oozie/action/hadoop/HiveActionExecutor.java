@@ -19,33 +19,41 @@ package org.apache.oozie.action.hadoop;
 
 import static org.apache.oozie.action.hadoop.LauncherMapper.CONF_OOZIE_ACTION_MAIN_CLASS;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapred.RunningJob;
 import org.apache.oozie.action.ActionExecutorException;
 import org.apache.oozie.client.WorkflowAction;
 import org.apache.oozie.client.XOozieClient;
+import org.apache.oozie.service.HadoopAccessorException;
+import org.apache.oozie.util.IOUtils;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 
 public class HiveActionExecutor extends ScriptLanguageActionExecutor {
 
+    private static final String HIVE_MAIN_CLASS_NAME = "org.apache.oozie.action.hadoop.HiveMain";
+    static final String HIVE_SCRIPT = "oozie.hive.script";
+    static final String HIVE_PARAMS = "oozie.hive.params";
+
     public HiveActionExecutor() {
         super("hive");
     }
 
     @Override
-    protected List<Class> getLauncherClasses() {
-        List<Class> classes = super.getLauncherClasses();
-        classes.add(HiveMain.class);
-        return classes;
-    }
-
-    @Override
     protected String getLauncherMain(Configuration launcherConf, Element actionXml) {
-        return launcherConf.get(CONF_OOZIE_ACTION_MAIN_CLASS, HiveMain.class.getName());
+        return launcherConf.get(CONF_OOZIE_ACTION_MAIN_CLASS, HIVE_MAIN_CLASS_NAME);
     }
 
     @Override
@@ -69,13 +77,44 @@ public class HiveActionExecutor extends ScriptLanguageActionExecutor {
             strParams[i] = params.get(i).getTextTrim();
         }
 
-        HiveMain.setHiveScript(conf, scriptName, strParams);
+        setHiveScript(conf, scriptName, strParams);
         return conf;
+    }
+
+    public static void setHiveScript(Configuration conf, String script, String[] params) {
+        conf.set(HIVE_SCRIPT, script);
+        MapReduceMain.setStrings(conf, HIVE_PARAMS, params);
     }
 
     @Override
     protected boolean getCaptureOutput(WorkflowAction action) throws JDOMException {
         return true;
+    }
+
+    @Override
+    protected void getActionData(FileSystem actionFs, RunningJob runningJob, WorkflowAction action, Context context)
+            throws HadoopAccessorException, JDOMException, IOException, URISyntaxException {
+        super.getActionData(actionFs, runningJob, action, context);
+
+        // Load stored Hadoop jobs ids and promote them as external child ids on job success
+        Properties props = new Properties();
+        props.load(new StringReader(action.getData()));
+        context.setExternalChildIDs((String) props.get(LauncherMain.HADOOP_JOBS));
+    }
+
+    @Override
+    protected void setActionCompletionData(Context context, FileSystem actionFs) throws IOException,
+            HadoopAccessorException, URISyntaxException {
+        super.setActionCompletionData(context, actionFs);
+
+        // Load stored Hadoop jobs ids and promote them as external child ids on job failure
+        Path externalChildIDs = LauncherMapper.getExternalChildIDsDataPath(context.getActionDir());
+        if (actionFs.exists(externalChildIDs)) {
+            InputStream is = actionFs.open(externalChildIDs);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            context.setExternalChildIDs(IOUtils.getReaderAsString(reader, -1));
+            reader.close();
+        }
     }
 
     /**
