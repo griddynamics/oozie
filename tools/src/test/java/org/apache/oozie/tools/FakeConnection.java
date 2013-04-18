@@ -326,6 +326,7 @@ public class FakeConnection implements Connection {
 
     }
 
+    @SuppressWarnings( "deprecation" )
     private static class FakeResultSet implements ResultSet {
 
         private int counter = 0;
@@ -414,14 +415,17 @@ public class FakeConnection implements Connection {
             return null;
         }
 
+        @Override
         public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
             return null;
         }
 
+        @Override
         public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
             return null;
         }
 
+        @Override
         public BigDecimal getBigDecimal(String columnLabel, int scale) throws SQLException {
             return null;
         }
@@ -751,10 +755,12 @@ public class FakeConnection implements Connection {
             return null;
         }
 
+        @Override
         public InputStream getUnicodeStream(int columnIndex) throws SQLException {
             return null;
         }
 
+        @Override
         public InputStream getUnicodeStream(String columnLabel) throws SQLException {
             return null;
         }
