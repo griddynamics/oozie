@@ -242,8 +242,6 @@ public class SshActionExecutor extends ActionExecutor {
                             Element argsElement = argsList.get(i);
                             args[i] = argsElement.getValue();
                             // Even though we're keeping the args as an array, if they contain a space we still have to either quote
-
-
                             // them or escape their space (because the scripts will split them up otherwise)
                             if (args[i].contains(" ") &&
                                     !(args[i].startsWith("\"") && args[i].endsWith("\"") ||

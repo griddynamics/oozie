@@ -25,8 +25,7 @@ import org.apache.oozie.client.WorkflowJob;
 import org.apache.oozie.client.rest.BulkResponseImpl;
 
 /**
- * Test non-argument constructor and methods of {@link BundleEngine} that
- * either throw exceptions or return null.
+ * Test non-argument constructor and methods of {@link BundleEngine} that either throw exceptions or return null. 
  * {@link BundleEngineException} covered as well.
  */
 public class TestBundleEngineSimple extends TestCase {
@@ -95,7 +94,8 @@ public class TestBundleEngineSimple extends TestCase {
     }
 
     /**
-     * Test negative cases of the filter parsing by {@link BundleEngine#parseFilter(String)}.
+     * Test negative cases of the filter parsing by
+     * {@link BundleEngine#parseFilter(String)}.
      */
     public void testParseFilterNegative() {
         BundleEngine be = new BundleEngine();
@@ -134,7 +134,8 @@ public class TestBundleEngineSimple extends TestCase {
     }
 
     /**
-     * Test negative cases of method {@link BundleEngine#parseBulkFilter(String)}
+     * Test negative cases of method
+     * {@link BundleEngine#parseBulkFilter(String)}
      */
     public void testParseBulkFilterNegative() {
         // incorrect key=value pair syntax:
@@ -155,7 +156,7 @@ public class TestBundleEngineSimple extends TestCase {
         }
         // one of the values is a whitespace:
         try {
-            BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_BUNDLE_NAME+"=aaa, ,bbb");
+            BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_BUNDLE_NAME + "=aaa, ,bbb");
             assertTrue("BundleEngineException expected.", false);
         }
         catch (BundleEngineException bee) {
@@ -171,13 +172,14 @@ public class TestBundleEngineSimple extends TestCase {
         }
         // incorrect status:
         try {
-            BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_STATUS+"=foo");
+            BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_STATUS + "=foo");
             assertTrue("BundleEngineException expected.", false);
         }
         catch (BundleEngineException bee) {
             assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
         }
-        // filter does not contain "BulkResponseImpl.BULK_FILTER_BUNDLE_NAME" field:
+        // filter does not contain "BulkResponseImpl.BULK_FILTER_BUNDLE_NAME"
+        // field:
         try {
             BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_LEVEL + "=foo");
             assertTrue("BundleEngineException expected.", false);

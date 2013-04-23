@@ -43,8 +43,7 @@ public class TestCoordinatorJobBean extends XTestCase {
     private static final Date nmt = new Date(6L);
     private static final Date pt = new Date(7L);
     private static final Date spt = new Date(8L);
-    private static final List<? extends JsonCoordinatorAction> actionList = Collections
-            .singletonList(new CoordinatorActionBean());
+    private static final List<? extends JsonCoordinatorAction> actionList = Collections.singletonList(new CoordinatorActionBean());
     private static final Execution execution = Execution.LIFO;
 
     private void set(CoordinatorJobBean bean) {
@@ -119,8 +118,7 @@ public class TestCoordinatorJobBean extends XTestCase {
         }
         assertEquals(true, bean.isDoneMaterialization());
         assertEquals(et, bean.getEndTime());
-        assertEquals(DateUtils.convertDateToTimestamp(et),
-                bean.getEndTimestamp());
+        assertEquals(DateUtils.convertDateToTimestamp(et), bean.getEndTimestamp());
         if (checkDeserialization) {
             assertEquals(execution.toString(), bean.getExecution());
         }
@@ -134,17 +132,14 @@ public class TestCoordinatorJobBean extends XTestCase {
             assertEquals(4, bean.getLastActionNumber());
         }
         assertEquals(lat, bean.getLastActionTime());
-        assertEquals(DateUtils.convertDateToTimestamp(lat),
-                bean.getLastActionTimestamp());
+        assertEquals(DateUtils.convertDateToTimestamp(lat), bean.getLastActionTimestamp());
         if (checkDeserialization) {
             assertEquals(lmt, bean.getLastModifiedTime());
-            assertEquals(DateUtils.convertDateToTimestamp(lmt),
-                    bean.getLastModifiedTimestamp());
+            assertEquals(DateUtils.convertDateToTimestamp(lmt), bean.getLastModifiedTimestamp());
         }
         assertEquals(10, bean.getMatThrottling());
         assertEquals(nmt, bean.getNextMaterializedTime());
-        assertEquals(DateUtils.convertDateToTimestamp(nmt),
-                bean.getNextMaterializedTimestamp());
+        assertEquals(DateUtils.convertDateToTimestamp(nmt), bean.getNextMaterializedTimestamp());
         if (checkDeserialization) {
             assertEquals("ojx", bean.getOrigJobXml());
             assertEquals(pt, bean.getPauseTime());
@@ -154,13 +149,11 @@ public class TestCoordinatorJobBean extends XTestCase {
             assertEquals("sx", bean.getSlaXml());
         }
         assertEquals(st, bean.getStartTime());
-        assertEquals(DateUtils.convertDateToTimestamp(st),
-                bean.getStartTimestamp());
+        assertEquals(DateUtils.convertDateToTimestamp(st), bean.getStartTimestamp());
         assertEquals(Status.KILLED, bean.getStatus());
         if (checkDeserialization) {
             assertEquals(spt, bean.getSuspendedTime());
-            assertEquals(DateUtils.convertDateToTimestamp(spt),
-                    bean.getSuspendedTimestamp());
+            assertEquals(DateUtils.convertDateToTimestamp(spt), bean.getSuspendedTimestamp());
         }
         assertEquals(11, bean.getTimeout());
         assertEquals(Timeunit.MINUTE, bean.getTimeUnit());
@@ -182,8 +175,7 @@ public class TestCoordinatorJobBean extends XTestCase {
         dos.close();
 
         final CoordinatorJobBean bean2 = new CoordinatorJobBean();
-        bean2.readFields(new DataInputStream(new ByteArrayInputStream(baos
-                .toByteArray())));
+        bean2.readFields(new DataInputStream(new ByteArrayInputStream(baos.toByteArray())));
 
         testGet(bean2, false);
     }

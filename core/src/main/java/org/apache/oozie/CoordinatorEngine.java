@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -277,7 +277,7 @@ public class CoordinatorEngine extends BaseEngine {
             if (logRetrievalType.equals(RestConstants.JOB_LOG_ACTION)) {
                 // NB: use set implementation that maintains order or elements to
                 // achieve reproducibility:
-                Map<String,String> actionMap = new LinkedHashMap<String,String>();
+                Set<String> actionSet = new LinkedHashSet<String>();
                 String[] list = logRetrievalScope.split(",");
                 for (String s : list) {
                     s = s.trim();
@@ -305,7 +305,7 @@ public class CoordinatorEngine extends BaseEngine {
                             throw new CommandException(ErrorCode.E0302, "format is wrong for action's range '" + s + "'");
                         }
                         for (int i = start; i <= end; i++) {
-                            actionMap.put(jobId + "@" + i, null);
+                            actionSet.add(jobId + "@" + i);
                         }
                     }
                     else {
@@ -316,11 +316,11 @@ public class CoordinatorEngine extends BaseEngine {
                             throw new CommandException(ErrorCode.E0302, "format is wrong for action id'" + s
                                     + "'. Integer only.");
                         }
-                        actionMap.put(jobId + "@" + s, null);
+                        actionSet.add(jobId + "@" + s);
                     }
                 }
 
-                Iterator<String> actionsIterator = actionMap.keySet().iterator();
+                Iterator<String> actionsIterator = actionSet.iterator();
                 StringBuilder orSeparatedActions = new StringBuilder("");
                 boolean orRequired = false;
                 while (actionsIterator.hasNext()) {
@@ -330,7 +330,7 @@ public class CoordinatorEngine extends BaseEngine {
                     orSeparatedActions.append(actionsIterator.next().toString());
                     orRequired = true;
                 }
-                if (actionMap.size() > 1 && orRequired) {
+                if (actionSet.size() > 1 && orRequired) {
                     orSeparatedActions.insert(0, "(");
                     orSeparatedActions.append(")");
                 }

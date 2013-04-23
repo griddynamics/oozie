@@ -116,7 +116,8 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
         try {
             client.reRun("foo-id", client.createConfiguration());
             assertTrue(false);
-        } catch (OozieClientException oce) {
+        }
+        catch (OozieClientException oce) {
             assertEquals(ErrorCode.E0301.toString(), oce.getErrorCode());
         }
     }
@@ -152,11 +153,10 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
                 + "<dataset name=\"local_a\" frequency=\"${coord:minutes(20)}\" initial-instance=\"2009-02-01T01:00Z\" "
                 + "timezone=\"UTC\"> <uri-template>file:///tmp/coord/workflows/${YEAR}/${DAY}</uri-template> </dataset> "
                 + "</datasets> <input-events> "
-                + "<data-in name=\"A\" dataset=\"a\"> <instance>${coord:latest(0)}</instance> </data-in>  "
-                + "</input-events> "
+                + "<data-in name=\"A\" dataset=\"a\"> <instance>${coord:latest(0)}</instance> </data-in>  " + "</input-events> "
                 + "<output-events> <data-out name=\"LOCAL_A\" dataset=\"local_a\"> "
                 + "<instance>${coord:current(-1)}</instance> </data-out> </output-events> <action> <workflow> "
-                    + "<app-path>hdfs:///tmp/workflows/</app-path> "
+                + "<app-path>hdfs:///tmp/workflows/</app-path> "
                 + "<configuration> <property> <name>inputA</name> <value>${coord:dataIn('A')}</value> </property> "
                 + "<property> <name>inputB</name> <value>${coord:dataOut('LOCAL_A')}</value> "
                 + "</property></configuration> </workflow> </action> </coordinator-app>";

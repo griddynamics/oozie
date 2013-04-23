@@ -111,9 +111,9 @@ public class TestCoordinatorEngineSimple extends XTestCase {
 
         Map<String, List<String>> map = ce.parseFilter("frequency=5;unit=hours;user=foo;status=FAILED");
         assertTrue(map.size() == 4);
-        assertEquals("300",    map.get("frequency").get(0));
+        assertEquals("300", map.get("frequency").get(0));
         assertEquals("MINUTE", map.get("unit").get(0));
-        assertEquals("foo",    map.get("user").get(0));
+        assertEquals("foo", map.get("user").get(0));
         assertEquals("FAILED", map.get("status").get(0));
     }
 }

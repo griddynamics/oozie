@@ -91,8 +91,7 @@ public class TestBundleJobBean extends XTestCase {
             assertEquals(ct, bean.getCreatedTime());
         }
         assertEquals(et, bean.getEndTime());
-        assertEquals(DateUtils.convertDateToTimestamp(et),
-                bean.getEndTimestamp());
+        assertEquals(DateUtils.convertDateToTimestamp(et), bean.getEndTimestamp());
         assertEquals("ei", bean.getExternalId());
         assertEquals("group", bean.getGroup());
         assertEquals("id", bean.getId());
@@ -100,12 +99,10 @@ public class TestBundleJobBean extends XTestCase {
             assertEquals("jx", bean.getJobXml());
         }
         assertEquals(kt, bean.getKickoffTime());
-        assertEquals(DateUtils.convertDateToTimestamp(kt),
-                bean.getKickoffTimestamp());
+        assertEquals(DateUtils.convertDateToTimestamp(kt), bean.getKickoffTimestamp());
         if (checkAllFields) {
             assertEquals(lmt, bean.getLastModifiedTime());
-            assertEquals(DateUtils.convertDateToTimestamp(lmt),
-                    bean.getLastModifiedTimestamp());
+            assertEquals(DateUtils.convertDateToTimestamp(lmt), bean.getLastModifiedTimestamp());
         }
         if (checkAllFields) {
             assertEquals("ojx", bean.getOrigJobXml());
@@ -115,8 +112,7 @@ public class TestBundleJobBean extends XTestCase {
         assertEquals(st, bean.getStartTime());
         assertEquals(Status.KILLED, bean.getStatus());
         if (checkAllFields) {
-            assertEquals(DateUtils.convertDateToTimestamp(spt),
-                    bean.getSuspendedTimestamp());
+            assertEquals(DateUtils.convertDateToTimestamp(spt), bean.getSuspendedTimestamp());
         }
         assertEquals(11, bean.getTimeout());
         assertEquals(Timeunit.MINUTE, bean.getTimeUnit());
@@ -137,8 +133,7 @@ public class TestBundleJobBean extends XTestCase {
         dos.close();
 
         final BundleJobBean bean2 = new BundleJobBean();
-        bean2.readFields(new DataInputStream(new ByteArrayInputStream(baos
-                .toByteArray())));
+        bean2.readFields(new DataInputStream(new ByteArrayInputStream(baos.toByteArray())));
 
         testGet(bean2, false);
     }

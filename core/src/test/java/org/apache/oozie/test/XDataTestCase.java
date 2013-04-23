@@ -783,7 +783,6 @@ public abstract class XDataTestCase extends XHCatTestCase {
      * @return bundle job bean
      * @throws Exception
      */
-    @VisibleForTesting
     public BundleJobBean addRecordToBundleJobTable(Job.Status jobStatus, boolean pending) throws Exception {
         BundleJobBean bundle = createBundleJob(jobStatus, pending);
         try {

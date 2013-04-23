@@ -66,9 +66,11 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         try {
             out = new PrintWriter(new FileWriter(wf));
             out.println(appXml);
-        } catch (IOException iex) {
+        }
+        catch (IOException iex) {
             throw iex;
-        } finally {
+        }
+        finally {
             if (out != null) {
                 out.close();
             }
@@ -77,11 +79,15 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
 
     static class TestXLogService extends XLogService {
         Filter filter;
+
         @Override
-        public void streamLog(Filter filter1, Date startTime, Date endTime,
-                Writer writer) throws IOException {
+        public void streamLog(Filter filter1, Date startTime, Date endTime, Writer writer) throws IOException {
             filter = filter1;
         }
+    }
+
+    private CoordinatorEngine createCoordinatorEngine() {
+        return new CoordinatorEngine(getTestUser(), "UNIT_TESTING");
     }
 
     /**
@@ -92,15 +98,14 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
      * {@link CoordinatorEngine#streamLog(String, Writer)} invocation.
      */
     public void testStreamLog2() throws Exception {
-        CeData ced = runJobsImpl();
-        ced.ce.streamLog(ced.jobId, new StringWriter()/* writer is unused */);
+        CoordinatorEngine ce = createCoordinatorEngine();
+        String jobId = runJobsImpl(ce);
+        ce.streamLog(jobId, new StringWriter()/* writer is unused */);
 
-        TestXLogService service = (TestXLogService) services
-                .get(XLogService.class);
+        TestXLogService service = (TestXLogService) services.get(XLogService.class);
         Filter filter = service.filter;
 
-        assertEquals(filter.getFilterParams().get(DagXLogInfoService.JOB),
-                ced.jobId);
+        assertEquals(filter.getFilterParams().get(DagXLogInfoService.JOB), jobId);
     }
 
     /**
@@ -108,18 +113,14 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
      * String, Writer) with null 2nd and 3rd arguments.
      */
     public void testStreamLog4NullNull() throws Exception {
-        CeData ced = runJobsImpl();
-        ced.ce.streamLog(ced.jobId, null, null, new StringWriter()/*
-                                                                   * writer is
-                                                                   * unused
-                                                                   */);
+        CoordinatorEngine ce = createCoordinatorEngine();
+        String jobId = runJobsImpl(ce);
+        ce.streamLog(jobId, null, null, new StringWriter()/* writer is unused */);
 
-        TestXLogService service = (TestXLogService) services
-                .get(XLogService.class);
+        TestXLogService service = (TestXLogService) services.get(XLogService.class);
         Filter filter = service.filter;
 
-        assertEquals(filter.getFilterParams().get(DagXLogInfoService.JOB),
-                ced.jobId);
+        assertEquals(filter.getFilterParams().get(DagXLogInfoService.JOB), jobId);
     }
 
     /**
@@ -128,21 +129,17 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
      * argument.
      */
     public void testStreamLog4JobLogAction() throws Exception {
-        CeData ced = runJobsImpl();
+        CoordinatorEngine ce = createCoordinatorEngine();
+        String jobId = runJobsImpl(ce);
 
-        ced.ce.streamLog(ced.jobId, "678, 123-127, 946",
-                RestConstants.JOB_LOG_ACTION, new StringWriter()/* unused */);
+        ce.streamLog(jobId, "678, 123-127, 946", RestConstants.JOB_LOG_ACTION, new StringWriter()/* unused */);
 
-        TestXLogService service = (TestXLogService) services
-                .get(XLogService.class);
+        TestXLogService service = (TestXLogService) services.get(XLogService.class);
         Filter filter = service.filter;
 
-        assertEquals(ced.jobId,
-                filter.getFilterParams().get(DagXLogInfoService.JOB));
-        assertEquals("(" + ced.jobId + "@678|" + ced.jobId + "@123|"
-                + ced.jobId + "@124|" + ced.jobId + "@125|" + ced.jobId
-                + "@126|" + ced.jobId + "@127|" + ced.jobId + "@946)", filter
-                .getFilterParams().get(DagXLogInfoService.ACTION));
+        assertEquals(jobId, filter.getFilterParams().get(DagXLogInfoService.JOB));
+        assertEquals("(" + jobId + "@678|" + jobId + "@123|" + jobId + "@124|" + jobId + "@125|" + jobId + "@126|" + jobId
+                + "@127|" + jobId + "@946)", filter.getFilterParams().get(DagXLogInfoService.ACTION));
     }
 
     /**
@@ -150,39 +147,30 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
      * String, Writer) with RestConstants.JOB_LOG_DATE.
      */
     public void testStreamLog4JobLogDate() throws Exception {
-        final CeData ced = runJobsImpl();
+        CoordinatorEngine ce = createCoordinatorEngine();
+        final String jobId = runJobsImpl(ce);
 
-        CoordinatorJobBean cjb = ced.ce.getCoordJob(ced.jobId);
+        CoordinatorJobBean cjb = ce.getCoordJob(jobId);
         Date createdDate = cjb.getCreatedTime();
-        Date endDate     = new Date();
+        Date endDate = new Date();
         assertTrue(endDate.after(createdDate));
 
-        long middle = (createdDate.getTime() + endDate.getTime())/2;
+        long middle = (createdDate.getTime() + endDate.getTime()) / 2;
         Date middleDate = new Date(middle);
 
-        ced.ce.streamLog(ced.jobId, DateUtils.formatDateOozieTZ(createdDate)
-                + "::" + DateUtils.formatDateOozieTZ(middleDate) + ","
-                + DateUtils.formatDateOozieTZ(middleDate) + "::"
-                + DateUtils.formatDateOozieTZ(endDate),
+        ce.streamLog(jobId, DateUtils.formatDateOozieTZ(createdDate) + "::" + DateUtils.formatDateOozieTZ(middleDate) + ","
+                + DateUtils.formatDateOozieTZ(middleDate) + "::" + DateUtils.formatDateOozieTZ(endDate),
                 RestConstants.JOB_LOG_DATE, new StringWriter()/* unused */);
 
-        TestXLogService service = (TestXLogService) services
-                .get(XLogService.class);
+        TestXLogService service = (TestXLogService) services.get(XLogService.class);
         Filter filter = service.filter;
 
-        assertEquals(ced.jobId,
-                filter.getFilterParams().get(DagXLogInfoService.JOB));
-        final String action = filter.getFilterParams().get(
-                DagXLogInfoService.ACTION);
-        assertEquals("(" + ced.jobId + "@1|" + ced.jobId + "@2)", action);
+        assertEquals(jobId, filter.getFilterParams().get(DagXLogInfoService.JOB));
+        final String action = filter.getFilterParams().get(DagXLogInfoService.ACTION);
+        assertEquals("(" + jobId + "@1|" + jobId + "@2)", action);
     }
 
-    private static class CeData {
-        CoordinatorEngine ce;
-        String jobId;
-    }
-
-    private CeData runJobsImpl() throws Exception {
+    private String runJobsImpl(final CoordinatorEngine ce) throws Exception {
         services.setService(TestXLogService.class);
         // NB: need to re-define the parameters that are cleared upon the
         // service reset:
@@ -191,9 +179,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
 
         Configuration conf = new XConfiguration();
 
-        final String appPath = "file://" + getTestCaseDir() + File.separator
-                + "coordinator.xml";
-        final CeData ced = new CeData();
+        final String appPath = "file://" + getTestCaseDir() + File.separator + "coordinator.xml";
         final long now = System.currentTimeMillis();
         final String start = DateUtils.formatDateOozieTZ(new Date(now));
         long e = now + 1000 * 119;
@@ -202,68 +188,47 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         String wfXml = IOUtils.getResourceAsString("wf-no-op.xml", -1);
         writeToFile(wfXml, getFsTestCaseDir(), "workflow.xml");
 
-        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:minutes(1)}\" start=\""
-                + start
-                + "\" end=\""
-                + end
-                + "\" timezone=\"UTC\" "
-                + "xmlns=\"uri:oozie:coordinator:0.1\"> "
-                + "<controls> "
-                + "  <timeout>10</timeout> "
-                + "  <concurrency>1</concurrency> "
-                + "  <execution>LIFO</execution> "
-                + "</controls> "
-                + "<action> "
-                + "  <workflow> "
-                + "  <app-path>"
-                + getFsTestCaseDir()
-                + "/workflow.xml</app-path>"
+        String appXml = "<coordinator-app name=\"NAME\" frequency=\"${coord:minutes(1)}\" start=\"" + start + "\" end=\"" + end
+                + "\" timezone=\"UTC\" " + "xmlns=\"uri:oozie:coordinator:0.1\"> " + "<controls> " + "  <timeout>10</timeout> "
+                + "  <concurrency>1</concurrency> " + "  <execution>LIFO</execution> " + "</controls> " + "<action> "
+                + "  <workflow> " + "  <app-path>" + getFsTestCaseDir() + "/workflow.xml</app-path>"
                 + "  <configuration> <property> <name>inputA</name> <value>valueA</value> </property> "
-                + "  <property> <name>inputB</name> <value>valueB</value> "
-                + "  </property></configuration> "
-                + "</workflow>"
+                + "  <property> <name>inputB</name> <value>valueB</value> " + "  </property></configuration> " + "</workflow>"
                 + "</action> " + "</coordinator-app>";
         writeToFile(appXml, appPath);
         conf.set(OozieClient.COORDINATOR_APP_PATH, appPath);
         conf.set(OozieClient.USER_NAME, getTestUser());
 
-        final CoordinatorEngine ce = new CoordinatorEngine(getTestUser(),
-                "UNIT_TESTING");
         final String jobId = ce.submitJob(conf, true);
         waitFor(1000 * 119, new Predicate() {
             @Override
             public boolean evaluate() throws Exception {
                 try {
-                    List<CoordinatorAction> actions = ce.getCoordJob(jobId)
-                            .getActions();
+                    List<CoordinatorAction> actions = ce.getCoordJob(jobId).getActions();
                     if (actions.size() < 1) {
                         return false;
                     }
-                    for (CoordinatorAction action: actions) {
-                        CoordinatorAction.Status actionStatus = action
-                                .getStatus();
+                    for (CoordinatorAction action : actions) {
+                        CoordinatorAction.Status actionStatus = action.getStatus();
                         if (actionStatus != CoordinatorAction.Status.SUCCEEDED) {
                             return false;
                         }
                     }
                     return true;
-                } catch (Exception ex) {
+                }
+                catch (Exception ex) {
                     ex.printStackTrace();
                     return false;
                 }
             }
         });
 
-        ced.ce = ce;
-        ced.jobId = jobId;
-        return ced;
+        return jobId;
     }
 
-    private void writeToFile(String content, Path appPath, String fileName)
-            throws IOException {
+    private void writeToFile(String content, Path appPath, String fileName) throws IOException {
         FileSystem fs = getFileSystem();
-        Writer writer = new OutputStreamWriter(fs.create(new Path(appPath,
-                fileName), true));
+        Writer writer = new OutputStreamWriter(fs.create(new Path(appPath, fileName), true));
         writer.write(content);
         writer.close();
     }

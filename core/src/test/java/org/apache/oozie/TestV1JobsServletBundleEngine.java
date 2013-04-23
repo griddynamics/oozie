@@ -49,7 +49,9 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
     private static final boolean IS_SECURITY_ENABLED = false;
 
     @Ignore
-    private static class XDataTestCase1 extends XDataTestCase {}
+    private static class XDataTestCase1 extends XDataTestCase {
+    }
+
     private final XDataTestCase1 xDataTestCase = new XDataTestCase1();
 
     @Override
@@ -71,8 +73,9 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
     }
 
     /**
-     * Tests method {@link BundleEngine#getBundleJobs(String, int, int)}.
-     * Also tests positive cases of the filter parsing by {@link BundleEngine#parseFilter(String)}.
+     * Tests method {@link BundleEngine#getBundleJobs(String, int, int)}. Also
+     * tests positive cases of the filter parsing by
+     * {@link BundleEngine#parseFilter(String)}.
      */
     public void testGetBundleJobs() throws Exception {
         final BundleJobBean bundleJobBean = xDataTestCase.addRecordToBundleJobTable(Job.Status.PREP, false);
@@ -84,10 +87,8 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(RestConstants.JOBTYPE_PARAM, "bundle");
-                params.put(RestConstants.JOBS_FILTER_PARAM,
-                         OozieClient.FILTER_STATUS+"=PREP;"
-                       + OozieClient.FILTER_NAME+"=BUNDLE-TEST;"
-                       + OozieClient.FILTER_USER+"="+getTestUser());
+                params.put(RestConstants.JOBS_FILTER_PARAM, OozieClient.FILTER_STATUS + "=PREP;" + OozieClient.FILTER_NAME
+                        + "=BUNDLE-TEST;" + OozieClient.FILTER_USER + "=" + getTestUser());
 
                 URL url = createURL("", params);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -97,10 +98,9 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
 
                 JSONObject json = (JSONObject) JSONValue.parse(new InputStreamReader(conn.getInputStream()));
 
-                //System.out.println("["+json+"]");
                 assertEquals(Long.valueOf(1L), json.get("total"));
-                JSONArray array = (JSONArray)json.get("bundlejobs");
-                JSONObject jo = (JSONObject)array.get(0);
+                JSONArray array = (JSONArray) json.get("bundlejobs");
+                JSONObject jo = (JSONObject) array.get(0);
                 assertEquals(bundleJobBean.getId(), jo.get("bundleJobId"));
 
                 return null;

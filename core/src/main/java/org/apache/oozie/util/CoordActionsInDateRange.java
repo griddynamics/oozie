@@ -21,9 +21,9 @@ package org.apache.oozie.util;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.apache.oozie.CoordinatorActionBean;
 import org.apache.oozie.ErrorCode;
@@ -54,23 +54,23 @@ public class CoordActionsInDateRange {
     public static List<String> getCoordActionIdsFromDates(String jobId, String scope) throws XException {
         ParamChecker.notEmpty(jobId, "jobId");
         ParamChecker.notEmpty(scope, "scope");
-        // NB: Use LinkedHashMap to get an ordered set.
+        // NB: Use an ordered set.
         // The ordering is needed to achieve reproducible behavior.
-        Map<String,String> actionMap = new LinkedHashMap<String,String>();
+        Set<String> actionSet = new LinkedHashSet<String>();
         String[] list = scope.split(",");
         for (String s : list) {
             s = s.trim();
             if (s.contains("::")) {
                 List<String> listOfActions = getCoordActionIdsFromDateRange(jobId, s);
                 for (String a: listOfActions) {
-                    actionMap.put(a, null);
+                    actionSet.add(a);
                 }
             }
             else {
                 throw new XException(ErrorCode.E0308, "'" + s + "'. Separator '::' is missing for start and end dates of range");
             }
         }
-        return new ArrayList<String>(actionMap.keySet());
+        return new ArrayList<String>(actionSet);
     }
 
     /**
