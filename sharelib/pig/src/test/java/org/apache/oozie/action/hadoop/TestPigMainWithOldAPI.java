@@ -63,8 +63,8 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
 
         Path script = new Path(getTestCaseDir(), "script.pig");
         Writer w = new FileWriter(script.toString());
-        String pigScript = "set job.name 'test'\n" + "set debug on\n" + "A = load '$IN' using PigStorage(':');\n"
-                + "B = foreach A generate $0 as id;\n" + "store B into '$OUT' USING PigStorage();";
+        String pigScript = "set job.name 'test'\n set debug on\n A = load '$IN' using PigStorage(':');\n"
+                + "B = foreach A generate $0 as id;\n store B into '$OUT' USING PigStorage();";
         w.write(pigScript);
         w.close();
 
@@ -109,7 +109,7 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
         File classPathDir = new File(url.getPath()).getParentFile();
         assertTrue(classPathDir.exists());
         Properties props = jobConfiguration.toProperties();
-        // assertEquals(props.getProperty("oozie.pig.args.size"), "1");
+        assertEquals(props.getProperty("oozie.pig.args.size"), "1");
         File pigProps = new File(classPathDir, "pig.properties");
 
         new LauncherSecurityManager();
@@ -144,8 +144,8 @@ public class TestPigMainWithOldAPI extends XFsTestCase implements Callable<Void>
         assertTrue(jobIdsFile.exists());
         Properties prop = new Properties();
         prop.load(new FileReader(jobIdsFile));
-        String gobId = prop.getProperty("hadoopJobs");
-        assertTrue(data.toString().contains(gobId));
+        String jobId = prop.getProperty("hadoopJobs");
+        assertTrue(data.toString().contains(jobId));
         assertTrue(data.toString().contains("Success!"));
 
         return null;
