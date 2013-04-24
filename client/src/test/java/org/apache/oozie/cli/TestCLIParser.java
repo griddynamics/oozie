@@ -28,11 +28,13 @@ import junit.framework.TestCase;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
 
 public class TestCLIParser extends TestCase {
 
+    @Test
     public void testEmptyParser() throws Exception {
         try {
             CLIParser parser = new CLIParser("oozie", new String[]{});
@@ -44,6 +46,7 @@ public class TestCLIParser extends TestCase {
         }
     }
 
+    @Test
     public void testCommandParser() throws Exception {
         try {
             CLIParser parser = new CLIParser("oozie", new String[]{});
@@ -57,6 +60,7 @@ public class TestCLIParser extends TestCase {
         }
     }
 
+    @Test
     public void testCommandParserX() throws Exception {
         Option opt = new Option("o", false, "O");
         Options opts = new Options();
@@ -68,25 +72,27 @@ public class TestCLIParser extends TestCase {
         assertEquals(3, c.getCommandLine().getArgList().size());
     }
 
+    @Test
     public void testCommandParserShowHelp() throws Exception {
-        String pattern = "ozzie job <A>: AAAAA";
-        CLIParser parser = new CLIParser("ozzie", new String[]{});
+        String pattern = "oozie job <A>: AAAAA";
+        CLIParser parser = new CLIParser("oozie", new String[]{});
         parser.addCommand("job", "<A>", "AAAAA", new Options(), false);
         CLIParser.Command c = parser.parse(new String[]{"job", "b"});
-        assertTrue("", readCommandOutput(parser, c).contains(pattern));
+        assertTrue(readCommandOutput(parser, c).contains(pattern));
     }
 
+    @Test
     public void testCommandParserShowHelpWithOptions() throws Exception {
-        String pattern = "ozzie job <OPTIONS> : job operations";
-        CLIParser parser = new CLIParser("ozzie", new String[]{});
+        String pattern = "oozie job <OPTIONS> : job operations";
+        CLIParser parser = new CLIParser("oozie", new String[]{});
         parser.addCommand("job", "", "job operations", createCommandOptions(), false);
         CLIParser.Command c = parser.parse(new String[]{ "job", "-url", "test-name", "-verbose" });
-        assertTrue("", readCommandOutput(parser, c).contains(pattern));
+        assertTrue(readCommandOutput(parser, c).contains(pattern));
     }
 
     private Options createCommandOptions() {
         Option oozie = new Option("url", true, "URL");
-        Option name = new Option("verbose", false, "Name");
+        Option name = new Option("verbose", false, "verbose");
         Options complexOptions = new Options();
         complexOptions.addOption(oozie);
         complexOptions.addOption(name);

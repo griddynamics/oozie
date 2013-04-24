@@ -37,6 +37,7 @@ import org.apache.oozie.client.CoordinatorAction;
 import org.apache.oozie.client.CoordinatorJob;
 import org.apache.oozie.client.WorkflowAction;
 import org.apache.oozie.client.WorkflowJob;
+import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
@@ -76,12 +77,15 @@ public class TestOozieCLIMethods extends TestCase {
 
     /**
      *
-     * Create {@code CoordinatorJob} implementation with
-     * {@code CoordinatorActions} implementation, call
-     * {@code new OozieCLI().printCoordJob() }, and validate {@code System.out}
-     * output
-     *
+     * Create {@code CoordinatorJob} and {@code CoordinatorActions} mocks,
+     * call {@code new OozieCLI().printCoordJob() },
+     * and validate {@code System.out} output on match with
+     * expected pattern.
+     * <p>
+     * Method do pass only if output matched with predefined pattern
+     * </p>
      */
+    @Test
     public void testValidatePrintCoordJobMethodOutput() throws IOException {
         final DataObject dtObject = new DataObject() {
             {
@@ -99,11 +103,15 @@ public class TestOozieCLIMethods extends TestCase {
 
     /**
      *
-     * Create {@code CoordinatorAction} implementation, call
-     * {@code new OozieCLI().printCoordAction() }, and validate
-     * {@code System.out} output
-     *
+     * Create {@code CoordinatorAction} mock,
+     * call {@code new OozieCLI().printCoordAction() },
+     * and validate {@code System.out} output on match with
+     * expected pattern
+     * <p>
+     * Method do pass only if output matched with predefined pattern
+     * </p>
      */
+    @Test
     public void testValidateReadPrintCoordActionOutput() throws IOException {
         final DataObject dtObject = new DataObject() {
             {
@@ -114,16 +122,19 @@ public class TestOozieCLIMethods extends TestCase {
         };
 
         CoordinatorAction coordinatorAction = createCoordinatorAction(dtObject);
-        assertPrintCoordActionOutput(readPrintCoordAction(coordinatorAction), dtObject);
+        assertPrintCoordActionOutput(readCoordAction(coordinatorAction), dtObject);
     }
 
     /**
      *
-     * Create {@code WorkflowJob} implementation with {@code WorkflowAction}
-     * implementation, call {@code new OozieCLI().printJob() }, and validate
-     * {@code System.out} output
-     *
+     * Create {@code WorkflowJob}, {@code WorkflowAction} mocks,
+     * call {@code new OozieCLI().printJob() },
+     * and validate {@code System.out} on match with expected pattern
+     * <p>
+     * Method do pass only if output matched with predefined pattern
+     * </p>
      */
+    @Test
     public void testValidatePrintJobOutput() throws IOException {
         final DataObject dtObject = new DataObject() {
             {
@@ -139,11 +150,15 @@ public class TestOozieCLIMethods extends TestCase {
     }
 
     /**
-     * Create {@code WorkflowAction} implementation and,
-     * call {@code new OozieCLI().printWorkflowAction() }
-     * and validate {@code System.out} output
      *
+     * Create {@code WorkflowAction} mock
+     * call {@code new OozieCLI().printWorkflowAction() }
+     * and validate {@code System.out} on match with expected pattern
+     * <p>
+     * Method do pass only if output matched with predefined pattern
+     * </p>
      */
+    @Test
     public void testValidatePrintWorkflowActionOutput() throws IOException {
         final DataObject dtObject = new DataObject() {
             {
@@ -159,11 +174,14 @@ public class TestOozieCLIMethods extends TestCase {
     }
 
     /**
-     * Create {@code CoordinatorJob} implementation,
+     * Create {@code CoordinatorJob} mock,
      * call {@code new OozieCLI().printCoordJobs() }
-     * and validate {@code System.out} output
-     *
+     * and validate {@code System.out} on match with expected pattern
+     * <p>
+     * Method do pass only if output matched with predefined pattern
+     * </p>
      */
+    @Test
     public void testValidatePrintCoordJobsOutput() throws IOException {
         final DataObject dtObject1 = new DataObject() {
             {
@@ -185,19 +203,21 @@ public class TestOozieCLIMethods extends TestCase {
 
         Pattern pattern =  Pattern.compile(dtObject1.deamonName + "[\\s]+" +
                     dtObject1.appName + "[\\s]+" + dtObject1.appPath);
-        assertPrintCoordJobsOutput(readCoordinatorsJobOutput(coordJobs, true), pattern);
+        assertPrintCoordJobsOutput(readCoordJobsOutput(coordJobs, true), pattern);
 
         pattern = Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName);
-        assertPrintCoordJobsOutput(readCoordinatorsJobOutput(coordJobs, false), pattern);
+        assertPrintCoordJobsOutput(readCoordJobsOutput(coordJobs, false), pattern);
     }
 
     /**
-     *
-     * Create {@code CoordinatorJob} implementation,
+     * Create {@code CoordinatorJob} mock,
      * call {@code new OozieCLI().printJobs() }
-     * and validate {@code System.out} output
-     *
+     * and validate {@code System.out} on match with expected pattern
+     * <p>
+     * Method do pass only if output matched with predefined pattern
+     * </p>
      */
+    @Test
     public void testValidatePrintJobsOutput() throws IOException {
         final DataObject dtObject1 = new DataObject() {
             {
@@ -226,10 +246,14 @@ public class TestOozieCLIMethods extends TestCase {
     }
 
     /**
-     * Create list of {@code BundleJob} implementation,
+     * Create list of {@code BundleJob} mocks,
      * call {@code new OozieCLI().printBundleJobs()}
-     * and validate {@code System.out} output
+     * and validate {@code System.out} on match with expected pattern
+     * <p>
+     * Method do pass only if output matched with predefined pattern
+     * </p>
      */
+    @Test
     public void testValidationPrintBundleJobsOutput() throws IOException {
         final DataObject dtObject1 = new DataObject() {
             {
@@ -256,11 +280,16 @@ public class TestOozieCLIMethods extends TestCase {
         pattern = Pattern.compile(dtObject1.deamonName + "[\\s]+" + dtObject1.appName);
         assertPrintBundleJobsOutput(readBundleJobsOutput(bundleJobs, false), pattern);
     }
+
     /**
-    * Create {@code BundleJob} implementation,
+    * Create {@code BundleJob} mock,
     * call {@code new OozieCLI().printBundleJobs()}
-    * and validate {@code System.out} output
+    * and validate {@code System.out} on match with expected pattern
+    * <p>
+    * Method do pass only if output matched with predefined pattern
+    * </p>
     */
+    @Test
     public void testValidationPrintBundleJobOutput() throws IOException {
         final DataObject dtObject = new DataObject() {
             {
@@ -274,6 +303,15 @@ public class TestOozieCLIMethods extends TestCase {
         assertPrintBundleJobsOutput(readBundleJobOutput(createBundleJob(dtObject), false), dtObject);
     }
 
+    /**
+     * Create list of {@code BulkResponse} mock,
+     * call {@code new OozieCLI().printBundleJobs()}
+     * and validate {@code System.out} on match with expected pattern
+     * <p>
+     * Method do pass only if output matched with predefined pattern
+     * </p>
+     */
+    @Test
     public void testValidationPrintBulkJobsOutput() throws IOException {
         final DataObject dtObject = new DataObject() {
             {
@@ -284,10 +322,10 @@ public class TestOozieCLIMethods extends TestCase {
         };
 
         Pattern pattern = Pattern.compile("Bundle Name" + "[\\s]+" + "Coordinator Name" + "[\\s]+" + " Coord Action ID");
-        assertPrintBulkResponseOutput(readBulkResponseOutput(ImmutableList.of(createBuilkResponse(dtObject))), pattern);
+        assertPrintBulkResponseOutput(readBulkResponseOutput(ImmutableList.of(createBulkResponse(dtObject))), pattern);
 
         pattern = Pattern.compile(dtObject.appPath + "[\\s]+" + dtObject.appPath + "[\\s]+" + dtObject.appPath);
-        assertPrintBulkResponseOutput(readBulkResponseOutput(ImmutableList.of(createBuilkResponse(dtObject))), pattern);
+        assertPrintBulkResponseOutput(readBulkResponseOutput(ImmutableList.of(createBulkResponse(dtObject))), pattern);
     }
 
     private String readBulkResponseOutput(final List<BulkResponse> bulkResponses) throws IOException {
@@ -318,6 +356,16 @@ public class TestOozieCLIMethods extends TestCase {
         }.read();
     }
 
+    private String readWorkflowJobOutput(final WorkflowJob workflowJob, final boolean verbose)
+            throws IOException {
+        return new OutputReaderTemplate() {
+            @Override
+            void execute() throws IOException {
+                new OozieCLI().printJob(workflowJob, null, verbose);
+            }
+        }.read();
+    }
+
     private String readWorkflowJobsOutput(final ImmutableList<WorkflowJob> workflowJobs, final boolean verbose)
             throws IOException {
         return new OutputReaderTemplate() {
@@ -328,7 +376,17 @@ public class TestOozieCLIMethods extends TestCase {
         }.read();
     }
 
-    private String readCoordinatorsJobOutput(final ImmutableList<CoordinatorJob> coordJobs, final boolean verbose)
+    private String readCoordJobOutput(final CoordinatorJob coordJob, final boolean verbose)
+            throws IOException {
+        return new OutputReaderTemplate() {
+            @Override
+            void execute() throws IOException {
+                new OozieCLI().printCoordJob(coordJob, null, verbose);
+            }
+        }.read();
+    }
+
+    private String readCoordJobsOutput(final ImmutableList<CoordinatorJob> coordJobs, final boolean verbose)
             throws IOException {
         return new OutputReaderTemplate() {
             @Override
@@ -348,32 +406,12 @@ public class TestOozieCLIMethods extends TestCase {
         }.read();
     }
 
-    private String readWorkflowJobOutput(final WorkflowJob workflowJob,
-            final boolean verbose) throws IOException {
-        return new OutputReaderTemplate() {
-            @Override
-            void execute() throws IOException {
-                new OozieCLI().printJob(workflowJob, null, verbose);
-            }
-        }.read();
-    }
-
-    private String readPrintCoordAction(final CoordinatorAction coordinatorAction)
+    private String readCoordAction(final CoordinatorAction coordinatorAction)
             throws IOException {
         return new OutputReaderTemplate() {
             @Override
             void execute() throws IOException {
                 new OozieCLI().printCoordAction(coordinatorAction, null);
-            }
-        }.read();
-    }
-
-    private String readCoordJobOutput(final CoordinatorJob coordJob, final boolean verbose)
-            throws IOException {
-        return new OutputReaderTemplate() {
-            @Override
-            void execute() throws IOException {
-                new OozieCLI().printCoordJob(coordJob, null, verbose);
             }
         }.read();
     }
@@ -500,7 +538,7 @@ public class TestOozieCLIMethods extends TestCase {
         return workflowActionMock;
     }
 
-    private static BulkResponse createBuilkResponse(DataObject dtObject) {
+    private static BulkResponse createBulkResponse(DataObject dtObject) {
         BulkResponse bulkResponse = mock(BulkResponse.class);
 
         BundleJob bundleJob = createBundleJob(dtObject);
