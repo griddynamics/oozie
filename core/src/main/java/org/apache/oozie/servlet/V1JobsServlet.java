@@ -6,7 +6,7 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
@@ -43,6 +43,7 @@ import org.apache.oozie.WorkflowJobBean;
 import org.apache.oozie.WorkflowsInfo;
 import org.apache.oozie.cli.OozieCLI;
 import org.apache.oozie.client.OozieClient;
+import org.apache.oozie.client.XOozieClient;
 import org.apache.oozie.client.rest.BulkResponseImpl;
 import org.apache.oozie.client.rest.JsonTags;
 import org.apache.oozie.client.rest.RestConstants;
@@ -305,14 +306,13 @@ public class V1JobsServlet extends BaseJobsServlet {
      * v1 service implementation to get a list of workflows, with filtering or interested windows embedded in the
      * request object
      */
-    @SuppressWarnings("unchecked")
     private JSONObject getWorkflowJobs(HttpServletRequest request) throws XServletException {
         JSONObject json = new JSONObject();
         try {
             String filter = request.getParameter(RestConstants.JOBS_FILTER_PARAM);
             String startStr = request.getParameter(RestConstants.OFFSET_PARAM);
             String lenStr = request.getParameter(RestConstants.LEN_PARAM);
-            String timeZoneId = request.getParameter(RestConstants.TIME_ZONE_PARAM) == null
+            String timeZoneId = request.getParameter(RestConstants.TIME_ZONE_PARAM) == null 
                     ? "GMT" : request.getParameter(RestConstants.TIME_ZONE_PARAM);
             int start = (startStr != null) ? Integer.parseInt(startStr) : 1;
             start = (start < 1) ? 1 : start;
@@ -346,7 +346,7 @@ public class V1JobsServlet extends BaseJobsServlet {
             String filter = request.getParameter(RestConstants.JOBS_FILTER_PARAM);
             String startStr = request.getParameter(RestConstants.OFFSET_PARAM);
             String lenStr = request.getParameter(RestConstants.LEN_PARAM);
-            String timeZoneId = request.getParameter(RestConstants.TIME_ZONE_PARAM) == null
+            String timeZoneId = request.getParameter(RestConstants.TIME_ZONE_PARAM) == null 
                     ? "GMT" : request.getParameter(RestConstants.TIME_ZONE_PARAM);
             int start = (startStr != null) ? Integer.parseInt(startStr) : 1;
             start = (start < 1) ? 1 : start;
@@ -375,7 +375,7 @@ public class V1JobsServlet extends BaseJobsServlet {
             String filter = request.getParameter(RestConstants.JOBS_FILTER_PARAM);
             String startStr = request.getParameter(RestConstants.OFFSET_PARAM);
             String lenStr = request.getParameter(RestConstants.LEN_PARAM);
-            String timeZoneId = request.getParameter(RestConstants.TIME_ZONE_PARAM) == null
+            String timeZoneId = request.getParameter(RestConstants.TIME_ZONE_PARAM) == null 
                     ? "GMT" : request.getParameter(RestConstants.TIME_ZONE_PARAM);
             int start = (startStr != null) ? Integer.parseInt(startStr) : 1;
             start = (start < 1) ? 1 : start;

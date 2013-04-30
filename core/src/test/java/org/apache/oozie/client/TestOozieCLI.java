@@ -8,7 +8,7 @@
  * with the License.  You may obtain a copy of the License at
  * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -146,7 +146,7 @@ public class TestOozieCLI extends DagServletTestCase {
         DataOutputStream dos = new DataOutputStream(new FileOutputStream(path));
 
         String pigScript = "A = load \'/user/data\' using PigStorage(:);\n" +
-                           "B = foreach A generate $0" +
+        		           "B = foreach A generate $0" +
                            "dumb B;";
 
         dos.writeBytes(pigScript);
@@ -298,7 +298,7 @@ public class TestOozieCLI extends DagServletTestCase {
 
     /**
      * Check if "-debug" option is accepted at CLI with job run command
-     *
+     * 
      * @throws Exception
      */
     public void testRunWithDebug() throws Exception {
@@ -499,7 +499,6 @@ public class TestOozieCLI extends DagServletTestCase {
 
     public void testJobStatus() throws Exception {
         runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
-            @Override
             public Void call() throws Exception {
                 String oozieUrl = getContextURL();
                 MockDagEngineService.reset();
@@ -513,16 +512,16 @@ public class TestOozieCLI extends DagServletTestCase {
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOB_SHOW_INFO, MockDagEngineService.did);
 
-                args = new String[]{"job", "-timezone", "PST", "-oozie", oozieUrl, "-info",
+                args = new String[]{"job", "-timezone", "PST", "-oozie", oozieUrl, "-info", 
                     MockDagEngineService.JOB_ID + "1" + MockDagEngineService.JOB_ID_END};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOB_SHOW_INFO, MockDagEngineService.did);
-
+                
                 args = new String[]{"job", "-oozie", oozieUrl, "-info", MockDagEngineService.JOB_ID + "2" +
                     MockDagEngineService.JOB_ID_END};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOB_SHOW_INFO, MockDagEngineService.did);
-
+                
                 args = new String[]{"job", "-oozie", oozieUrl, "-info",
                         MockDagEngineService.JOB_ID + (MockDagEngineService.workflows.size() + 1)};
                 assertEquals(-1, new OozieCLI().run(args));
@@ -544,15 +543,15 @@ public class TestOozieCLI extends DagServletTestCase {
                         "name=x"};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);
-
-                args = new String[]{"jobs", "-timezone", "PST", "-len", "3", "-offset", "2", "-oozie", oozieUrl,
+                
+                args = new String[]{"jobs", "-timezone", "PST", "-len", "3", "-offset", "2", "-oozie", oozieUrl, 
                     "-filter", "name=x"};
                 assertEquals(0, new OozieCLI().run(args));
                 assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);
-
+                
                 args = new String[]{"jobs", "-jobtype", "coord",  "-filter", "status=FAILED", "-oozie", oozieUrl};
                 assertEquals(0, new OozieCLI().run(args));
-                assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);
+                assertEquals(RestConstants.JOBS_FILTER_PARAM, MockDagEngineService.did);                
                 return null;
             }
         });
@@ -710,7 +709,7 @@ public class TestOozieCLI extends DagServletTestCase {
             }
         });
     }
-
+    
     public void testInfo() throws Exception {
         String[] args = new String[]{"info"};
         assertEquals(0, new OozieCLI().run(args));
