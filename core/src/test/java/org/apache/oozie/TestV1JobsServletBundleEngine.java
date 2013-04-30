@@ -48,6 +48,11 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
 
     private static final boolean IS_SECURITY_ENABLED = false;
 
+    /**
+     * This class is needed in order to reuse some methods of class {@link XDataTestCase}. We cannot directly extend it there as
+     * we extend {@link DagServletTestCase}. Anonymous inner class is also not an option since we cannot assign it an annotation.
+     * The @Ignore annotation is needed to prevent JUnit from recognizing this inner class as a test.
+     */
     @Ignore
     private static class XDataTestCase1 extends XDataTestCase {
     }

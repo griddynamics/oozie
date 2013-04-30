@@ -120,7 +120,6 @@ public class JsonSLAEvent implements SLAEvent, JsonBean {
     @Lob
     private String jobData = null;
 
-    @Override
     public long getEvent_id() {
         return event_id;
     }

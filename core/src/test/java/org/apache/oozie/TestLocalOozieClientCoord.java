@@ -77,7 +77,7 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
         assertFalse(hit.hasNext());
         try {
             hit.next();
-            assertTrue(false);
+            fail("NoSuchElementException expected.");
         }
         catch (NoSuchElementException nsee) {
             // expected
@@ -90,21 +90,21 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
         OozieClient client = LocalOozie.getCoordClient();
         try {
             client.getJobsInfo("foo");
-            assertTrue(false);
+            fail("OozieClientException expected.");
         }
         catch (OozieClientException oce) {
             assertEquals(ErrorCode.E0301.toString(), oce.getErrorCode());
         }
         try {
             client.getJobsInfo("foo", 0, 5);
-            assertTrue(false);
+            fail("OozieClientException expected.");
         }
         catch (OozieClientException oce) {
             assertEquals(ErrorCode.E0301.toString(), oce.getErrorCode());
         }
         try {
             client.getJobInfo("foo-id");
-            assertTrue(false);
+            fail("OozieClientException expected.");
         }
         catch (OozieClientException oce) {
             assertEquals(ErrorCode.E0301.toString(), oce.getErrorCode());
@@ -115,7 +115,7 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
         OozieClient client = LocalOozie.getCoordClient();
         try {
             client.reRun("foo-id", client.createConfiguration());
-            assertTrue(false);
+            fail("OozieClientException expected.");
         }
         catch (OozieClientException oce) {
             assertEquals(ErrorCode.E0301.toString(), oce.getErrorCode());

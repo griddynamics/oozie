@@ -38,7 +38,6 @@ import org.apache.oozie.util.XConfiguration;
 public class TestCoordinatorEngine extends XTestCase {
     private Services services;
 
-    @Override
     protected void setUp() throws Exception {
         super.setUp();
         services = new Services();

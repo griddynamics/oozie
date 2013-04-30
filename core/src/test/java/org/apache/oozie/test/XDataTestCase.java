@@ -1159,7 +1159,8 @@ public abstract class XDataTestCase extends XHCatTestCase {
 
         Path bundleAppPath = new Path(getFsTestCaseDir(), "bundle");
         String bundleAppXml = getBundleXml("bundle-submit-job.xml");
-        assertTrue(bundleAppXml != null && bundleAppXml.length() > 0);
+        assertNotNull(bundleAppXml);
+        assertTrue(bundleAppXml.length() > 0);
 
         bundleAppXml = bundleAppXml
                 .replaceAll("#app_path1", Matcher.quoteReplacement(coordPath1.toString() + File.separator + "coordinator.xml"));

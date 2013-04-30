@@ -25,7 +25,7 @@ import org.apache.oozie.client.WorkflowJob;
 import org.apache.oozie.client.rest.BulkResponseImpl;
 
 /**
- * Test non-argument constructor and methods of {@link BundleEngine} that either throw exceptions or return null. 
+ * Test non-argument constructor and methods of {@link BundleEngine} that either throw exceptions or return null.
  * {@link BundleEngineException} covered as well.
  */
 public class TestBundleEngineSimple extends TestCase {
@@ -34,10 +34,10 @@ public class TestBundleEngineSimple extends TestCase {
         BundleEngine be = new BundleEngine();
         try {
             CoordinatorJob cj = be.getCoordJob("foo");
-            assertTrue("Expected BundleEngineException was not thrown.", false);
+            fail("Expected BundleEngineException was not thrown.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.getErrorCode() == ErrorCode.E0301);
+            assertEquals(ErrorCode.E0301, bee.getErrorCode());
         }
     }
 
@@ -45,10 +45,10 @@ public class TestBundleEngineSimple extends TestCase {
         BundleEngine be = new BundleEngine();
         try {
             CoordinatorJob cj = be.getCoordJob("foo", "filter", 0, 1);
-            assertTrue("Expected BundleEngineException was not thrown.", false);
+            fail("Expected BundleEngineException was not thrown.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.getErrorCode() == ErrorCode.E0301);
+            assertEquals(ErrorCode.E0301, bee.getErrorCode());
         }
     }
 
@@ -56,10 +56,10 @@ public class TestBundleEngineSimple extends TestCase {
         BundleEngine be = new BundleEngine();
         try {
             WorkflowJob wj = be.getJob("foo");
-            assertTrue("Expected BundleEngineException was not thrown.", false);
+            fail("Expected BundleEngineException was not thrown.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.getErrorCode() == ErrorCode.E0301);
+            assertEquals(ErrorCode.E0301, bee.getErrorCode());
         }
     }
 
@@ -67,10 +67,10 @@ public class TestBundleEngineSimple extends TestCase {
         BundleEngine be = new BundleEngine();
         try {
             WorkflowJob wj = be.getJob("foo", 0, 1);
-            assertTrue("Expected BundleEngineException was not thrown.", false);
+            fail("Expected BundleEngineException was not thrown.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.getErrorCode() == ErrorCode.E0301);
+            assertEquals(ErrorCode.E0301, bee.getErrorCode());
         }
     }
 
@@ -80,17 +80,17 @@ public class TestBundleEngineSimple extends TestCase {
         try {
             Configuration c = new Configuration();
             be.reRun("foo", c);
-            assertTrue("Expected BundleEngineException was not thrown.", false);
+            fail("Expected BundleEngineException was not thrown.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.getErrorCode() == ErrorCode.E0301);
+            assertEquals(ErrorCode.E0301, bee.getErrorCode());
         }
     }
 
     public void testGetJobForExternalId() throws BundleEngineException {
         BundleEngine be = new BundleEngine();
         String job = be.getJobIdForExternalId("externalFoo");
-        assertTrue(job == null);
+        assertNull(job);
     }
 
     /**
@@ -101,35 +101,35 @@ public class TestBundleEngineSimple extends TestCase {
         BundleEngine be = new BundleEngine();
         // no eq sign in token:
         try {
-            be.parseFilter("vinnypooh");
-            assertTrue("BundleEngineException expected.", false);
+            be.parseFilter("winniethepooh");
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
         // incorrect key=value pair syntax:
         try {
             be.parseFilter("xx=yy=zz");
-            assertTrue("BundleEngineException expected.", false);
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
         // unknown key in key=value pair:
         try {
             be.parseFilter("foo=moo");
-            assertTrue("BundleEngineException expected.", false);
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
         // incorrect "status" key value:
         try {
             be.parseFilter("status=foo");
-            assertTrue("BundleEngineException expected.", false);
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
     }
 
@@ -141,51 +141,50 @@ public class TestBundleEngineSimple extends TestCase {
         // incorrect key=value pair syntax:
         try {
             BundleEngine.parseBulkFilter("xx=yy=zz");
-            assertTrue("BundleEngineException expected.", false);
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(bee.toString(), ErrorCode.E0420, bee.getErrorCode());
         }
         // no eq sign in token:
         try {
-            BundleEngine.parseBulkFilter("vinnypooh");
-            assertTrue("BundleEngineException expected.", false);
+            BundleEngine.parseBulkFilter("winniethepooh");
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(bee.toString(), ErrorCode.E0420, bee.getErrorCode());
         }
         // one of the values is a whitespace:
         try {
             BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_BUNDLE_NAME + "=aaa, ,bbb");
-            assertTrue("BundleEngineException expected.", false);
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(bee.toString(), ErrorCode.E0420, bee.getErrorCode());
         }
         // unparseable time value:
         try {
             BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_START_CREATED_EPOCH + "=blah-blah");
-            assertTrue("BundleEngineException expected.", false);
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(bee.toString(), ErrorCode.E0420, bee.getErrorCode());
         }
         // incorrect status:
         try {
             BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_STATUS + "=foo");
-            assertTrue("BundleEngineException expected.", false);
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.toString(), ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(bee.toString(), ErrorCode.E0420, bee.getErrorCode());
         }
-        // filter does not contain "BulkResponseImpl.BULK_FILTER_BUNDLE_NAME"
-        // field:
+        // filter does not contain "BulkResponseImpl.BULK_FILTER_BUNDLE_NAME" field:
         try {
             BundleEngine.parseBulkFilter(BulkResponseImpl.BULK_FILTER_LEVEL + "=foo");
-            assertTrue("BundleEngineException expected.", false);
+            fail("BundleEngineException expected.");
         }
         catch (BundleEngineException bee) {
-            assertTrue(bee.toString(), ErrorCode.E0305 == bee.getErrorCode());
+            assertEquals(bee.toString(), ErrorCode.E0305, bee.getErrorCode());
         }
     }
 

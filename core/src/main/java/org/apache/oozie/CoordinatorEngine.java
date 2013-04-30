@@ -275,8 +275,7 @@ public class CoordinatorEngine extends BaseEngine {
         if (logRetrievalScope != null && logRetrievalType != null) {
             // if coordinator action logs are to be retrieved based on action id range
             if (logRetrievalType.equals(RestConstants.JOB_LOG_ACTION)) {
-                // NB: use set implementation that maintains order or elements to
-                // achieve reproducibility:
+                // Use set implementation that maintains order or elements to achieve reproducibility:
                 Set<String> actionSet = new LinkedHashSet<String>();
                 String[] list = logRetrievalScope.split(",");
                 for (String s : list) {

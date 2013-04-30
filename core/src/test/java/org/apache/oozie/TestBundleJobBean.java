@@ -75,11 +75,11 @@ public class TestBundleJobBean extends XTestCase {
     public void testSetGet() {
         final BundleJobBean bean = new BundleJobBean();
         set(bean);
-        testGet(bean, true);
+        _testGet(bean, true);
     }
 
     @SuppressWarnings("deprecation")
-    private void testGet(BundleJobBean bean, boolean checkAllFields) {
+    private void _testGet(BundleJobBean bean, boolean checkAllFields) {
         assertEquals("an", bean.getAppName());
         assertEquals("ap", bean.getAppPath());
         if (checkAllFields) {
@@ -135,6 +135,6 @@ public class TestBundleJobBean extends XTestCase {
         final BundleJobBean bean2 = new BundleJobBean();
         bean2.readFields(new DataInputStream(new ByteArrayInputStream(baos.toByteArray())));
 
-        testGet(bean2, false);
+        _testGet(bean2, false);
     }
 }

@@ -96,10 +96,10 @@ public class TestCoordinatorJobBean extends XTestCase {
     public void testSetGet() {
         final CoordinatorJobBean bean = new CoordinatorJobBean();
         set(bean);
-        testGet(bean, true);
+        _testGet(bean, true);
     }
 
-    private void testGet(CoordinatorJobBean bean, boolean checkDeserialization) {
+    private void _testGet(CoordinatorJobBean bean, boolean checkDeserialization) {
         if (checkDeserialization) {
             assertEquals(actionList, bean.getActions());
         }
@@ -177,6 +177,6 @@ public class TestCoordinatorJobBean extends XTestCase {
         final CoordinatorJobBean bean2 = new CoordinatorJobBean();
         bean2.readFields(new DataInputStream(new ByteArrayInputStream(baos.toByteArray())));
 
-        testGet(bean2, false);
+        _testGet(bean2, false);
     }
 }

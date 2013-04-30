@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.oozie.service.Services;
 import org.apache.oozie.test.XTestCase;
+import org.junit.Test;
 
 public class TestCoordinatorEngineSimple extends XTestCase {
 
@@ -36,6 +37,7 @@ public class TestCoordinatorEngineSimple extends XTestCase {
         super.tearDown();
     }
 
+    @Test
     public void testParseFilterNegative() throws CoordinatorEngineException {
         final CoordinatorEngine ce = new CoordinatorEngine();
 
@@ -51,66 +53,68 @@ public class TestCoordinatorEngineSimple extends XTestCase {
 
         // no eq sign in token:
         try {
-            ce.parseFilter("vinnypooh");
-            assertTrue("CoordinatorEngineException expected.", false);
+            ce.parseFilter("winniethepooh");
+            fail("CoordinatorEngineException expected.");
         }
         catch (CoordinatorEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
         // incorrect k=v:
         try {
             map = ce.parseFilter("kk=vv=zz");
+            fail("CoordinatorEngineException expected.");
         }
         catch (CoordinatorEngineException cee) {
-            assertTrue(cee.getErrorCode() == ErrorCode.E0420);
+            assertEquals(ErrorCode.E0420, cee.getErrorCode());
         }
         // unknown key in key=value pair:
         try {
             ce.parseFilter("foo=moo");
-            assertTrue("CoordinatorEngineException expected.", false);
+            fail("CoordinatorEngineException expected.");
         }
         catch (CoordinatorEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
         // incorrect "status" key value:
         try {
             ce.parseFilter("status=foo");
-            assertTrue("CoordinatorEngineException expected.", false);
+            fail("CoordinatorEngineException expected.");
         }
         catch (CoordinatorEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
         // unparseable "frequency" value:
         try {
             ce.parseFilter("FreQuency=foo");
-            assertTrue("CoordinatorEngineException expected.", false);
+            fail("CoordinatorEngineException expected.");
         }
         catch (CoordinatorEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
         // unparseable "unit" value:
         try {
             ce.parseFilter("UniT=foo");
-            assertTrue("CoordinatorEngineException expected.", false);
+            fail("CoordinatorEngineException expected.");
         }
         catch (CoordinatorEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
         // "unit" specified, but "frequency" is not:
         try {
             ce.parseFilter("unit=minutes");
-            assertTrue("CoordinatorEngineException expected.", false);
+            fail("CoordinatorEngineException expected.");
         }
         catch (CoordinatorEngineException bee) {
-            assertTrue(ErrorCode.E0420 == bee.getErrorCode());
+            assertEquals(ErrorCode.E0420, bee.getErrorCode());
         }
     }
 
+    @Test
     public void testParseFilterPositive() throws CoordinatorEngineException {
         final CoordinatorEngine ce = new CoordinatorEngine();
 
         Map<String, List<String>> map = ce.parseFilter("frequency=5;unit=hours;user=foo;status=FAILED");
-        assertTrue(map.size() == 4);
+        assertEquals(4, map.size());
         assertEquals("300", map.get("frequency").get(0));
         assertEquals("MINUTE", map.get("unit").get(0));
         assertEquals("foo", map.get("user").get(0));

@@ -54,17 +54,14 @@ public class CoordActionsInDateRange {
     public static List<String> getCoordActionIdsFromDates(String jobId, String scope) throws XException {
         ParamChecker.notEmpty(jobId, "jobId");
         ParamChecker.notEmpty(scope, "scope");
-        // NB: Use an ordered set.
-        // The ordering is needed to achieve reproducible behavior.
+        // Use an ordered set to achieve reproducible behavior.
         Set<String> actionSet = new LinkedHashSet<String>();
         String[] list = scope.split(",");
         for (String s : list) {
             s = s.trim();
             if (s.contains("::")) {
                 List<String> listOfActions = getCoordActionIdsFromDateRange(jobId, s);
-                for (String a: listOfActions) {
-                    actionSet.add(a);
-                }
+                actionSet.addAll(listOfActions);
             }
             else {
                 throw new XException(ErrorCode.E0308, "'" + s + "'. Separator '::' is missing for start and end dates of range");

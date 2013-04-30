@@ -44,6 +44,11 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
 
     private static final boolean IS_SECURITY_ENABLED = false;
 
+    /**
+     * This class is needed in order to reuse some methods of class {@link XDataTestCase}. We cannot directly extend it there as
+     * we extend {@link DagServletTestCase}. Anonymous inner class is also not an option since we cannot assign it an annotation.
+     * The @Ignore annotation is needed to prevent JUnit from recognizing this inner class as a test.
+     */
     @Ignore
     private static class XDataTestCase1 extends XDataTestCase {}
 
@@ -160,26 +165,26 @@ public class TestV1JobServletBundleEngine extends DagServletTestCase {
     }
 
     public void testBundleEngineKill() throws Exception {
-        testBundleEnginePutImpl(RestConstants.JOB_ACTION_KILL);
+        _testBundleEnginePutImpl(RestConstants.JOB_ACTION_KILL);
     }
 
     public void testBundleEngineResume() throws Exception {
-        testBundleEnginePutImpl(RestConstants.JOB_ACTION_RESUME);
+        _testBundleEnginePutImpl(RestConstants.JOB_ACTION_RESUME);
     }
 
     public void testBundleEngineSuspend() throws Exception {
-        testBundleEnginePutImpl(RestConstants.JOB_ACTION_SUSPEND);
+        _testBundleEnginePutImpl(RestConstants.JOB_ACTION_SUSPEND);
     }
 
     public void testBundleEngineStart() throws Exception {
-        testBundleEnginePutImpl(RestConstants.JOB_ACTION_START);
+        _testBundleEnginePutImpl(RestConstants.JOB_ACTION_START);
     }
 
     public void testBundleEngineReRun() throws Exception {
-        testBundleEnginePutImpl(RestConstants.JOB_BUNDLE_ACTION_RERUN);
+        _testBundleEnginePutImpl(RestConstants.JOB_BUNDLE_ACTION_RERUN);
     }
 
-    private void testBundleEnginePutImpl(final String jobAction) throws Exception {
+    private void _testBundleEnginePutImpl(final String jobAction) throws Exception {
         final BundleJobBean bundleJobBean = xDataTestCase.addRecordToBundleJobTable(Job.Status.PREP, false);
 
         runTest("/v1/job/*", V1JobServlet.class, IS_SECURITY_ENABLED, new Callable<Void>() {

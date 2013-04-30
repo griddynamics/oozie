@@ -172,8 +172,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
 
     private String runJobsImpl(final CoordinatorEngine ce) throws Exception {
         services.setService(TestXLogService.class);
-        // NB: need to re-define the parameters that are cleared upon the
-        // service reset:
+        // need to re-define the parameters that are cleared upon the service reset:
         new DagXLogInfoService().init(services);
         services.init();
 
