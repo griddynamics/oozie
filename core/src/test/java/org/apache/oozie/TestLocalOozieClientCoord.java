@@ -31,26 +31,19 @@ import org.apache.oozie.client.CoordinatorJob;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.local.LocalOozie;
-import org.apache.oozie.service.Services;
 import org.apache.oozie.test.XDataTestCase;
 
 public class TestLocalOozieClientCoord extends XDataTestCase {
 
-    private Services services;
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        services = new Services();
-        services.init();
-        cleanUpDBTables();
         LocalOozie.start();
     }
 
     @Override
     protected void tearDown() throws Exception {
         LocalOozie.stop();
-        services.destroy();
         super.tearDown();
     }
 

@@ -77,7 +77,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         }
     }
 
-    static class TestXLogService extends XLogService {
+    static class DummyXLogService extends XLogService {
         Filter filter;
 
         @Override
@@ -102,7 +102,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         String jobId = runJobsImpl(ce);
         ce.streamLog(jobId, new StringWriter()/* writer is unused */);
 
-        TestXLogService service = (TestXLogService) services.get(XLogService.class);
+        DummyXLogService service = (DummyXLogService) services.get(XLogService.class);
         Filter filter = service.filter;
 
         assertEquals(filter.getFilterParams().get(DagXLogInfoService.JOB), jobId);
@@ -117,7 +117,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
         String jobId = runJobsImpl(ce);
         ce.streamLog(jobId, null, null, new StringWriter()/* writer is unused */);
 
-        TestXLogService service = (TestXLogService) services.get(XLogService.class);
+        DummyXLogService service = (DummyXLogService) services.get(XLogService.class);
         Filter filter = service.filter;
 
         assertEquals(filter.getFilterParams().get(DagXLogInfoService.JOB), jobId);
@@ -134,7 +134,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
 
         ce.streamLog(jobId, "678, 123-127, 946", RestConstants.JOB_LOG_ACTION, new StringWriter()/* unused */);
 
-        TestXLogService service = (TestXLogService) services.get(XLogService.class);
+        DummyXLogService service = (DummyXLogService) services.get(XLogService.class);
         Filter filter = service.filter;
 
         assertEquals(jobId, filter.getFilterParams().get(DagXLogInfoService.JOB));
@@ -162,7 +162,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
                 + DateUtils.formatDateOozieTZ(middleDate) + "::" + DateUtils.formatDateOozieTZ(endDate),
                 RestConstants.JOB_LOG_DATE, new StringWriter()/* unused */);
 
-        TestXLogService service = (TestXLogService) services.get(XLogService.class);
+        DummyXLogService service = (DummyXLogService) services.get(XLogService.class);
         Filter filter = service.filter;
 
         assertEquals(jobId, filter.getFilterParams().get(DagXLogInfoService.JOB));
@@ -171,7 +171,7 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
     }
 
     private String runJobsImpl(final CoordinatorEngine ce) throws Exception {
-        services.setService(TestXLogService.class);
+        services.setService(DummyXLogService.class);
         // need to re-define the parameters that are cleared upon the service reset:
         new DagXLogInfoService().init(services);
         services.init();
@@ -221,7 +221,11 @@ public class TestCoordinatorEngineStreamLog extends XFsTestCase {
                 }
             }
         });
-
+        // Assert all the actions are succeeded (useful for waitFor() timeout case):
+        final List<CoordinatorAction> actions = ce.getCoordJob(jobId).getActions();
+        for (CoordinatorAction action: actions) {
+          assertEquals(CoordinatorAction.Status.SUCCEEDED, action.getStatus());
+        }
         return jobId;
     }
 

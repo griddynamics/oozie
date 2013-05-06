@@ -47,6 +47,8 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
     }
 
     private static final boolean IS_SECURITY_ENABLED = false;
+    
+    private Services services;
 
     /**
      * This class is needed in order to reuse some methods of class {@link XDataTestCase}. We cannot directly extend it there as
@@ -67,12 +69,15 @@ public class TestV1JobsServletBundleEngine extends DagServletTestCase {
         xDataTestCase.setUpPub();
 
         new Services().init();
-        Services services = Services.get();
+        services = Services.get();
         services.setService(UUIDService.class);
     }
 
     @Override
     protected void tearDown() throws Exception {
+        if (services != null) {
+            services.destroy();
+        }
         xDataTestCase.tearDownPub();
         super.tearDown();
     }
