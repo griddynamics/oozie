@@ -26,14 +26,18 @@ import org.junit.Test;
 
 public class TestCoordinatorEngineSimple extends XTestCase {
 
+    private Services services;
+  
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        new Services().init();
+        services = new Services(); 
+        services.init();
     }
 
     @Override
     protected void tearDown() throws Exception {
+        services.destroy();
         super.tearDown();
     }
 

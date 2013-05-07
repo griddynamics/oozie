@@ -31,19 +31,35 @@ import org.apache.oozie.client.CoordinatorJob;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.local.LocalOozie;
+import org.apache.oozie.service.Services;
 import org.apache.oozie.test.XDataTestCase;
 
 public class TestLocalOozieClientCoord extends XDataTestCase {
 
+    private Services services;
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        /*
+         * DB cleanup below is needed to clean up the job records possibly left by previously executed tests.
+         * For example, such records are left by test org.apache.oozie.executor.jpa.TestCoordActionUpdateJPAExecutor.
+         * Note that by default Oozie tests are executed in "filesystem" (in fact, arbitrary) order. This way problems caused
+         * by left records can be flaky (not reproduced constantly).
+         * Services re-init is needed for the DB cleanup.
+         */
+        services = new Services();
+        services.init();
+        cleanUpDBTables();
+
         LocalOozie.start();
     }
 
     @Override
     protected void tearDown() throws Exception {
         LocalOozie.stop();
+        services.destroy();
         super.tearDown();
     }
 
@@ -133,7 +149,12 @@ public class TestLocalOozieClientCoord extends XDataTestCase {
     }
 
     public void testJobMethods() throws Exception {
-        OozieClient client = LocalOozie.getCoordClient();
+        final OozieClient client = LocalOozie.getCoordClient();
+
+        // Just in case, check that there are no Coord job records left by previous tests:
+        List<CoordinatorJob> list0 = client.getCoordJobsInfo("", 1, 100);
+        assertEquals(0, list0.size());
+
         Properties conf = client.createConfiguration();
 
         String appPath = "file://" + getTestCaseDir() + File.separator + "coordinator.xml";
