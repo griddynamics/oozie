@@ -68,7 +68,7 @@ public class TestSLAEventBean extends XTestCase {
         assertEquals("af", bean.getAlertFrequency());
         assertEquals("ap", bean.getAlertPercentage());
         assertEquals("an", bean.getAppName());
-        assertTrue(org.apache.oozie.client.SLAEvent.SlaAppType.WORKFLOW_ACTION 
+        assertTrue(org.apache.oozie.client.SLAEvent.SlaAppType.WORKFLOW_ACTION
             == bean.getAppType());
         assertEquals("WORKFLOW_ACTION", bean.getAppTypeStr());
         assertEquals("dc", bean.getDevContact());
