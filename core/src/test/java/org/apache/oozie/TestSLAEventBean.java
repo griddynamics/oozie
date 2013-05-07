@@ -19,8 +19,6 @@ package org.apache.oozie;
 
 import java.util.Date;
 
-import org.apache.oozie.client.SLAEvent.SlaAppType;
-import org.apache.oozie.client.SLAEvent.Status;
 import org.apache.oozie.test.XTestCase;
 import org.apache.oozie.util.DateUtils;
 import org.apache.oozie.util.XmlUtils;
@@ -32,12 +30,13 @@ public class TestSLAEventBean extends XTestCase {
     private static final Date es = new Date(2L);
     private static final Date st = new Date(3L);
 
+    @SuppressWarnings("deprecation")
     private void set(SLAEventBean bean) {
         bean.setAlertContact("ac");
         bean.setAlertFrequency("af");
         bean.setAlertPercentage("ap");
         bean.setAppName("an");
-        bean.setAppType(SlaAppType.WORKFLOW_ACTION);
+        bean.setAppType(org.apache.oozie.client.SLAEvent.SlaAppType.WORKFLOW_ACTION);
         bean.setAppTypeStr("WORKFLOW_ACTION");
         bean.setDevContact("dc");
         bean.setEvent_id(1L);
@@ -46,7 +45,7 @@ public class TestSLAEventBean extends XTestCase {
         bean.setExpectedStart(es);
         bean.setGroupName("gn");
         bean.setJobData("jd");
-        bean.setJobStatus(Status.STARTED);
+        bean.setJobStatus(org.apache.oozie.client.SLAEvent.Status.STARTED);
         bean.setJobStatusStr("STARTED");
         bean.setNotificationMsg("nm");
         bean.setParentClientId("pci");
@@ -59,6 +58,7 @@ public class TestSLAEventBean extends XTestCase {
         bean.setUser("u");
     }
 
+    @SuppressWarnings("deprecation")
     public void testSetGet() {
         final SLAEventBean bean = new SLAEventBean();
 
@@ -68,7 +68,8 @@ public class TestSLAEventBean extends XTestCase {
         assertEquals("af", bean.getAlertFrequency());
         assertEquals("ap", bean.getAlertPercentage());
         assertEquals("an", bean.getAppName());
-        assertTrue(SlaAppType.WORKFLOW_ACTION == bean.getAppType());
+        assertTrue(org.apache.oozie.client.SLAEvent.SlaAppType.WORKFLOW_ACTION 
+            == bean.getAppType());
         assertEquals("WORKFLOW_ACTION", bean.getAppTypeStr());
         assertEquals("dc", bean.getDevContact());
         assertEquals(1L, bean.getEvent_id());
@@ -105,11 +106,12 @@ public class TestSLAEventBean extends XTestCase {
                 + "    <app-name>an</app-name>\r\n" + "  </status>\r\n" + "</event>", actualXml);
     }
 
+    @SuppressWarnings("deprecation")
     public void testToXmlRegistrationEvent() {
         final SLAEventBean bean = new SLAEventBean();
         set(bean);
         // Set "CREATED" status to get the event of registration kind:
-        bean.setJobStatus(Status.CREATED);
+        bean.setJobStatus(org.apache.oozie.client.SLAEvent.Status.CREATED);
         Element el = bean.toXml();
         String actualXml = XmlUtils.prettyPrint(el).toString();
         System.out.println(actualXml);
