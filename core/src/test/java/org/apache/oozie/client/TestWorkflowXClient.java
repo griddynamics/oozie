@@ -116,9 +116,6 @@ public class TestWorkflowXClient extends DagServletTestCase {
                 Properties conf = wc.createConfiguration();
                 Path libPath = new Path(getFsTestCaseDir(), "lib");
                 getFileSystem().mkdirs(libPath);
-                conf.setProperty(OozieClient.LIBPATH, libPath.toString());
-                conf.setProperty(XOozieClient.JT, "localhost:9001");
-                conf.setProperty(XOozieClient.NN, "hdfs://localhost:9000");
 
                 // try to submit without JT and NN
                 try {
