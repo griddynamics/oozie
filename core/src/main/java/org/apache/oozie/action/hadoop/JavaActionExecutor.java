@@ -90,6 +90,7 @@ public class JavaActionExecutor extends ActionExecutor {
     public final static String MAX_EXTERNAL_STATS_SIZE = "oozie.external.stats.max.size";
     public static final String ACL_VIEW_JOB = "mapreduce.job.acl-view-job";
     public static final String ACL_MODIFY_JOB = "mapreduce.job.acl-modify-job";
+    private static final String HADOOP_YARN_UBER_MODE = "mapreduce.job.ubertask.enable";
     private static int maxActionOutputLen;
     private static int maxExternalStatsSize;
 
@@ -239,6 +240,7 @@ public class JavaActionExecutor extends ActionExecutor {
                 XConfiguration actionDefaultConf = has.createActionDefaultConf(conf.get(HADOOP_JOB_TRACKER), getType());
                 injectLauncherProperties(actionDefaultConf, launcherConf);
                 injectLauncherProperties(inlineConf, launcherConf);
+                injectLauncherUseUberMode(launcherConf);
                 checkForDisallowedProps(launcherConf, "launcher configuration");
                 XConfiguration.copy(launcherConf, conf);
             }
@@ -246,6 +248,15 @@ public class JavaActionExecutor extends ActionExecutor {
         }
         catch (IOException ex) {
             throw convertException(ex);
+        }
+    }
+
+    void injectLauncherUseUberMode(Configuration launcherConf) {
+        // Set Uber Mode for the launcher (YARN only, ignored by MR1) if not set by action conf and not disabled in oozie-site
+        if (launcherConf.get(HADOOP_YARN_UBER_MODE) == null) {
+            if (getOozieConf().getBoolean("oozie.action.launcher.mapreduce.job.ubertask.enable", true)) {
+                launcherConf.setBoolean(HADOOP_YARN_UBER_MODE, true);
+            }
         }
     }
 
@@ -735,7 +746,8 @@ public class JavaActionExecutor extends ActionExecutor {
                 XLog.getLog(getClass()).debug("Submitting the job through Job Client for action " + action.getId());
 
                 // setting up propagation of the delegation token.
-                Token<DelegationTokenIdentifier> mrdt = jobClient.getDelegationToken(HadoopAccessorService
+                HadoopAccessorService has = Services.get().get(HadoopAccessorService.class);
+                Token<DelegationTokenIdentifier> mrdt = jobClient.getDelegationToken(has
                         .getMRDelegationTokenRenewer(launcherJobConf));
                 launcherJobConf.getCredentials().addToken(HadoopAccessorService.MR_TOKEN_ALIAS, mrdt);
 
@@ -961,6 +973,11 @@ public class JavaActionExecutor extends ActionExecutor {
         return Services.get().get(HadoopAccessorService.class).createJobClient(user, jobConf);
     }
 
+    protected RunningJob getRunningJob(Context context, WorkflowAction action, JobClient jobClient) throws Exception{
+        RunningJob runningJob = jobClient.getJob(JobID.forName(action.getExternalId()));
+        return runningJob;
+    }
+
     @Override
     public void check(Context context, WorkflowAction action) throws ActionExecutorException {
         JobClient jobClient = null;
@@ -970,7 +987,7 @@ public class JavaActionExecutor extends ActionExecutor {
             FileSystem actionFs = context.getAppFileSystem();
             JobConf jobConf = createBaseHadoopConf(context, actionXml);
             jobClient = createJobClient(context, jobConf);
-            RunningJob runningJob = jobClient.getJob(JobID.forName(action.getExternalId()));
+            RunningJob runningJob = getRunningJob(context, action, jobClient);
             if (runningJob == null) {
                 context.setExternalStatus(FAILED);
                 context.setExecutionData(FAILED, null);
@@ -999,7 +1016,7 @@ public class JavaActionExecutor extends ActionExecutor {
                                 action.getId());
                     }
 
-                    context.setStartData(newId, action.getTrackerUri(), runningJob.getTrackingURL());
+                    context.setExternalChildIDs(newId);
                     XLog.getLog(getClass()).info(XLog.STD, "External ID swap, old ID [{0}] new ID [{1}]", launcherId,
                             newId);
                 }

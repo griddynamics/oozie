@@ -85,7 +85,8 @@
          <!-- Sharelib component versions -->
          <hive.version>0.9.0</hive.version>
          <pig.version>0.9.0</pig.version>
-         <sqoop.version>1.5.0-incubating-SNAPSHOT</sqoop.version>
+         <sqoop.version>1.4.3</sqoop.version>
+         <sqoop.classifier>hadoop100</sqoop.classifier>
          <streaming.version>${hadoop.version}</streaming.version>
          <distcp.version>${hadooplib.version}</distcp.version>
 
@@ -703,6 +704,7 @@
                 <groupId>org.apache.sqoop</groupId>
                 <artifactId>sqoop</artifactId>
                 <version>${sqoop.version}</version>
+                <classifier>${sqoop.classifier}</classifier>
             </dependency>
 
             <dependency>
@@ -986,7 +988,8 @@
                         <exclude>docs/src/site/twiki/*.twiki</exclude>
                         <exclude>examples/src/main/data/*</exclude>
                         <exclude>core/src/test/resources/test-ioutils.txt</exclude>
-                        <exclude>core/src/test/resources/PigMain.txt</exclude>
+                        <exclude>sharelib/pig/src/test/resources/PigMain.txt</exclude>
+                        <exclude>sharelib/hive/src/test/resources/HiveMain.txt</exclude>
                         <exclude>webapp/src/main/resources/.gitignore</exclude>
                         <exclude>**/target/**</exclude>
                         <exclude>**/build/**</exclude>

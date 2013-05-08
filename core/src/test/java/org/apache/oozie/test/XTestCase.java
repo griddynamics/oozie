@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -213,6 +215,12 @@ public abstract class XTestCase extends TestCase {
     public static final String TEST_GROUP_PROP = "oozie.test.group";
 
     /**
+     * System property that specifies the test groiup used by the tests.
+     * The default value of this property is <tt>testg</tt>.
+     */
+    public static final String TEST_GROUP_PROP2 = "oozie.test.group2";
+
+    /**
      * System property that specifies the wait time, in seconds, between testcases before
      * triggering a shutdown. The default value is 10 sec.
      */
@@ -267,21 +275,27 @@ public abstract class XTestCase extends TestCase {
         File source = (customOozieSite.startsWith("/"))
                       ? new File(customOozieSite) : new File(OOZIE_SRC_DIR, customOozieSite);
         source = source.getAbsoluteFile();
-        // If we can't find it, try using the class loader (useful if we're using XTestCase from outside core)
-        if (!source.exists()) {
-            source = new File(getClass().getClassLoader().getResource(oozieTestDB + "-oozie-site.xml").getPath());
-            source = source.getAbsoluteFile();
+        InputStream oozieSiteSourceStream = null;
+        if (source.exists()) {
+            oozieSiteSourceStream = new FileInputStream(source);
         }
-        // If we still can't find it, then exit
-        if (!source.exists()) {
-            System.err.println();
-            System.err.println(XLog.format("Custom configuration file for testing does no exist [{0}]",
-                                           source.getAbsolutePath()));
-            System.err.println();
-            System.exit(-1);
+        else {
+            // If we can't find it, try using the class loader (useful if we're using XTestCase from outside core)
+            URL sourceURL = getClass().getClassLoader().getResource(oozieTestDB + "-oozie-site.xml");
+            if (sourceURL != null) {
+                oozieSiteSourceStream = sourceURL.openStream();
+            }
+            else {
+                // If we still can't find it, then exit
+                System.err.println();
+                System.err.println(XLog.format("Custom configuration file for testing does no exist [{0}]",
+                                               source.getAbsolutePath()));
+                System.err.println();
+                System.exit(-1);
+            }
         }
         File target = new File(testCaseConfDir, "oozie-site.xml");
-        IOUtils.copyStream(new FileInputStream(source), new FileOutputStream(target));
+        IOUtils.copyStream(oozieSiteSourceStream, new FileOutputStream(target));
 
         File hadoopConfDir = new File(testCaseConfDir, "hadoop-conf");
         hadoopConfDir.mkdir();
@@ -401,6 +415,15 @@ public abstract class XTestCase extends TestCase {
      */
     protected static String getTestGroup() {
         return System.getProperty(TEST_GROUP_PROP, "testg");
+    }
+
+    /**
+     * Return the alternate test group.
+     *
+     * @return the test group.
+     */
+    protected static String getTestGroup2() {
+        return System.getProperty(TEST_GROUP_PROP, "testg2");
     }
 
     /**
@@ -731,7 +754,7 @@ public abstract class XTestCase extends TestCase {
             conf.set("mapred.tasktracker.map.tasks.maximum", "4");
             conf.set("mapred.tasktracker.reduce.tasks.maximum", "4");
 
-            String [] userGroups = new String[] { getTestGroup() };
+            String[] userGroups = new String[] { getTestGroup(), getTestGroup2() };
             UserGroupInformation.createUserForTesting(oozieUser, userGroups);
             UserGroupInformation.createUserForTesting(getTestUser(), userGroups);
             UserGroupInformation.createUserForTesting(getTestUser2(), userGroups);

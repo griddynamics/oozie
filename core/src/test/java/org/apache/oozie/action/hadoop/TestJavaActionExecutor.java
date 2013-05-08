@@ -847,6 +847,16 @@ public class TestJavaActionExecutor extends ActionExecutorTestCase {
                 "<mkdir path='" + mkdir + "'/>" +
                 "<delete path='" + delete + "'/>" +
                 "</prepare>" +
+                "<configuration>" +
+                "<property>" +
+                "<name>dfs.umaskmode</name>" +
+                "<value>026</value>" +
+                "</property>" +
+                "<property>" +
+                "<name>fs.hdfs.impl.disable.cache</name>" +
+                "<value>true</value>" +
+                "</property>" +
+                "</configuration>" +
                 "<main-class>" + LauncherMainTester.class.getName() + "</main-class>" +
                 "</java>";
         Context context = createContext(actionXml, null);
@@ -867,6 +877,8 @@ public class TestJavaActionExecutor extends ActionExecutorTestCase {
         assertEquals(WorkflowAction.Status.OK, context.getAction().getStatus());
 
         assertTrue(fs.exists(mkdir));
+        // Check if the action configuration is applied in the prepare block
+        assertEquals("rwxr-x--x", fs.getFileStatus(mkdir).getPermission().toString());
         assertFalse(fs.exists(delete));
     }
 
@@ -1427,5 +1439,51 @@ public class TestJavaActionExecutor extends ActionExecutorTestCase {
         assertEquals("v2", conf.get("p2"));
         assertEquals("v3b", conf.get("p3"));
         assertEquals("v4", conf.get("p4"));
+    }
+
+    public void testInjectLauncherUseUberMode() throws Exception {
+        // default -- should set to true
+        JavaActionExecutor jae = new JavaActionExecutor();
+        Configuration conf = new Configuration(false);
+        assertNull(conf.get("mapreduce.job.ubertask.enable"));
+        jae.injectLauncherUseUberMode(conf);
+        assertEquals("true", conf.get("mapreduce.job.ubertask.enable"));
+
+        // action conf set to true -- should keep at true
+        conf = new Configuration(false);
+        assertNull(conf.get("mapreduce.job.ubertask.enable"));
+        conf.setBoolean("mapreduce.job.ubertask.enable", true);
+        jae.injectLauncherUseUberMode(conf);
+        assertEquals("true", conf.get("mapreduce.job.ubertask.enable"));
+
+        // action conf set to false -- should keep at false
+        conf = new Configuration(false);
+        assertNull(conf.get("mapreduce.job.ubertask.enable"));
+        conf.setBoolean("mapreduce.job.ubertask.enable", false);
+        jae.injectLauncherUseUberMode(conf);
+        assertEquals("false", conf.get("mapreduce.job.ubertask.enable"));
+
+        // disable at oozie-site level (default is to be enabled) -- redo above tests
+        Services.get().getConf().setBoolean("oozie.action.launcher.mapreduce.job.ubertask.enable", false);
+
+        // default -- should not set
+        conf = new Configuration(false);
+        assertNull(conf.get("mapreduce.job.ubertask.enable"));
+        jae.injectLauncherUseUberMode(conf);
+        assertNull(conf.get("mapreduce.job.ubertask.enable"));
+
+        // action conf set to true -- should keep at true
+        conf = new Configuration(false);
+        assertNull(conf.get("mapreduce.job.ubertask.enable"));
+        conf.setBoolean("mapreduce.job.ubertask.enable", true);
+        jae.injectLauncherUseUberMode(conf);
+        assertEquals("true", conf.get("mapreduce.job.ubertask.enable"));
+
+        // action conf set to false -- should keep at false
+        conf = new Configuration(false);
+        assertNull(conf.get("mapreduce.job.ubertask.enable"));
+        conf.setBoolean("mapreduce.job.ubertask.enable", false);
+        jae.injectLauncherUseUberMode(conf);
+        assertEquals("false", conf.get("mapreduce.job.ubertask.enable"));
     }
 }
