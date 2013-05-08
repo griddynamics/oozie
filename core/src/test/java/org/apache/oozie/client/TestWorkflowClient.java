@@ -71,62 +71,52 @@ public class TestWorkflowClient extends DagServletTestCase {
      * Test methods for headers manipulation
      */
     public void testHeaders() throws Exception {
-        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED,
-                new Callable<Void>() {
-                    public Void call() throws Exception {
-                        HeaderTestingVersionServlet.OOZIE_HEADERS.clear();
-                        String oozieUrl = getContextURL();
-                        OozieClient wc = new OozieClient(oozieUrl);
-                        wc.setHeader("header", "test");
-                        assertEquals("test", wc.getHeader("header"));
-                        assertEquals("test", wc.getHeaders().get("header"));
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                HeaderTestingVersionServlet.OOZIE_HEADERS.clear();
+                String oozieUrl = getContextURL();
+                OozieClient wc = new OozieClient(oozieUrl);
+                wc.setHeader("header", "test");
+                assertEquals("test", wc.getHeader("header"));
+                assertEquals("test", wc.getHeaders().get("header"));
 
-                        boolean found = false;
-                        for (Iterator<String> headers = wc.getHeaderNames(); headers
-                                .hasNext();) {
-                            if ("header".equals(headers.next())) {
-                                found = true;
-                            }
-                        }
-                        assertTrue("headers does not tontain header!", found);
-                        wc.validateWSVersion();
-                        assertTrue(HeaderTestingVersionServlet.OOZIE_HEADERS
-                                .containsKey("header"));
-                        assertTrue(HeaderTestingVersionServlet.OOZIE_HEADERS
-                                .containsValue("test"));
-                        wc.removeHeader("header");
-                        assertNull(wc.getHeader("header"));
-                        return null;
+                boolean found = false;
+                for (Iterator<String> headers = wc.getHeaderNames(); headers.hasNext();) {
+                    if ("header".equals(headers.next())) {
+                        found = true;
                     }
-                });
+                }
+                assertTrue("headers does not contain header!", found);
+                wc.validateWSVersion();
+                assertTrue(HeaderTestingVersionServlet.OOZIE_HEADERS.containsKey("header"));
+                assertTrue(HeaderTestingVersionServlet.OOZIE_HEADERS.containsValue("test"));
+                wc.removeHeader("header");
+                assertNull(wc.getHeader("header"));
+                return null;
+            }
+        });
 
     }
 
     public void testUrls() throws Exception {
-        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED,
-                new Callable<Void>() {
-                    public Void call() throws Exception {
-                        String oozieUrl = getContextURL();
-                        OozieClient wc = new OozieClient(oozieUrl);
-                        assertEquals(
-                                oozieUrl,
-                                wc.getOozieUrl().substring(0,
-                                        wc.getOozieUrl().length() - 1));
-                        assertTrue(wc.getProtocolUrl().startsWith(
-                                wc.getOozieUrl() + "v"));
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                String oozieUrl = getContextURL();
+                OozieClient wc = new OozieClient(oozieUrl);
+                assertEquals(oozieUrl, wc.getOozieUrl().substring(0, wc.getOozieUrl().length() - 1));
+                assertTrue(wc.getProtocolUrl().startsWith(wc.getOozieUrl() + "v"));
 
-                        try {
-                            wc = new OozieClientForTest(oozieUrl);
-                            wc.getProtocolUrl();
-                            fail("wrong version should run throw exception");
-                        } catch (OozieClientException e) {
-                            assertEquals(
-                                    "UNSUPPORTED_VERSION : Supported version [1] or less, Unsupported versions[-11-10]",
-                                    e.toString());
-                        }
-                        return null;
-                    }
-                });
+                try {
+                    wc = new OozieClientForTest(oozieUrl);
+                    wc.getProtocolUrl();
+                    fail("wrong version should run throw exception");
+                }
+                catch (OozieClientException e) {
+                    assertEquals("UNSUPPORTED_VERSION : Supported version [1] or less, Unsupported versions[-11-10]", e.toString());
+                }
+                return null;
+            }
+        });
 
     }
 
@@ -418,104 +408,91 @@ public class TestWorkflowClient extends DagServletTestCase {
      * Test client's methods getWorkflowActionInfo and getBundleJobInfo
      */
     public void testJobInformation() throws Exception {
-        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED,
-                new Callable<Void>() {
-                    public Void call() throws Exception {
-                        String oozieUrl = getContextURL();
-                        OozieClient wc = new OozieClient(oozieUrl);
-                        String jobId = MockDagEngineService.JOB_ID + "1"
-                                + MockDagEngineService.JOB_ID_END;
-                        assertEquals(RestConstants.JOB_SHOW_LOG,
-                                wc.getJobLog(jobId));
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                String oozieUrl = getContextURL();
+                OozieClient wc = new OozieClient(oozieUrl);
+                String jobId = MockDagEngineService.JOB_ID + "1" + MockDagEngineService.JOB_ID_END;
+                assertEquals(RestConstants.JOB_SHOW_LOG, wc.getJobLog(jobId));
 
-                        WorkflowAction wfAction = wc
-                                .getWorkflowActionInfo(jobId);
+                WorkflowAction wfAction = wc.getWorkflowActionInfo(jobId);
 
-                        assertEquals(jobId, wfAction.getId());
-                        CoordinatorJob job = wc.getCoordJobInfo(jobId);
+                assertEquals(jobId, wfAction.getId());
+                CoordinatorJob job = wc.getCoordJobInfo(jobId);
 
-                        assertEquals("group", job.getAcl());
-                        assertEquals("SUCCEEDED", job.getStatus().toString());
-                        assertEquals("user", job.getUser());
+                assertEquals("group", job.getAcl());
+                assertEquals("SUCCEEDED", job.getStatus().toString());
+                assertEquals("user", job.getUser());
 
-                        BundleJob bundleJob = wc.getBundleJobInfo(jobId);
-                        assertEquals("SUCCEEDED", bundleJob.getStatus()
-                                .toString());
-                        assertEquals("user", bundleJob.getUser());
+                BundleJob bundleJob = wc.getBundleJobInfo(jobId);
+                assertEquals("SUCCEEDED", bundleJob.getStatus().toString());
+                assertEquals("user", bundleJob.getUser());
 
-                        return null;
-                    }
-                });
+                return null;
+            }
+        });
     }
 
     /**
      * Test client's methods getCoordActionInfo and reRunBundle.
      */
     public void testJobActionInfo() throws Exception {
-        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED,
-                new Callable<Void>() {
-                    public Void call() throws Exception {
-                        String oozieUrl = getContextURL();
-                        OozieClient wc = new OozieClient(oozieUrl);
-                        String jobId = MockDagEngineService.JOB_ID + "1"
-                                + MockDagEngineService.JOB_ID_END;
-                        assertEquals(RestConstants.JOB_SHOW_LOG,
-                                wc.getJobLog(jobId));
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                String oozieUrl = getContextURL();
+                OozieClient wc = new OozieClient(oozieUrl);
+                String jobId = MockDagEngineService.JOB_ID + "1" + MockDagEngineService.JOB_ID_END;
+                assertEquals(RestConstants.JOB_SHOW_LOG, wc.getJobLog(jobId));
 
-                        WorkflowAction wfAction = wc
-                                .getWorkflowActionInfo(jobId);
+                WorkflowAction wfAction = wc.getWorkflowActionInfo(jobId);
 
-                        assertEquals(jobId, wfAction.getId());
+                assertEquals(jobId, wfAction.getId());
 
-                        CoordinatorAction action = wc.getCoordActionInfo(jobId);
-                        assertEquals(0, action.getActionNumber());
-                        assertEquals("SUCCEEDED", action.getStatus().toString());
-                        assertEquals(jobId, action.getId());
+                CoordinatorAction action = wc.getCoordActionInfo(jobId);
+                assertEquals(0, action.getActionNumber());
+                assertEquals("SUCCEEDED", action.getStatus().toString());
+                assertEquals(jobId, action.getId());
 
-                        assertEquals(0, wc.getBulkInfo(null, 0, 10).size());
+                assertEquals(0, wc.getBulkInfo(null, 0, 10).size());
 
-                        List<BundleJob> jobs = wc.getBundleJobsInfo(
-                                "status=SUCCEEDED", 0, 10);
-                        assertEquals(4, jobs.size());
+                List<BundleJob> jobs = wc.getBundleJobsInfo("status=SUCCEEDED", 0, 10);
+                assertEquals(4, jobs.size());
 
-                        assertEquals("SUCCEEDED", jobs.get(1).getStatus()
-                                .toString());
+                assertEquals("SUCCEEDED", jobs.get(1).getStatus().toString());
 
-                        // the method reRunBundle does nothing.
-                        wc.reRunBundle(jobId, "coordScope", "dateScope", true,
-                                true);
+                // the method reRunBundle does nothing.
+                wc.reRunBundle(jobId, "coordScope", "dateScope", true, true);
 
-                        return null;
-                    }
-                });
+                return null;
+            }
+        });
     }
 
     /**
      * Test SlaServlet and client's method getSlaInfo
      */
     public void testSla() throws Exception {
-        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED,
-                new Callable<Void>() {
-                    public Void call() throws Exception {
-                        String oozieUrl = getContextURL();
-                        OozieClient wc = new OozieClient(oozieUrl);
+        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
+            public Void call() throws Exception {
+                String oozieUrl = getContextURL();
+                OozieClient wc = new OozieClient(oozieUrl);
 
-                        PrintStream oldStream = System.out;
-                        ByteArrayOutputStream data = new ByteArrayOutputStream();
-                        System.setOut(new PrintStream(data));
-                        try {
-                            wc.getSlaInfo(0, 10, null);
-                        } finally {
-                            System.setOut(oldStream);
-                        }
-                        assertTrue(data.toString().contains("<sla-message>"));
-                        assertTrue(data.toString().contains(
-                            "<last-sequence-id>0</last-sequence-id>"));
-                        assertTrue(data.toString().contains("</sla-message>"));
+                PrintStream oldStream = System.out;
+                ByteArrayOutputStream data = new ByteArrayOutputStream();
+                System.setOut(new PrintStream(data));
+                try {
+                    wc.getSlaInfo(0, 10, null);
+                }
+                finally {
+                    System.setOut(oldStream);
+                }
+                assertTrue(data.toString().contains("<sla-message>"));
+                assertTrue(data.toString().contains("<last-sequence-id>0</last-sequence-id>"));
+                assertTrue(data.toString().contains("</sla-message>"));
 
-                        return null;
-                    }
-                });
+                return null;
+            }
+        });
     }
 
     /**
@@ -529,11 +506,9 @@ public class TestWorkflowClient extends DagServletTestCase {
 
         @SuppressWarnings("unchecked")
         @Override
-        protected HttpURLConnection createConnection(URL url, String method)
-                throws IOException, OozieClientException {
+        protected HttpURLConnection createConnection(URL url, String method) throws IOException, OozieClientException {
             HttpURLConnection result = mock(HttpURLConnection.class);
-            when(result.getResponseCode())
-                    .thenReturn(HttpURLConnection.HTTP_OK);
+            when(result.getResponseCode()).thenReturn(HttpURLConnection.HTTP_OK);
 
             JSONArray versions = new JSONArray();
             versions.add(-11);
@@ -542,8 +517,7 @@ public class TestWorkflowClient extends DagServletTestCase {
             versions.writeJSONString(writer);
             writer.flush();
 
-            when(result.getInputStream()).thenReturn(
-                    new ByteArrayInputStream(writer.toString().getBytes()));
+            when(result.getInputStream()).thenReturn(new ByteArrayInputStream(writer.toString().getBytes()));
             return result;
         }
 

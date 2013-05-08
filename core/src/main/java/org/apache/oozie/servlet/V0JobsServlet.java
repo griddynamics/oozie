@@ -75,6 +75,7 @@ public class V0JobsServlet extends BaseJobsServlet {
     /**
      * v0 service implementation to get a JSONObject representation of a job from its external ID
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected JSONObject getJobIdForExternalId(HttpServletRequest request, String externalId) throws XServletException, IOException {
         JSONObject json = new JSONObject();
