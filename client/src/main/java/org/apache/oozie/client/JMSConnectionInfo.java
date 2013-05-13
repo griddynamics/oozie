@@ -19,6 +19,8 @@ package org.apache.oozie.client;
 
 import java.util.Properties;
 
+import org.apache.oozie.client.event.Event;
+
 /**
  * JMS connection related information
  *
@@ -26,10 +28,17 @@ import java.util.Properties;
 public interface JMSConnectionInfo {
 
     /**
-     * Retrieve the JMS topic name
-     * @return the topic name
+     * Get the topic prefix for a JMS topic
+     * @return JMS topic prefix
      */
-    String getTopicName();
+    String getTopicPrefix();
+
+    /**
+     * Get the topic pattern given the app type of job
+     * @param appType the appType for a job
+     * @return JMS topic pattern
+     */
+    String getTopicPattern(Event.AppType appType);
 
     /**
      * Retrieve the JNDI properties for establishing connection to JMS server
