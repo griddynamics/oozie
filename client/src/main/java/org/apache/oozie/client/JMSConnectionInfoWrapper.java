@@ -15,23 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.oozie.jms;
+package org.apache.oozie.client;
 
-import org.apache.oozie.client.rest.JMSConnectionInfoBean;
-import org.apache.oozie.executor.jpa.JPAExecutorException;
+import java.util.Properties;
 
 /**
- * Get the JMS ConnectionInfoBean
+ * Wrapper for JMSConnectionInfo
+ *
  */
-public interface JMSServerInfo {
+public interface JMSConnectionInfoWrapper {
 
     /**
-     * Retrive the conn info bean using conn properties and job id
-     * @param connectionProperties the jms producer conn properties
-     * @param jobId the job id
-     * @return
-     * @throws Exception
+     * Retrieve JNDI properties
+     * @return JNDI properties
      */
-    public JMSConnectionInfoBean getJMSConnectionInfoBean(String connectionProperties, String jobId) throws Exception;
+    Properties getJNDIProperties();
 
+    /**
+     * Get topic prefix
+     * @return the topic prefix
+     */
+    String getTopicPrefix();
+
+    /**
+     * Get topic pattern as Properties
+     * @return TopicPattern properties
+     */
+    Properties getTopicPatternProperties();
 }

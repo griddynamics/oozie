@@ -33,6 +33,7 @@ import org.apache.oozie.servlet.V0JobsServlet;
 import org.apache.oozie.servlet.V1AdminServlet;
 import org.apache.oozie.servlet.V1JobServlet;
 import org.apache.oozie.servlet.V1JobsServlet;
+import org.apache.oozie.servlet.V2AdminServlet;
 import org.apache.oozie.servlet.V2JobServlet;
 import org.json.simple.JSONArray;
 
@@ -53,6 +54,7 @@ public class TestWorkflowClient extends DagServletTestCase {
         new V1AdminServlet();
         new V1JobServlet();
         new V2JobServlet();
+        new V2AdminServlet();
         new SLAServlet();
     }
 
@@ -62,7 +64,8 @@ public class TestWorkflowClient extends DagServletTestCase {
             VERSION + "/sla/*" };
     @SuppressWarnings("rawtypes")
     static final Class[] SERVLET_CLASSES = {HeaderTestingVersionServlet.class, V0JobsServlet.class,
-            V0JobServlet.class, V1AdminServlet.class,SLAServlet.class, V1JobServlet.class, V2JobServlet.class, V1JobsServlet.class};
+            V0JobServlet.class, V1AdminServlet.class, V2AdminServlet.class, SLAServlet.class, V1JobServlet.class,
+            V2JobServlet.class, V1JobsServlet.class};
 
     protected void setUp() throws Exception {
         super.setUp();
