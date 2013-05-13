@@ -322,8 +322,9 @@ public class TestOozieCLIMethods extends TestCase {
         };
 
         Pattern pattern = Pattern.compile("Bundle Name[ |:]+" + dtObject.appName);
-        assertPrintBulkResponseOutput(readBulkResponseOutput(ImmutableList.of(createBulkResponse(dtObject)), false), pattern);
+        assertPrintBulkResponseOutput(readBulkResponseOutput(ImmutableList.of(createBulkResponse(dtObject)), true), pattern);
 
+        pattern = Pattern.compile(dtObject.appName + "-" +"\\s+" + dtObject.appName + "-");
         assertPrintBulkResponseOutput(readBulkResponseOutput(ImmutableList.of(createBulkResponse(dtObject)), false), pattern);
     }
 
@@ -331,7 +332,7 @@ public class TestOozieCLIMethods extends TestCase {
         return new OutputReaderTemplate() {
             @Override
             void execute() throws IOException {
-                new OozieCLI().printBulkJobs(bulkResponses, null, true);
+                new OozieCLI().printBulkJobs(bulkResponses, null, verbose);
             }
         }.read();
     }
