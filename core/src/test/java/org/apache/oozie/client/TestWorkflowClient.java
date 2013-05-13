@@ -64,7 +64,7 @@ public class TestWorkflowClient extends DagServletTestCase {
             VERSION + "/sla/*" };
     @SuppressWarnings("rawtypes")
     static final Class[] SERVLET_CLASSES = {HeaderTestingVersionServlet.class, V0JobsServlet.class,
-            V0JobServlet.class, V1AdminServlet.class, V2AdminServlet.class, SLAServlet.class, V1JobServlet.class,
+            V0JobServlet.class, V1AdminServlet.class, SLAServlet.class, V2AdminServlet.class,  V1JobServlet.class,
             V2JobServlet.class, V1JobsServlet.class};
 
     protected void setUp() throws Exception {
@@ -128,7 +128,7 @@ public class TestWorkflowClient extends DagServletTestCase {
                     fail("wrong version should run throw exception");
                 }
                 catch (OozieClientException e) {
-                    assertEquals("UNSUPPORTED_VERSION : Supported version [1] or less, Unsupported versions[-11-10]", e.toString());
+                    assertEquals("UNSUPPORTED_VERSION : Supported version [2] or less, Unsupported versions[-11-10]", e.toString());
                 }
                 return null;
             }
