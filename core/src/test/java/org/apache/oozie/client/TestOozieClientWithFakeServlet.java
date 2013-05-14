@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Test some client functions with fake http connect 
+ * Test some client functions with fake http connect
  *
  */
 public class TestOozieClientWithFakeServlet {

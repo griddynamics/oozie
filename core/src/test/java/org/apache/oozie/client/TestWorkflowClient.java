@@ -449,7 +449,6 @@ public class TestWorkflowClient extends DagServletTestCase {
         });
     }
 
- 
 
     /**
      * Test SlaServlet and client's method getSlaInfo
