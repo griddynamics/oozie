@@ -449,40 +449,7 @@ public class TestWorkflowClient extends DagServletTestCase {
         });
     }
 
-    /**
-     * Test client's methods getCoordActionInfo and reRunBundle.
-     */
-    public void testJobActionInfo() throws Exception {
-        runTest(END_POINTS, SERVLET_CLASSES, IS_SECURITY_ENABLED, new Callable<Void>() {
-            public Void call() throws Exception {
-                String oozieUrl = getContextURL();
-                OozieClient wc = new OozieClient(oozieUrl);
-                String jobId = MockDagEngineService.JOB_ID + "1" + MockDagEngineService.JOB_ID_END;
-                assertEquals(RestConstants.JOB_SHOW_LOG, wc.getJobLog(jobId));
-
-                WorkflowAction wfAction = wc.getWorkflowActionInfo(jobId);
-
-                assertEquals(jobId, wfAction.getId());
-
-                CoordinatorAction action = wc.getCoordActionInfo(jobId);
-                assertEquals(0, action.getActionNumber());
-                assertEquals("SUCCEEDED", action.getStatus().toString());
-                assertEquals(jobId, action.getId());
-
-                assertEquals(0, wc.getBulkInfo(null, 0, 10).size());
-
-                List<BundleJob> jobs = wc.getBundleJobsInfo("status=SUCCEEDED", 0, 10);
-                assertEquals(4, jobs.size());
-
-                assertEquals("SUCCEEDED", jobs.get(1).getStatus().toString());
-
-                // the method reRunBundle does nothing.
-                wc.reRunBundle(jobId, "coordScope", "dateScope", true, true);
-
-                return null;
-            }
-        });
-    }
+ 
 
     /**
      * Test SlaServlet and client's method getSlaInfo
