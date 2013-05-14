@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,6 @@ public class V0JobsServlet extends BaseJobsServlet {
     /**
      * v0 service implementation to submit a workflow job
      */
-    @SuppressWarnings("unchecked")
     @Override
     protected JSONObject submitJob(HttpServletRequest request, Configuration conf) throws XServletException, IOException {
 
@@ -75,7 +74,6 @@ public class V0JobsServlet extends BaseJobsServlet {
     /**
      * v0 service implementation to get a JSONObject representation of a job from its external ID
      */
-    @SuppressWarnings("unchecked")
     @Override
     protected JSONObject getJobIdForExternalId(HttpServletRequest request, String externalId) throws XServletException, IOException {
         JSONObject json = new JSONObject();
@@ -95,7 +93,6 @@ public class V0JobsServlet extends BaseJobsServlet {
      * v0 service implementation to get a list of workflows, with filtering or interested windows embedded in the
      * request object
      */
-    @SuppressWarnings("unchecked")
     @Override
     protected JSONObject getJobs(HttpServletRequest request) throws XServletException, IOException {
         JSONObject json = new JSONObject();
