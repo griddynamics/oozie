@@ -1,5 +1,11 @@
 -- Oozie 4.1.0 release (trunk - unreleased)
 
+OOZIE-1327 enhance unit-test coverage of package org.apache.oozie (iveselovsky via rkanter)
+OOZIE-1356 Bundle job in PAUSEWITHERROR state does not goto SUSPENDEDWITHERROR state on suspending it (bowenzhangusa via virag)
+OOZIE-1313 coverage fix for org.apache.oozie.client (aleksgor via virag)
+OOZIE-1360 Oozie CLI shows created time of workflow as started time (ryota via virag)
+OOZIE-1359 mention default value of throttle in doc (ryota via virag)
+OOZIE-1370 oozie create db script throws classNotFound exception (bowenzhangusa via virag)
 OOZIE-1183 Update WebServices API documentation (rkanter)
 OOZIE-1368 Error message when using an incorrect oozie url with kerberos is misleading (rkanter)
 OOZIE-1352 Write documentation for OOzie Hive CLI (rkanter)
