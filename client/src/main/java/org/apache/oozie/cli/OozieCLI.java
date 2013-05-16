@@ -72,6 +72,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import com.google.common.annotations.VisibleForTesting;
+
 /**
  * Oozie command line utility.
  */
