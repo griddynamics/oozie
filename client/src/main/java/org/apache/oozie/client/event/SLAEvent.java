@@ -27,7 +27,7 @@ import org.apache.oozie.AppType;
 public abstract class SLAEvent extends Event {
 
     public static enum EventStatus {
-        START_MET, START_MISS, END_MET, END_MISS, DURATION_MET, DURATION_MISS
+        START_MET, START_MISS, DURATION_MET, DURATION_MISS, END_MET, END_MISS
     }
 
     public static enum SLAStatus {
@@ -58,7 +58,7 @@ public abstract class SLAEvent extends Event {
      *
      * @return String job-id
      */
-    public abstract String getJobId();
+    public abstract String getId();
 
     /**
      * Get the id of the parent job

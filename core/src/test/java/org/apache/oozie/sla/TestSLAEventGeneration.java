@@ -159,7 +159,7 @@ public class TestSLAEventGeneration extends XDataTestCase {
         SubmitXCommand sc = new SubmitXCommand(conf, "UNIT_TESTING");
         String jobId = sc.call();
         SLACalcStatus slaEvent = slas.getSLACalculator().get(jobId);
-        assertEquals(jobId, slaEvent.getJobId());
+        assertEquals(jobId, slaEvent.getId());
         assertEquals("test-wf-job-sla", slaEvent.getAppName());
         assertEquals(AppType.WORKFLOW_JOB, slaEvent.getAppType());
         assertEquals(nominalTime, DateUtils.formatDateOozieTZ(slaEvent.getNominalTime()));
@@ -177,11 +177,11 @@ public class TestSLAEventGeneration extends XDataTestCase {
         // test that sla processes the Job Event from Start command
         new StartXCommand(jobId).call();
         slaEvent = slas.getSLACalculator().get(jobId);
-        slaEvent.setStartProcessed(false); //resetting flag for testing sla event
+        slaEvent.setEventProcessed(0); //resetting to receive sla events
         ehs.new EventWorker().run();
         Thread.sleep(300); //time for event listeners to run
         slaEvent = (SLACalcStatus) ehs.getEventQueue().poll();
-        assertEquals(jobId, slaEvent.getJobId());
+        assertEquals(jobId, slaEvent.getId());
         assertNotNull(slaEvent.getActualStart());
         assertEquals(SLAStatus.IN_PROCESS, slaEvent.getSLAStatus());
         assertEquals(WorkflowJob.Status.RUNNING.name(), slaEvent.getJobStatus());
@@ -192,7 +192,7 @@ public class TestSLAEventGeneration extends XDataTestCase {
         ehs.new EventWorker().run();
         Thread.sleep(300);
         slaEvent = (SLACalcStatus) ehs.getEventQueue().poll();
-        assertEquals(jobId, slaEvent.getJobId());
+        assertEquals(jobId, slaEvent.getId());
         assertNotNull(slaEvent.getActualEnd());
         assertEquals(EventStatus.END_MISS, slaEvent.getEventStatus());
         assertEquals(SLAStatus.MISS, slaEvent.getSLAStatus());
@@ -237,7 +237,7 @@ public class TestSLAEventGeneration extends XDataTestCase {
         String expectedEnd = DateUtils.formatDateOozieTZ(cal.getTime());
         String appName = "test-coord-sla";
 
-        // testing creation of new sla registration via Submit+Materialize
+        // testing creation of new sla registration via Submit + Materialize
         // command
         CoordSubmitXCommand sc = new CoordSubmitXCommand(conf, "UNIT_TESTING");
         String jobId = sc.call();
@@ -246,7 +246,7 @@ public class TestSLAEventGeneration extends XDataTestCase {
         CoordinatorActionBean action = jpa.execute(getCmd);
         String actionId = action.getId();
         SLACalcStatus slaEvent = slas.getSLACalculator().get(actionId);
-        assertEquals(actionId, slaEvent.getJobId());
+        assertEquals(actionId, slaEvent.getId());
         assertEquals(appName, slaEvent.getAppName());
         assertEquals(AppType.COORDINATOR_ACTION, slaEvent.getAppType());
         assertEquals(nominalTime, DateUtils.formatDateOozieTZ(slaEvent.getNominalTime()));
@@ -266,11 +266,11 @@ public class TestSLAEventGeneration extends XDataTestCase {
         jpa.execute(writeCmd);
         new CoordActionStartXCommand(actionId, getTestUser(), appName, "authtoken", jobId).call();
         slaEvent = slas.getSLACalculator().get(actionId);
-        slaEvent.setStartProcessed(false); //resetting flag for testing sla event
+        slaEvent.setEventProcessed(0); //resetting for testing sla event
         ehs.new EventWorker().run();
         Thread.sleep(300); //time for event listeners to run
         slaEvent = (SLACalcStatus) ehs.getEventQueue().poll();
-        assertEquals(actionId, slaEvent.getJobId());
+        assertEquals(actionId, slaEvent.getId());
         assertNotNull(slaEvent.getActualStart());
         assertEquals(SLAStatus.IN_PROCESS, slaEvent.getSLAStatus());
         assertEquals(WorkflowJob.Status.RUNNING.name(), slaEvent.getJobStatus());
@@ -280,7 +280,7 @@ public class TestSLAEventGeneration extends XDataTestCase {
         ehs.new EventWorker().run();
         Thread.sleep(300); //time for event listeners to run
         slaEvent = (SLACalcStatus) ehs.getEventQueue().poll();
-        assertEquals(actionId, slaEvent.getJobId());
+        assertEquals(actionId, slaEvent.getId());
         assertNotNull(slaEvent.getActualEnd());
         assertEquals(EventStatus.END_MISS, slaEvent.getEventStatus());
         assertEquals(SLAStatus.MISS, slaEvent.getSLAStatus());
