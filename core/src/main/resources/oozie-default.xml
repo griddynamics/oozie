@@ -25,6 +25,18 @@
     <!-- ************************** VERY IMPORTANT  ************************** -->
 
     <property>
+        <name>oozie.action.ship.launcher.jar</name>
+        <value>true</value>
+        <description>
+            If true, Oozie will create and ship a "launcher jar" that contains classes necessary for the launcher job.  If false,
+            Oozie will not do this, and it is assumed that the necessary classes are in their respective sharelib jars or the
+            "oozie" sharelib instead.  When false, the sharelib is required for ALL actions; when true, the sharelib is only
+            required for actions that need additional jars (e.g. Pig).  The main advantage of setting this to false is that
+            launching jobs should be slightly faster.
+        </description>
+    </property>
+
+    <property>
         <name>oozie.action.mapreduce.uber.jar.enable</name>
         <value>false</value>
         <description>
@@ -1858,7 +1870,7 @@
 
     <property>
         <name>oozie.service.EventHandlerService.worker.interval</name>
-        <value>60</value>
+        <value>30</value>
         <description>
             The default interval (seconds) at which the worker threads will be scheduled to run
             and process events.
@@ -1906,11 +1918,12 @@
     </property>
 
     <property>
-        <name>oozie.sla.service.SLAService.events.modified.after</name>
-        <value>7</value>
-        <description> Retrive records which have been modified in last x amount of days (x is 7 by default)
+        <name>oozie.sla.service.SLAService.job.event.latency</name>
+        <value>90000</value>
+        <description>
+             Time in milliseconds to account of latency of getting the job status event
+             to compare against and decide sla miss/met
         </description>
     </property>
-
 
 </configuration>
