@@ -1,10 +1,12 @@
 -- Oozie 4.1.0 release (trunk - unreleased)
 
+OOZIE-1453 Change "frequency" to string in SyncCoordAction.java (bowenzhangusa via rkanter)
 OOZIE-1447 Sqoop actions that don't launch a map reduce job fail with an IllegalArgumentException (jarcec via rkanter)
 OOZIE-1440 Build fails in certain environments due to xerces OpenJPA issue (mackrorysd via rkanter)
 
 -- Oozie 4.0.0 release
 
+OOZIE-1450 Duplicate Coord_Action events on Waiting -> Timeout, and Coord Materialize not removing actions on Failure (mona)
 OOZIE-1451 CoordActionInputCheckX does a redundant eagerLoadState (rohini)
 OOZIE-1446 SLACalcStatus not updating the last modified time correctly and duplicate DURATION_* event (virag,mona via mona)
 OOZIE-1249 SLA Documentation (mona,virag,rohini via rohini)
