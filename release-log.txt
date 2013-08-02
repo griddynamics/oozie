@@ -1,11 +1,21 @@
 -- Oozie 4.1.0 release (trunk - unreleased)
 
+OOZIE-1425 param checker should validate cron syntax (bowenzhangusa via rkanter)
 OOZIE-1453 Change "frequency" to string in SyncCoordAction.java (bowenzhangusa via rkanter)
 OOZIE-1447 Sqoop actions that don't launch a map reduce job fail with an IllegalArgumentException (jarcec via rkanter)
 OOZIE-1440 Build fails in certain environments due to xerces OpenJPA issue (mackrorysd via rkanter)
 
 -- Oozie 4.0.0 release
 
+OOZIE-1482 4.0 client does not work with 3.x server for coord jobs (rohini)
+OOZIE-1479 Duplicate end_miss events introduced by OOZIE-1472 (rohini)
+OOZIE-1472 Confirm against database before generating start and duration miss events (rohini)
+OOZIE-1473 getKey() not overridden in some commands causing duplicates in queue (virag)
+OOZIE-1470 BundleStatusUpdateXCommand should get lock for bundle job (virag)
+OOZIE-1469 loadState() and/or verifyPrecondition() are blank in some commands (virag)
+OOZIE-1467 Bundle not killed if coordinator fails due to db exception (rohini,virag via virag)
+OOZIE-1466 current EL should not check for less than or equal to zero (rohini)
+OOZIE-1465 Making constants in CoordELFunctions public for el extensions (shwethags via rohini)
 OOZIE-1450 Duplicate Coord_Action events on Waiting -> Timeout, and Coord Materialize not removing actions on Failure (mona)
 OOZIE-1451 CoordActionInputCheckX does a redundant eagerLoadState (rohini)
 OOZIE-1446 SLACalcStatus not updating the last modified time correctly and duplicate DURATION_* event (virag,mona via mona)
