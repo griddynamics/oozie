@@ -625,9 +625,10 @@ public class CoordSubmitXCommand extends SubmitTransitionXCommand {
         // job's main attributes
         // frequency
         String val = resolveAttribute("frequency", eAppXml, evalFreq);
-        int ival = ParamChecker.checkInteger(val, "frequency");
-        ParamChecker.checkGTZero(ival, "frequency");
-        coordJob.setFrequency(Integer.toString(ival));
+        int ival = 0;
+
+        val = ParamChecker.checkFrequency(val);
+        coordJob.setFrequency(val);
         TimeUnit tmp = (evalFreq.getVariable("timeunit") == null) ? TimeUnit.MINUTE : ((TimeUnit) evalFreq
                 .getVariable("timeunit"));
         addAnAttribute("freq_timeunit", eAppXml, tmp.toString());
@@ -1095,8 +1096,10 @@ public class CoordSubmitXCommand extends SubmitTransitionXCommand {
             try {
                 jpaService.execute(new CoordJobInsertJPAExecutor(coordJob));
             }
-            catch (JPAExecutorException je) {
-                throw new CommandException(je);
+            catch (JPAExecutorException jpaee) {
+                coordJob.setId(null);
+                coordJob.setStatus(CoordinatorJob.Status.FAILED);
+                throw new CommandException(jpaee);
             }
         }
         return jobId;
