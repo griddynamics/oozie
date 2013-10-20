@@ -1,5 +1,7 @@
 -- Oozie 4.1.0 release (trunk - unreleased)
 
+OOZIE-1578 Coordinator jobs with cron frequency should be invalidated upon submission if nothing would be materialized during run time (bowenzhangusa via rkanter)
+OOZIE-1577 Oozie coordinator job with identical start and end time remains "RUNNING" forever (bowenzhangusa via rkanter)
 OOZIE-1559 Fix missing fields from new SELECT queries and Recovery Service picking up killed control nodes (ryota,mona via mona)
 OOZIE-1569 Maintain backward incompatibility for running jobs before upgrade (mona)
 OOZIE-1568 TestWorkflowClient.testSla is flakey (rkanter)
@@ -57,6 +59,7 @@ OOZIE-1440 Build fails in certain environments due to xerces OpenJPA issue (mack
 
 -- Oozie 4.0.1 release (unreleased)
 
+OOZIE-1582 Bump up Tomcat version to 6.0.37 (rkanter)
 OOZIE-1563 colt jar includes GPL licence (rkanter)
 OOZIE-1284 oozie.service.SchemaService.wf.ext.schemas in oozie-site is missing some newer xsd files (rkanter)
 OOZIE-1549 Update hcat documentation to mention hcatalog-pig-adapter jar (bowenzhangusa via rohini)

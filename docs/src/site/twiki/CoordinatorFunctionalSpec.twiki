@@ -504,6 +504,10 @@ The legal characters and the names of months and days of the week are not case s
 If a user specifies an invalid cron syntax to run something on Feb, 30th for example: "0 10 30 2 *", the coordinator job
 will not be created and an invalid coordinator frequency parse exception will be thrown.
 
+If a user has a coordinator job that materializes no action during run time, for example: frequency of "0 10 * * *" with
+start time of 2013-10-18T21:00Z and end time of 2013-10-18T22:00Z, the coordinator job submission will be rejected and
+an invalid coordinator attribute exception will be thrown.
+
 *%GREEN% Examples: %ENDCOLOR%*
 
 | *Cron Expression* | *Meaning* |
@@ -792,7 +796,8 @@ Coordinator applications are normally parameterized.
 
 To create a coordinator job, a job configuration that resolves all coordinator application parameters must be provided to the coordinator engine.
 
-A coordinator job is a running instance of a coordinator application running from a start time to an end time.
+A coordinator job is a running instance of a coordinator application running from a start time to an end time. The start
+time must be earlier than the end time.
 
 At any time, a coordinator job is in one of the following status: *PREP, RUNNING, RUNNINGWITHERROR, PREPSUSPENDED, SUSPENDED, SUSPENDEDWITHERROR, PREPPAUSED, PAUSED, PAUSEDWITHERROR, SUCCEEDED, DONEWITHERROR, KILLED, FAILED*.
 
