@@ -1,5 +1,9 @@
 -- Oozie 4.1.0 release (trunk - unreleased)
 
+OOZIE-1597 Cleanup database before every test (rkanter)
+OOZIE-1589 TestZKLocksService is flakey (rkanter)
+OOZIE-1541 Typo in Oozie HA admin -servers command in documentation (rkanter)
+OOZIE-1596 TestOozieMySqlDBCLI.testCreateMysql fails when tests are executed in a different order (rkanter)
 OOZIE-1592 El Expression Reference should point to the exact chapter in java 6 (bowenzhangusa via rkanter)
 OOZIE-1578 Coordinator jobs with cron frequency should be invalidated upon submission if nothing would be materialized during run time (bowenzhangusa via rkanter)
 OOZIE-1577 Oozie coordinator job with identical start and end time remains "RUNNING" forever (bowenzhangusa via rkanter)
@@ -60,6 +64,7 @@ OOZIE-1440 Build fails in certain environments due to xerces OpenJPA issue (mack
 
 -- Oozie 4.0.1 release (unreleased)
 
+OOZIE-1565 OOZIE-1481 should only affect v2 of the API, not v1 (rkanter)
 OOZIE-1551 Change hadoop-2 profile to use 2.2.0 (rkanter,rohini,mona via rkanter)
 OOZIE-1573 coord:tzOffset() gives incorrect offset for daylight saving timezones (rohini)
 OOZIE-1582 Bump up Tomcat version to 6.0.37 (rkanter)
